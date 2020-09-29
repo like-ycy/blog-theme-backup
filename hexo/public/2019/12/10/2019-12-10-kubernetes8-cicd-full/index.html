@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="望翔">
+  <meta name="keywords" content="">
+  <title>【Kubernetes系列】第8篇 CI/CD 之全流程实践 - 权掌天下 Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>权掌天下</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background" parallax=true
+         style="background: url('https://image.my-blog.wang/header/header.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2019-12-10 00:00">
+      2019年12月10日 凌晨
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.4k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      19
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：2020年9月29日 下午
+                
+              </p>
+            
+            <article class="markdown-body">
+              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>1）本实践中已经的示例代码及jenkins-agent镜像已经推送归档至github，–&gt;传送门（<a href="https://github.com/Kubernetes-Best-Pratice/）" target="_blank" rel="noopener">https://github.com/Kubernetes-Best-Pratice/）</a></p>
+<p>2）注意本实践中均为内网数据，你测试时一定要改为自己的环境的有效数据。</p>
+<p>3) 由于本实践涉及组件较多，若有操作不明确的话，你可以后台留言，我们一起完善。</p>
+<p>4) 具体操作时若有不清楚，或是错误可以留言，大家一起解决。</p>
+<h1 id="1、准备基础数据"><a href="#1、准备基础数据" class="headerlink" title="1、准备基础数据"></a>1、准备基础数据</h1><p><strong>step1：</strong>配置Gitlab</p>
+<ul>
+<li>创建项目</li>
+<li>上传示例代码</li>
+</ul>
+<p><em>注: 本次示例使用的gitlab项目地址：</em></p>
+<p><em><a href="http://gitlab.hanker.com/colynn/hanker-hello.git" target="_blank" rel="noopener">http://gitlab.hanker.com/colynn/hanker-hello.git</a></em></p>
+<p><strong>step2：</strong>配置Harbor</p>
+<p>创建项目, 用于存储构建的镜像</p>
+<p><em>注: 本次示例使用的harbor地址为</em> </p>
+<p><em>10.0.0.185:5000/hanker/hanker-hello:v1</em></p>
+<p><strong>step3：</strong>Jenkins验证信息</p>
+<ul>
+<li><p>添加 gitlab 帐号信息</p>
+<p><u>操作指引：【Credentials】-&gt; 【System】-&gt; 【Global credentials】-&gt; 【Add Credentials】</u></p>
+</li>
+</ul>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-10/1-3-a.png" srcset="/img/loading.gif" alt="avatar"></p>
+<ul>
+<li><p>harbor 信息</p>
+<p><u>操作指引：【Credentials】-&gt; 【System】-&gt; 【Global credentials】-&gt; 【Add Credentials】</u></p>
+</li>
+</ul>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-10/1-3-b.png" srcset="/img/loading.gif" alt="avatar"></p>
+<ul>
+<li><p>k8s namespace验证信息</p>
+<p>在你的k8s master节点上执行如下操作：</p>
+<p>1) 创建serviceaccount</p>
+</li>
+</ul>
+<pre><code class="hljs bash">$ kubectl -n devops create serviceaccount jenkins-robot</code></pre>
+
+<p>命令输出：</p>
+<pre><code class="hljs bash">serviceaccount/jenkins-robot created</code></pre>
+
+<p>  2) 角色绑定</p>
+<pre><code class="hljs bash">$ kubectl -n devops create rolebinding jenkins-robot-binding --clusterrole=cluster-admin --serviceaccount=devops:jenkins-robot</code></pre>
+
+<p>命令输出：</p>
+<pre><code class="hljs bash">rolebinding.rbac.authorization.k8s.io/jenkins-robot-binding created</code></pre>
+
+<p>3) 获取 ServiceAccount</p>
+<pre><code class="hljs routeros">$ kubectl -n devops <span class="hljs-builtin-name">get</span> serviceaccount jenkins-robot -o go-template <span class="hljs-attribute">--template</span>=<span class="hljs-string">'&#123;&#123;range .secrets&#125;&#125;&#123;&#123;.name&#125;&#125;&#123;&#123;"\n"&#125;&#125;&#123;&#123;end&#125;&#125;'</span>jenkins-robot-token-n8w6b</code></pre>
+
+<p> 4) 基于base64解码 ServiceToken</p>
+<pre><code class="hljs jboss-cli">$ kubectl -n devops get secrets jenkins-robot-token-n8w6b -o go-template <span class="hljs-params">--template</span> '&#123;&#123;index <span class="hljs-string">.data</span> <span class="hljs-string">"token"</span>&#125;&#125;' | base64 <span class="hljs-params">--decode</span></code></pre>
+<p>命令输出：</p>
+<pre><code class="hljs smali">eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZXZvcHMiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiamVua2lucy1yb2JvdC10b2tlbi1uOHc2YiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJqZW5raW5zLXJvYm90Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiOTcyZTY0OGYtMTYxZC00NmM5LWI0ZjgtYjFkNTdlOWY4NTBjIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OmRldm9wczpqZW5raW5zLXJvYm90In0.ArQvcaEqCaeU1ZcJ6nOC5rLaTZr_vLDrpLCt87asltMUWj2gSli_mXUTrl09hBnBDXI3A1D4rJXHKLHjIAA4nN8qRIRGbpqSNzDwmqJr-jmmmWWZFrZ3n3Al9-13KJnNOK8pcWr70rt3Rsigt4B6CIQ0-ZLK8BZhvROJSifeOfJ6xe2KBqdXBv1ccZZZfEhPLgGbaR5yWm5jLvOMr2MQiPDrZoHOEkcMt-C0xipytOp4sJCJ4bQhb-UoMu1owYydxbd6O7xO71fvqP_bMDpZXC601nA2ggK7h-vi6CJffHv5MM59q8X_DWe1NnZS6KXiMmkXqAmBn10Yu20PNj-kjg</code></pre>
+
+<p> 5) 添加 Secret text验证信息</p>
+<p><u>操作指引：【首页】-&gt;【Credentials】-&gt; 【System】-&gt; 【Global credentials】-&gt; 【Add Credentials】-&gt; 选择【Secret text】类型</u></p>
+<p>然后将上一步 解码的结果 更新至 Secret, Pipeline 中</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-10/1-5.png" srcset="/img/loading.gif" alt="avatar"></p>
+<h1 id="2、如何创建Jenkins-pipline"><a href="#2、如何创建Jenkins-pipline" class="headerlink" title="2、如何创建Jenkins pipline"></a>2、如何创建Jenkins pipline</h1><p><strong>step1：</strong>创建jenkins pipeline item</p>
+<p><u>操作指引：【首页】-&gt;【New Item】</u></p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-10/2-1.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p><strong>step2:</strong> pipeline script 步骤说明</p>
+<p><em>注: pipeline主要包含三个阶段（检出代码、制作镜像、部署服务），下面跟大家解释下，如何编写pipeline， 借助Pipeline Syntax生成的只是部分代码，你可以根据语言规范将其完善。</em></p>
+<p>阶段1: 检出代码</p>
+<p><u>操作指引：【首页】-&gt;【hanker-hello-demo】-&gt; 【Pipeline Syntax】</u></p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-10/2-2-a.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p><em>注: 本实践中选取的 git: Git 类型，当然你也可以选择 checkout: Check out from version control</em></p>
+<p>获取到该步骤的脚本</p>
+<pre><code class="hljs bash">git credentialsId: <span class="hljs-string">'gitlab-project-auth'</span>, url: <span class="hljs-string">'http://gitlab.hanker.com/colynn/hanker-hello.git'</span></code></pre>
+<p>阶段2：构建建镜像操作指引,类似于阶段1</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-10/2-2-b.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p>完善获取该步骤脚本</p>
+<pre><code class="hljs json">script &#123;
+    withDockerRegistry(credentialsId: 'harbor-auth', url: 'http://10.0.0.185:5000') &#123;
+        def customImage =  docker.build("10.0.0.185:5000/devops/hanker-hello:v1")
+        customImage.push()
+    &#125;
+&#125;</code></pre>
+
+<p><em>注: 支持本阶段需要jenkins-agent镜像里包含docker命令。</em></p>
+<p> 阶段3. 部署服务</p>
+<p>参考: jenkins kubernetes cli plugin</p>
+<p><a href="https://github.com/jenkinsci/kubernetes-cli-plugin/blob/master/README.md" target="_blank" rel="noopener">https://github.com/jenkinsci/kubernetes-cli-plugin/blob/master/README.md</a></p>
+<p><em>注: 支持本阶段需要jenkins-agent镜像里包含kubectl命令。</em></p>
+<p>*<em>step3: *</em>设置 pipeline</p>
+<p><em>注:General/ Build Triggers/ Advanced Project Options 这三块你可以根据自己需要设置，将各阶段的脚本合并，更新至 Pipline -&gt; Script内。</em></p>
+<p>合并后的pipeline脚本内容如下：</p>
+<pre><code class="hljs json">pipeline &#123;
+    agent any
+    stages &#123;
+        stage('checkout') &#123;
+            steps &#123;
+                git credentialsId: 'gitlab-project-auth', url: 'http://gitlab.hanker.com/colynn/hanker-hello.git'    
+            &#125;
+        &#125;
+
+        stage('docker-publish') &#123;
+            steps&#123;
+                script &#123;
+                    withDockerRegistry(credentialsId: 'harbor-auth', url: 'http://10.0.0.185:5000') &#123;
+                        def customImage =  docker.build("10.0.0.185:5000/devops/hanker-hello:v1")
+                        customImage.push()
+                    &#125;
+                &#125;
+            &#125;
+        &#125;
+
+        stage('application-deploy') &#123;
+            steps &#123;
+                withKubeConfig([credentialsId: '5a5517f3-3d38-459d-bafc-12b55beeb588', serverUrl: 'https://10.0.0.182:6443']) &#123;
+                    sh '/usr/bin/kubectl apply -f k8s-setup.yml'
+                &#125;
+            &#125;
+        &#125;
+    &#125;
+&#125;</code></pre>
+
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-10/2-3.png" srcset="/img/loading.gif" alt="avatar"></p>
+<h1 id="3、触发构建"><a href="#3、触发构建" class="headerlink" title="3、触发构建"></a>3、触发构建</h1><p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-10/3-1.png" srcset="/img/loading.gif" alt="avatar"></p>
+<h1 id="4、结果确认"><a href="#4、结果确认" class="headerlink" title="4、结果确认"></a>4、结果确认</h1><p>1) 确认 jenkina-agent 启动状态；</p>
+<pre><code class="hljs bash">$ kubectl -n devops get pods |grep jnlp
+jnlp-sh8zl                                 1/1     Running   0          14s
+// 查看jenkins-agent pod日志
+$ kubectl -n devops logs -f [jenkins-agent-pod-name]</code></pre>
+
+<p><em>注: 如果长时间没有启动jenkins-agent, 可以确认下集群内是否有足够的资源。</em></p>
+<p>2) 确认pipeline 执行状态；</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-10/4-2.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p>3) 确认harbor镜像仓库里是否已经有新推送的镜像</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-10/4-3.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p><em>注: harbor里的项目是需要你先创建好的，不然推送时会报错。</em></p>
+<p>4) 确认部署的服务状态</p>
+<p>k8s master节点上执行如下操作:</p>
+<pre><code class="hljs bash">$ kubectl -n devops get pod,deployment,svc,ingress |grep hanker-hello
+
+pod/hanker-hello-5b7586f86d-5j7kk              1/1     Running   0          173m
+
+
+deployment.extensions/hanker-hello              1/1     1            1           3h8m
+service/hanker-hello-svc          ClusterIP   10.233.22.19    &lt;none&gt;        8080/TCP             3h8m
+ingress.extensions/hanker-hello-ingress              hanker-hello-demo.dev.hanker.net                   80      3h8m</code></pre>
+
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-10/4-4.png" srcset="/img/loading.gif" alt="avatar"></p>
+<h1 id="5、附录"><a href="#5、附录" class="headerlink" title="5、附录"></a>5、附录</h1><p><strong>1）自定义jenkins-agent镜像</strong></p>
+<pre><code class="hljs bash"><span class="hljs-comment">## 基于 https://github.com/Kubernetes-Best-Pratice/jenkins-jnlp-agent.git</span>
+$ git checkout  https://github.com/Kubernetes-Best-Pratice/jenkins-jnlp-agent.git
+$ <span class="hljs-built_in">cd</span> jenkins-jnlp-agent
+$ docker build .
+$ docker tag tag-name custom-private-repository-addr</code></pre>
+
+<p><em>注: 你也可以基于基础镜像创建自定义的镜像</em></p>
+<p><strong>2）可以做的更完善</strong></p>
+<ol>
+<li>配置webhook, 自动触发jenkins job;</li>
+<li>当前我们实践时构建的镜像版本使用的是固定的, 你是否可以将其替换为依赖pipeline环境变量或是传参的形式，将其变是更有意义；</li>
+<li>上一篇文章（<a href="http://mp.weixin.qq.com/s?__biz=MzU5MTkyNzQ0MQ==&mid=2247483797&idx=1&sn=770557060a5bc4507c2ba9a8d71b1ddb&chksm=fe26c06bc951497d6596a2c9a717bcca04ad130ab8f14097ccd0cc9df9d39bb44adbc4d18768&scene=21#wechat_redirect" target="_blank" rel="noopener">点击这里</a>进入传送门）中在设置【配置Kubernetes Pod Template】时，我们提到可以挂载主机或是网络共享存储，你是否可以通过这个将你的构建快起来；</li>
+<li>我们的示例代码使用的go, 直接是镜像内打包，如何更好的就好的其他语言的构建，你可以参考Using Docker with Pipeline；</li>
+<li>你想过如何下载构建过程中的产物吗，等等</li>
+</ol>
+<p><strong>3）参考链接</strong></p>
+<ol>
+<li><p><a href="https://github.com/jenkinsci/kubernetes-cli-plugin/blob/master/README.md" target="_blank" rel="noopener">https://github.com/jenkinsci/kubernetes-cli-plugin/blob/master/README.md</a></p>
+</li>
+<li><p>下载kubectl:</p>
+<p><a href="https://docs.docker.com/ee/ucp/user-access/kubectl/" target="_blank" rel="noopener">https://docs.docker.com/ee/ucp/user-access/kubectl/</a></p>
+</li>
+</ol>
+
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Kubernetes/">Kubernetes</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/12/11/2019-12-11-kubernetes9-network/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【Kubernetes系列】第9篇 网络原理解析</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2019/12/09/2019-12-09-kubernetes7-cicd/">
+                        <span class="hidden-mobile">【Kubernetes系列】第7篇 CI/CD 之组件部署</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-md">
+    <div class="container custom post-content mx-auto">
+      <img src="https://octodex.github.com/images/jetpacktocat.png" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "【Kubernetes系列】第8篇 CI/CD 之全流程实践&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+  
+  
+    <script>
+      !function (e, t, a) {
+        function r() {
+          for (var e = 0; e < s.length; e++) s[e].alpha <= 0 ? (t.body.removeChild(s[e].el), s.splice(e, 1)) : (s[e].y--, s[e].scale += .004, s[e].alpha -= .013, s[e].el.style.cssText = "left:" + s[e].x + "px;top:" + s[e].y + "px;opacity:" + s[e].alpha + ";transform:scale(" + s[e].scale + "," + s[e].scale + ") rotate(45deg);background:" + s[e].color + ";z-index:99999");
+          requestAnimationFrame(r)
+        }
+
+        function n() {
+          var t = "function" == typeof e.onclick && e.onclick;
+          e.onclick = function (e) {
+            t && t(), o(e)
+          }
+        }
+
+        function o(e) {
+          var a = t.createElement("div");
+          a.className = "heart", s.push({
+            el: a,
+            x: e.clientX - 5,
+            y: e.clientY - 5,
+            scale: 1,
+            alpha: 1,
+            color: c()
+          }), t.body.appendChild(a)
+        }
+
+        function i(e) {
+          var a = t.createElement("style");
+          a.type = "text/css";
+          try {
+            a.appendChild(t.createTextNode(e))
+          } catch (t) {
+            a.styleSheet.cssText = e
+          }
+          t.getElementsByTagName("head")[0].appendChild(a)
+        }
+
+        function c() {
+          return "rgb(" + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + ")"
+        }
+
+        var s = [];
+        e.requestAnimationFrame = e.requestAnimationFrame || e.webkitRequestAnimationFrame || e.mozRequestAnimationFrame || e.oRequestAnimationFrame || e.msRequestAnimationFrame || function (e) {
+          setTimeout(e, 1e3 / 60)
+        }, i(".heart{width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: fixed;}.heart:after{top: -5px;}.heart:before{left: -5px;}"), n(), r()
+      }(window, document);
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

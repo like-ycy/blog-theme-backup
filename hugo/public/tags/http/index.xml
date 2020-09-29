@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Http on 权掌天下 Blog</title>
+    <link>https://like-ycy.github.io/tags/http/</link>
+    <description>Recent content in Http on 权掌天下 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 19 May 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://like-ycy.github.io/tags/http/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> 面试 HTTP ，99% 的面试官都爱问这些问题 </title>
+      <link>https://like-ycy.github.io/2020/05/19/http-interviews/</link>
+      <pubDate>Tue, 19 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2020/05/19/http-interviews/</guid>
+      <description>HTTP 和 HTTPS 的区别 HTTP 是一种 超文本传输协议(Hypertext Transfer Protocol)，HTTP 是一个在计算机世界里专门在两点之间传输文字、图片、音频、</description>
+    </item>
+    
+  </channel>
+</rss>

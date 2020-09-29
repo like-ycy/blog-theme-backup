@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Network on 权掌天下 Blog</title>
+    <link>https://like-ycy.github.io/tags/network/</link>
+    <description>Recent content in Network on 权掌天下 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 10 Jan 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://like-ycy.github.io/tags/network/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> 迄今为止把同步/异步/阻塞/非阻塞/BIO/NIO/AIO讲的这么清楚的好文章 </title>
+      <link>https://like-ycy.github.io/2020/01/10/sync-async/</link>
+      <pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2020/01/10/sync-async/</guid>
+      <description>常规的误区 假设有一个展示用户详情的需求，分两步，先调用一个HTTP接口拿到详情数据，然后使用适合的视图展示详情数据。 如果网速很慢，代码发起一</description>
+    </item>
+    
+  </channel>
+</rss>

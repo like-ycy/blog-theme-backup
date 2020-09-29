@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mysql on 权掌天下 Blog</title>
+    <link>https://like-ycy.github.io/tags/mysql/</link>
+    <description>Recent content in Mysql on 权掌天下 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 25 May 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://like-ycy.github.io/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> MySQL常见面试题（后续的面试题会更新） </title>
+      <link>https://like-ycy.github.io/2020/05/25/mysql-examination-questions/</link>
+      <pubDate>Mon, 25 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2020/05/25/mysql-examination-questions/</guid>
+      <description>题目一 MyISAM和InnoDB的区别，什么时候选择MyISAM 参考回答 InnoDB是目前MySQL主流版本(5.6、5.7、8.0)默认的</description>
+    </item>
+    
+  </channel>
+</rss>

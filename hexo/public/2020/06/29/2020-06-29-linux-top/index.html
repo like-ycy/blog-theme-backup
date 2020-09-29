@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="望翔">
+  <meta name="keywords" content="">
+  <title> Linux top命令参数详解  - 权掌天下 Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>权掌天下</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background" parallax=true
+         style="background: url('https://image.my-blog.wang/header/header.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2020-06-29 10:17">
+      2020年6月29日 上午
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      12
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：2020年6月29日 上午
+                
+              </p>
+            
+            <article class="markdown-body">
+              <h3 id="一、top前5行统计信息"><a href="#一、top前5行统计信息" class="headerlink" title="一、top前5行统计信息"></a>一、top前5行统计信息</h3><p><strong>第1行：top - 05:43:27 up 4:52, 2 users, load average: 0.58, 0.41, 0.30</strong><br>第1行是任务队列信息，其参数如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">内容</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">05:43:27</td>
+<td align="left">表示当前时间</td>
+</tr>
+<tr>
+<td align="left">up 4:52</td>
+<td align="left">系统运行时间 格式为时：分</td>
+</tr>
+<tr>
+<td align="left">2 users</td>
+<td align="left">当前登录用户数</td>
+</tr>
+<tr>
+<td align="left">load average: 0.58, 0.41, 0.30</td>
+<td align="left">系统负载，即任务队列的平均长度。 三个数值分别为 1分钟、5分钟、15分钟前到现在的平均值。</td>
+</tr>
+</tbody></table>
+<p>load average: 如果这个数除以逻辑CPU的数量，结果高于5的时候就表明系统在超负荷运转了。 </p>
+<p><strong>第2行：Tasks: 159 total, 1 running, 158 sleeping, 0 stopped, 0 zombie</strong><br><strong>第3行：%Cpu(s): 37.0 us, 3.7 sy, 0.0 ni, 59.3 id, 0.0 wa, 0.0 hi, 0.0 si, 0.0 st</strong><br>第2、3行为进程和CPU的信息<br>当有多个CPU时，这些内容可能会超过两行，其参数如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">内容</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">159 total</td>
+<td align="left">进程总数</td>
+</tr>
+<tr>
+<td align="left">1 running</td>
+<td align="left">正在运行的进程数</td>
+</tr>
+<tr>
+<td align="left">158 sleeping</td>
+<td align="left">睡眠的进程数</td>
+</tr>
+<tr>
+<td align="left">0 stopped</td>
+<td align="left">停止的进程数</td>
+</tr>
+<tr>
+<td align="left">0 zombie</td>
+<td align="left">僵尸进程数</td>
+</tr>
+<tr>
+<td align="left">37.0 us</td>
+<td align="left">用户空间占用CPU百分比</td>
+</tr>
+<tr>
+<td align="left">3.7 sy</td>
+<td align="left">内核空间占用CPU百分比</td>
+</tr>
+<tr>
+<td align="left"><strong>0.0 ni</strong></td>
+<td align="left">用户进程空间内改变过优先级的进程占用CPU百分比</td>
+</tr>
+<tr>
+<td align="left">59.3 id</td>
+<td align="left">空闲CPU百分比</td>
+</tr>
+<tr>
+<td align="left">0.0 wa</td>
+<td align="left">等待输入输出的CPU时间百分比</td>
+</tr>
+<tr>
+<td align="left"><strong>0.0 hi</strong></td>
+<td align="left">硬中断（Hardware IRQ）占用CPU的百分比</td>
+</tr>
+<tr>
+<td align="left"><strong>0.0 si</strong></td>
+<td align="left">软中断（Software Interrupts）占用CPU的百分比</td>
+</tr>
+<tr>
+<td align="left"><strong>0.0 st</strong></td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<p>第4行：KiB Mem: 1530752 total, 1481968 used, 48784 free, 70988 buffers<br>第5行：KiB Swap: 3905532 total, 267544 used, 3637988 free. 617312 cached Mem<br>第4、5行为内存信息<br>其参数如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">内容</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">KiB Mem: 1530752 total</td>
+<td align="left">物理内存总量</td>
+</tr>
+<tr>
+<td align="left">1481968 used</td>
+<td align="left">使用的物理内存总量</td>
+</tr>
+<tr>
+<td align="left">48784 free</td>
+<td align="left">空闲内存总量</td>
+</tr>
+<tr>
+<td align="left">70988 buffers（buff/cache）</td>
+<td align="left">用作内核缓存的内存量</td>
+</tr>
+<tr>
+<td align="left">KiB Swap: 3905532 total</td>
+<td align="left">交换区总量</td>
+</tr>
+<tr>
+<td align="left">267544 used</td>
+<td align="left">使用的交换区总量</td>
+</tr>
+<tr>
+<td align="left">3637988 free</td>
+<td align="left">空闲交换区总量</td>
+</tr>
+<tr>
+<td align="left">617312 cached Mem</td>
+<td align="left">缓冲的交换区总量。</td>
+</tr>
+<tr>
+<td align="left">3156100 avail Mem</td>
+<td align="left">代表可用于进程下一次分配的物理内存数量</td>
+</tr>
+</tbody></table>
+<p>上述最后提到的缓冲的交换区总量，这里解释一下，所谓缓冲的交换区总量，即内存中的内容被换出到交换区，而后又被换入到内存，但使用过的交换区尚未被覆盖，该数值即为这些内容已存在于内存中的交换区的大小。相应的内存再次被换出时可不必再对交换区写入。 </p>
+<p>计算可用内存数有一个近似的公式：<br>第四行的free + 第四行的buffers + 第五行的cached</p>
+<h3 id="二、进程信息"><a href="#二、进程信息" class="headerlink" title="二、进程信息"></a>二、进程信息</h3><table>
+<thead>
+<tr>
+<th align="left">列名</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">PID</td>
+<td align="left">进程id</td>
+</tr>
+<tr>
+<td align="left">PPID</td>
+<td align="left">父进程id</td>
+</tr>
+<tr>
+<td align="left">RUSER</td>
+<td align="left">Real user name</td>
+</tr>
+<tr>
+<td align="left">UID</td>
+<td align="left">进程所有者的用户id</td>
+</tr>
+<tr>
+<td align="left">USER</td>
+<td align="left">进程所有者的用户名</td>
+</tr>
+<tr>
+<td align="left">GROUP</td>
+<td align="left">进程所有者的组名</td>
+</tr>
+<tr>
+<td align="left">TTY</td>
+<td align="left">启动进程的终端名。不是从终端启动的进程则显示为 ?</td>
+</tr>
+<tr>
+<td align="left">PR</td>
+<td align="left">优先级</td>
+</tr>
+<tr>
+<td align="left">NI</td>
+<td align="left">nice值。负值表示高优先级，正值表示低优先级</td>
+</tr>
+<tr>
+<td align="left">P</td>
+<td align="left">最后使用的CPU，仅在多CPU环境下有意义</td>
+</tr>
+<tr>
+<td align="left">%CPU</td>
+<td align="left">上次更新到现在的CPU时间占用百分比</td>
+</tr>
+<tr>
+<td align="left">TIME</td>
+<td align="left">进程使用的CPU时间总计，单位秒</td>
+</tr>
+<tr>
+<td align="left">TIME+</td>
+<td align="left">进程使用的CPU时间总计，单位1/100秒</td>
+</tr>
+<tr>
+<td align="left">%MEM</td>
+<td align="left">进程使用的物理内存百分比</td>
+</tr>
+<tr>
+<td align="left">VIRT</td>
+<td align="left">进程使用的虚拟内存总量，单位kb。VIRT=SWAP+RES</td>
+</tr>
+<tr>
+<td align="left">SWAP</td>
+<td align="left">进程使用的虚拟内存中，被换出的大小，单位kb</td>
+</tr>
+<tr>
+<td align="left">RES</td>
+<td align="left">进程使用的、未被换出的物理内存大小，单位kb。RES=CODE+DATA</td>
+</tr>
+<tr>
+<td align="left">CODE</td>
+<td align="left">可执行代码占用的物理内存大小，单位kb</td>
+</tr>
+<tr>
+<td align="left">DATA</td>
+<td align="left">可执行代码以外的部分(数据段+栈)占用的物理内存大小，单位kb</td>
+</tr>
+<tr>
+<td align="left">SHR</td>
+<td align="left">共享内存大小，单位kb</td>
+</tr>
+<tr>
+<td align="left">nFLT</td>
+<td align="left">页面错误次数</td>
+</tr>
+<tr>
+<td align="left">nDRT</td>
+<td align="left">最后一次写入到现在，被修改过的页面数。</td>
+</tr>
+<tr>
+<td align="left">S</td>
+<td align="left">进程状态。D=不可中断的睡眠状态 R=运行 S=睡眠 T=跟踪/停止 Z=僵尸进程</td>
+</tr>
+<tr>
+<td align="left">COMMAND</td>
+<td align="left">命令名/命令行</td>
+</tr>
+<tr>
+<td align="left">WCHAN</td>
+<td align="left">若该进程在睡眠，则显示睡眠中的系统函数名</td>
+</tr>
+<tr>
+<td align="left">Flags</td>
+<td align="left">任务标志</td>
+</tr>
+</tbody></table>
+
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Linux/">Linux</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/07/01/2020-07-01-user-slow-server/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"> 用户访问网站慢，排查思路 </span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2020/06/29/2020-06-29-kafka-vs-mq/">
+                        <span class="hidden-mobile"> kafka和各MQ的优劣对比 </span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-md">
+    <div class="container custom post-content mx-auto">
+      <img src="https://octodex.github.com/images/jetpacktocat.png" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        " Linux top命令参数详解 &nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+  
+  
+    <script>
+      !function (e, t, a) {
+        function r() {
+          for (var e = 0; e < s.length; e++) s[e].alpha <= 0 ? (t.body.removeChild(s[e].el), s.splice(e, 1)) : (s[e].y--, s[e].scale += .004, s[e].alpha -= .013, s[e].el.style.cssText = "left:" + s[e].x + "px;top:" + s[e].y + "px;opacity:" + s[e].alpha + ";transform:scale(" + s[e].scale + "," + s[e].scale + ") rotate(45deg);background:" + s[e].color + ";z-index:99999");
+          requestAnimationFrame(r)
+        }
+
+        function n() {
+          var t = "function" == typeof e.onclick && e.onclick;
+          e.onclick = function (e) {
+            t && t(), o(e)
+          }
+        }
+
+        function o(e) {
+          var a = t.createElement("div");
+          a.className = "heart", s.push({
+            el: a,
+            x: e.clientX - 5,
+            y: e.clientY - 5,
+            scale: 1,
+            alpha: 1,
+            color: c()
+          }), t.body.appendChild(a)
+        }
+
+        function i(e) {
+          var a = t.createElement("style");
+          a.type = "text/css";
+          try {
+            a.appendChild(t.createTextNode(e))
+          } catch (t) {
+            a.styleSheet.cssText = e
+          }
+          t.getElementsByTagName("head")[0].appendChild(a)
+        }
+
+        function c() {
+          return "rgb(" + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + ")"
+        }
+
+        var s = [];
+        e.requestAnimationFrame = e.requestAnimationFrame || e.webkitRequestAnimationFrame || e.mozRequestAnimationFrame || e.oRequestAnimationFrame || e.msRequestAnimationFrame || function (e) {
+          setTimeout(e, 1e3 / 60)
+        }, i(".heart{width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: fixed;}.heart:after{top: -5px;}.heart:before{left: -5px;}"), n(), r()
+      }(window, document);
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

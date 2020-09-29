@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="望翔">
+  <meta name="keywords" content="">
+  <title> TCP 超时与重传  - 权掌天下 Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>权掌天下</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background" parallax=true
+         style="background: url('https://image.my-blog.wang/header/header.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2019-12-31 00:00">
+      2019年12月31日 凌晨
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.7k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      31
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：2020年9月29日 下午
+                
+              </p>
+            
+            <article class="markdown-body">
+              <p>我们都知道 TCP 协议具有重传机制，也就是说，如果发送方认为发生了丢包现象，就重发这些数据包。很显然，我们需要一个方法来「<strong>猜测</strong>」是否发生了丢包。最简单的想法就是，接收方每收到一个包，就向发送方返回一个 <strong>ACK</strong>，表示自己已经收到了这段数据，反过来，如果发送方一段时间内没有收到 ACK，就知道<strong>很可能</strong>是数据包丢失了，紧接着就重发该数据包，直到收到 ACK 为止。</p>
+<p>你可能注意到我用的是「猜测」，因为即使是超时了，这个数据包也可能并没有丢，它只是绕了一条远路，来的很晚而已。毕竟 TCP 协议是位于<strong>传输层</strong>的协议，不可能明确知道数据链路层和物理层发生了什么。但这并不妨碍我们的超时重传机制，因为接收方会自动忽略重复的包。</p>
+<p>超时和重传的概念其实就是这么简单，但内部的细节却是很多，我们最先想到的一个问题就是，<strong>到底多长时间才能算超时呢</strong>？</p>
+<h2 id="超时是怎么确定的？"><a href="#超时是怎么确定的？" class="headerlink" title="超时是怎么确定的？"></a>超时是怎么确定的？</h2><p>一刀切的办法就是，我<strong>直接把超时时间设成一个固定值</strong>，比如说 200ms，但这样肯定是有问题的，我们的电脑和很多服务器都有交互，这些服务器位于天南海北，国内国外，延迟差异巨大，打个比方：</p>
+<ul>
+<li>我的个人博客搭在国内，延迟大概 30ms，也就是说正常情况下的数据包，60ms 左右就已经能收到 ACK 了，但是按照我们的方法，200ms 才能确定丢包（正常可能是 90 到 120 ms），这<strong>效率实在是有点低</strong>。</li>
+<li>假设你访问某国外网站，延迟有 130 ms，这就麻烦了，<strong>正常的数据包都可能被认为是超时，导致大量数据包被重发，可以想象，重发的数据包也很容易被误判为超时。。。雪崩效应的感觉</strong></li>
+</ul>
+<p>所以设置固定值是很不可靠的，<strong>我们要根据网络延迟，动态调整超时时间</strong>，延迟越大，超时时间越长。</p>
+<p>在这里先引入两个概念：</p>
+<ul>
+<li>RTT（Round Trip Time）：往返时延，也就是<strong>数据包从发出去到收到对应 ACK 的时间。</strong>RTT 是针对连接的，每一个连接都有各自独立的 RTT。</li>
+<li>RTO（Retransmission Time Out）：重传超时，也就是前面说的超时时间。</li>
+</ul>
+<p>比较标准的 RTT 定义：</p>
+<blockquote>
+<p>Measure the elapsed time between sending a data octet with a particular sequence number and <strong>receiving an acknowledgment that covers that sequence number</strong> (segments sent do not have to match segments received). This measured elapsed time is the Round Trip Time (RTT).</p>
+</blockquote>
+<h3 id="经典方法"><a href="#经典方法" class="headerlink" title="经典方法"></a>经典方法</h3><p>最初的规范「RFC0793」采用了下面的公式来得到平滑的 RTT 估计值（称作 SRTT）：</p>
+<p><strong>SRTT  &lt;-  α·SRTT +（1 - α）·RTT</strong></p>
+<p>RTT 是指最新的样本值，这种估算方法叫做「指数加权移动平均」，名字听起来比较高大上，但整个公式比较好理解，就是利用现存的 SRTT 值和最新测量到的 RTT 值取一个加权平均。</p>
+<p>有了 SRTT，就该设置对应的 RTO 的值了，「RFC0793」是这么算的：</p>
+<p><strong>RTO = min(ubound, max(lbound, (SRTT)·β))</strong></p>
+<p>这里面的 <strong>ubound</strong> 是 RTO 的<strong>上边界</strong>，<strong>lbound</strong> 为 RTO 的<strong>下边界</strong>，β 称为<strong>时延离散因子</strong>，推荐值为 1.3 ~ 2.0。这个计算公式就是将  (SRTT)·β 的值作为 RTO，只不过另外<strong>限制了 RTO 的上下限</strong>。</p>
+<p>这个计算方法，初看是没有什么问题（至少我是这么感觉的），但是实际应用起来，有两个缺陷：</p>
+<blockquote>
+<p>There were two known problems with the RTO calculations specified in RFC-793. First, the accurate measurement of RTTs is difficult <strong>when there are retransmissions</strong>. Second, the algorithm to compute the smoothed round-trip time is inadequate [TCP:7], <strong>because it incorrectly assumed that the variance in RTT values would be small and constant</strong>. These problems were solved by <strong>Karn’s and Jacobson’s algorithm</strong>, respectively.</p>
+</blockquote>
+<p>这段话摘自「RFC1122」，我来解释一下：</p>
+<ul>
+<li>当<strong>出现数据包重传的情况</strong>下，RTT 的计算就会很“麻烦”，我画了张图来说明这些情况：</li>
+</ul>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-31/rtt.png" srcset="/img/loading.gif" alt=""></p>
+<ul>
+<li><p>图上列了两种情况，这两种情况下计算 RTT 的方法是不一样的（这就是所谓的重传二义性）：</p>
+<p>但是对于客户端来说，它不知道发生了哪种情况，选错情况的结果就是 RTT 偏大/偏小，影响到 RTO 的计算。（最简单粗暴的解决方法就是<strong>忽略有重传的数据包，只计算那些没重传过的</strong>，但这样会导致其他问题。。详见 Karn’s algorithm）</p>
+</li>
+<li><ul>
+<li>情况一：RTT = t2 - t0</li>
+<li>情况二：RTT = t2 - t1</li>
+</ul>
+</li>
+<li><p>另一个问题是，<strong>这个算法假设 RTT 波动比较小</strong>，因为这个加权平均的算法又叫<strong>低通滤波器</strong>，对突然的网络波动不敏感。如果网络时延突然增大导致实际 RTT 值远大于估计值，会导致不必要的重传，增大网络负担。（ RTT 增大已经表明网络出现了过载，这些不必要的重传会进一步加重网络负担）。</p>
+</li>
+</ul>
+<h3 id="标准方法"><a href="#标准方法" class="headerlink" title="标准方法"></a>标准方法</h3><p>说实话这个标准方法比较，，，麻烦，我就直接贴公式了：</p>
+<p><strong>SRTT  &lt;-  (1 - α)·SRTT  + α·RTT</strong>  //跟基本方法一样，<strong>求 SRTT 的加权平均</strong></p>
+<p><strong>rttvar  &lt;- (1 - h)·rttvar + h·(|RTT - SRTT |)</strong>  //计算 <strong>SRTT 与真实值的差距</strong>（称之为绝对误差|Err|），同样用到<strong>加权平均</strong></p>
+<p><strong>RTO = SRTT  + 4·rttvar</strong> //估算出来的新的 RTO，rttvar 的系数 4 是调参调出来的</p>
+<p>这个算法的整体思想就是结合<strong>平均值</strong>（就是基本方法）和<strong>平均偏差</strong>来进行估算，一波玄学调参得到不错的效果。如果想更深入了解这个算法，参考「RFC6298」。</p>
+<h2 id="重传——TCP的重要事件"><a href="#重传——TCP的重要事件" class="headerlink" title="重传——TCP的重要事件"></a>重传——TCP的重要事件</h2><h3 id="基于计时器的重传"><a href="#基于计时器的重传" class="headerlink" title="基于计时器的重传"></a>基于计时器的重传</h3><p>这种机制下，<strong>每个数据包都有相应的计时器</strong>，一旦超过 RTO 而没有收到 ACK，就重发该数据包。没收到 ACK 的数据包都会存在重传缓冲区里，等到 ACK 后，就从缓冲区里删除。</p>
+<p>首先明确一点，对 TCP 来说，超时重传是<strong>相当重要</strong>的事件（RTO 往往大于两倍的 RTT，超时往往意味着拥塞），一旦发生这种情况，<strong>TCP 不仅会重传对应数据段，还会降低当前的数据发送速率</strong>，因为TCP 会认为当前网络发生了拥塞。</p>
+<p>简单的超时重传机制往往比较低效，如下面这种情况：</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-31/transfer.png" srcset="/img/loading.gif" alt=""></p>
+<p>假设数据包5丢失，数据包 6,7,8,9 都已经到达接收方，这个时候客户端就只能等服务器发送 ACK，注意对于包 6,7,8,9，服务器都不能发送 ACK，这是滑动窗口机制决定的，因此对于客户端来说，他完全不知道丢了几个包，可能就悲观的认为，5 后面的数据包也都丢了，就重传这 5 个数据包，这就比较浪费了。</p>
+<h3 id="快速重传"><a href="#快速重传" class="headerlink" title="快速重传"></a>快速重传</h3><p>快速重传机制「RFC5681」基于接收端的反馈信息来引发重传，而非重传计时器超时。</p>
+<p>刚刚提到过，基于计时器的重传往往要等待很长时间，而快速重传使用了很巧妙的方法来解决这个问题：<strong>服务器如果收到乱序的包，也给客户端回复 ACK</strong>，只不过是重复的 ACK。就拿刚刚的例子来说，收到乱序的包 6,7,8,9 时，服务器全都发 ACK = 5。这样，客户端就知道 5 发生了空缺。一般来说，如果客户端连续三次收到重复的 ACK，就会重传对应包，而不需要等到计时器超时。</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-31/fast-transfer.png" srcset="/img/loading.gif" alt=""></p>
+<p>但快速重传仍然没有解决第二个问题：到底该重传多少个包？</p>
+<h3 id="带选择确认的重传"><a href="#带选择确认的重传" class="headerlink" title="带选择确认的重传"></a>带选择确认的重传</h3><p>改进的方法就是 SACK（Selective Acknowledgment），简单来讲就是在快速重传的基础上，<strong>返回最近收到的报文段的序列号范围</strong>，这样客户端就知道，哪些数据包已经到达服务器了。</p>
+<p>来几个简单的示例：</p>
+<ul>
+<li><p>case 1：第一个包丢失，剩下的 7 个包都被收到了。</p>
+<p>当收到 7 个包的<strong>任何一个</strong>的时候，接收方会返回一个带 SACK 选项的 ACK，告知发送方自己收到了哪些乱序包。注：<strong>Left Edge，Right Edge 就是这些乱序包的左右边界</strong>。</p>
+</li>
+</ul>
+<pre><code class="hljs bash">Triggering    ACK      Left Edge   Right Edge
+Segment
+
+5000         (lost)
+5500         5000     5500       6000
+6000         5000     5500       6500
+6500         5000     5500       7000
+7000         5000     5500       7500
+7500         5000     5500       8000
+8000         5000     5500       8500
+8500         5000     5500       9000</code></pre>
+
+<ul>
+<li><p>case 2：第 2, 4, 6, 8 个数据包丢失。</p>
+</li>
+<li><ul>
+<li>收到第一个包时，没有乱序的情况，正常回复 ACK。</li>
+<li>收到第 3, 5, 7 个包时，由于出现了乱序包，回复带 SACK 的 ACK。</li>
+<li>因为这种情况下有很多碎片段，所以相应的 Block 段也有很多组，当然，因为选项字段大小限制， Block 也有上限。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="hljs bash">Triggering  ACK    First Block   2nd Block     3rd Block
+Segment            Left   Right  Left   Right  Left   Right
+                   Edge   Edge   Edge   Edge   Edge   Edge
+
+5000       5500
+5500       (lost)
+6000       5500    6000   6500
+6500       (lost)
+7000       5500    7000   7500   6000   6500
+7500       (lost)
+8000       5500    8000   8500   7000   7500   6000   6500
+8500       (lost)</code></pre>
+
+<p>不过 SACK 的规范「RFC2018」有点坑爹，接收方可能会在提供一个 SACK 告诉发送方这些信息后，又「食言」，也就是说，接收方可能把这些（乱序的）数据包删除掉，然后再通知发送方。以下摘自「RFC2018」：</p>
+<blockquote>
+<p>Note that the data receiver is permitted to discard data in its queue that has not been acknowledged to the data sender, even if the data has already been reported in a SACK option. <strong>Such discarding of SACKed packets is discouraged, but may be used if the receiver runs out of buffer space.</strong></p>
+</blockquote>
+<p>最后一句是说，<strong>当接收方缓冲区快被耗尽时</strong>，可以采取这种措施，当然并不建议这种行为。。。</p>
+<p>由于这个操作，发送方在收到 SACK 以后，也不能直接清空重传缓冲区里的数据，一直到接收方发送普通的，ACK 号大于其最大序列号的值的时候才能清除。另外，重传计时器也收到影响，重传计时器应该忽略 SACK 的影响，毕竟接收方把数据删了跟丢包没啥区别。</p>
+<h3 id="DSACK-扩展"><a href="#DSACK-扩展" class="headerlink" title="DSACK 扩展"></a>DSACK 扩展</h3><p>DSACK，即重复 SACK，这个机制是在 SACK 的基础上，额外携带信息，<strong>告知发送方有哪些数据包自己重复接收了</strong>。DSACK 的目的是帮助发送方判断，是否发生了包失序、ACK 丢失、包重复或伪重传。让 TCP 可以更好的做网络流控。</p>
+<p>关于 DSACK，「RFC2883」里举了很多例子，有兴趣的读者可以去阅读一下，我这里就不讲那么细了。</p>
+
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Nginx/">Nginx</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/01/01/2020-01-01-mesos-pull-images-error/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"> mesos 以容器方式启动,拉取镜像失败问题 </span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2019/12/30/2019-12-30-tcp-handshake/">
+                        <span class="hidden-mobile"> TCP 协议，握手挥手不是你想的那么简单 </span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-md">
+    <div class="container custom post-content mx-auto">
+      <img src="https://octodex.github.com/images/jetpacktocat.png" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        " TCP 超时与重传 &nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+  
+  
+    <script>
+      !function (e, t, a) {
+        function r() {
+          for (var e = 0; e < s.length; e++) s[e].alpha <= 0 ? (t.body.removeChild(s[e].el), s.splice(e, 1)) : (s[e].y--, s[e].scale += .004, s[e].alpha -= .013, s[e].el.style.cssText = "left:" + s[e].x + "px;top:" + s[e].y + "px;opacity:" + s[e].alpha + ";transform:scale(" + s[e].scale + "," + s[e].scale + ") rotate(45deg);background:" + s[e].color + ";z-index:99999");
+          requestAnimationFrame(r)
+        }
+
+        function n() {
+          var t = "function" == typeof e.onclick && e.onclick;
+          e.onclick = function (e) {
+            t && t(), o(e)
+          }
+        }
+
+        function o(e) {
+          var a = t.createElement("div");
+          a.className = "heart", s.push({
+            el: a,
+            x: e.clientX - 5,
+            y: e.clientY - 5,
+            scale: 1,
+            alpha: 1,
+            color: c()
+          }), t.body.appendChild(a)
+        }
+
+        function i(e) {
+          var a = t.createElement("style");
+          a.type = "text/css";
+          try {
+            a.appendChild(t.createTextNode(e))
+          } catch (t) {
+            a.styleSheet.cssText = e
+          }
+          t.getElementsByTagName("head")[0].appendChild(a)
+        }
+
+        function c() {
+          return "rgb(" + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + ")"
+        }
+
+        var s = [];
+        e.requestAnimationFrame = e.requestAnimationFrame || e.webkitRequestAnimationFrame || e.mozRequestAnimationFrame || e.oRequestAnimationFrame || e.msRequestAnimationFrame || function (e) {
+          setTimeout(e, 1e3 / 60)
+        }, i(".heart{width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: fixed;}.heart:after{top: -5px;}.heart:before{left: -5px;}"), n(), r()
+      }(window, document);
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

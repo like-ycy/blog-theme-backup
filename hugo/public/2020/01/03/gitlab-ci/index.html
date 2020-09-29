@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="权掌天下 Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://like-ycy.github.io/img/backend.jpg">
+    <meta property="twitter:image" content="https://like-ycy.github.io/img/backend.jpg" />
+    
+
+    
+    <meta name="title" content=" Gitlab-CI 流程 " />
+    <meta property="og:title" content=" Gitlab-CI 流程 " />
+    <meta property="twitter:title" content=" Gitlab-CI 流程 " />
+    
+
+    
+    <meta name="description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。">
+    <meta property="og:description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。" />
+    <meta property="twitter:description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="权掌天下的博客, Master Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title> Gitlab-CI 流程 -权掌天下的博客</title>
+
+    <link rel="canonical" href="/2020/01/03/gitlab-ci/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">权掌天下 Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/categories/tech">tech</a>
+                    </li>
+                    
+                    
+		    
+                        <li><a href="/top/books/">BOOKS</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('https://image.my-blog.wang/header/header.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/gitlab" title="Gitlab">
+                            Gitlab
+                        </a>
+                        
+                    </div>
+                    <h1> Gitlab-CI 流程 </h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                &#34;望翔&#34;
+                         
+                        on 
+                        Friday, January 3, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#一-gitlab-ci-cd"><strong>一、GitLab CI/CD</strong></a></li>
+<li><a href="#二-什么是-gitlab-ci-yml"><strong>二、什么是 .gitlab-ci.yml</strong></a></li>
+<li><a href="#三-配置runner"><strong>三、配置Runner</strong></a></li>
+</ul></li>
+</ul>
+</nav>
+                
+                
+
+<p><strong>持续集成(Continuous Integration)</strong></p>
+
+<p>持续集成指的是频繁的将代码集成到主干，每次集成都通过自动化的构建（包括编译、发布、自动化测试）来验证，它的好处主要有两个：</p>
+
+<ul>
+<li>快速发现错误。每完成一点更新，就集成到主干，可以快速发现错误，定位错误也比较容易；</li>
+<li>防止分支大幅偏离主干。如果不经常集成，很容易导致集成难度变大，以至于难以集成。</li>
+</ul>
+
+<h2 id="一-gitlab-ci-cd"><strong>一、GitLab CI/CD</strong></h2>
+
+<p>从<code>8.0</code>版开始，<code>GitLab</code>持续集成(CI)完全集成到<code>GitLab</code>本身，它还具有持续部署和持续交付功能，可用于构建、测试和部署你的应用程序。下面是<code>GitLab CI/CD</code>流程图。</p>
+
+<p><img src="https://img-blog.csdnimg.cn/20190918172047198.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmc5MDE5,size_16,color_FFFFFF,t_70" alt="" /></p>
+
+<p>那么怎样让<code>GitLab CI</code>工作起来呢？总结起来就两条：</p>
+
+<ol>
+<li>将<code>.gitlab-ci.yml</code>文件添加到远程仓库的根目录；</li>
+<li>将<code>GitLab</code>项目配置为使用<code>Runner</code></li>
+</ol>
+
+<p>设置好这些后，你每次<code>push</code>代码到<code>Git</code>仓库，<code>Runner</code>都会自动触发<code>CI pipeline</code>，你可以在项目的<code>Pipelines</code>页面下。如下图所示：</p>
+
+<p><img src="https://img-blog.csdnimg.cn/20190918172243114.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmc5MDE5,size_16,color_FFFFFF,t_70" alt="" /></p>
+
+<p>如果一切运行正常，你可以看到绿色复选标记，这样你就可以在查看代码之前轻松查看任何提交是否导致测试失败。</p>
+
+<h2 id="二-什么是-gitlab-ci-yml"><strong>二、什么是 .gitlab-ci.yml</strong></h2>
+
+<p>1、.gitlab-ci.yml文件配置CI对项目执行的操作，它告诉GitLab runner该做什么。</p>
+
+<p>2、它位于存储库的根目录中，你代码的每次提交，GitLab都会查找.gitlab-ci.yml这个文件，并根据这个文件的内容，在Runner上启动你提交的工作。</p>
+
+<p>3、默认情况下，它运行一个包含三个stage的管道：build，test，deploy。你不需要使用所有三个stage，没有工作的stage将会被忽略。</p>
+
+<p>注意： .gitlab-ci.yml是一个YAML文件，因此您必须特别注意缩进。始终使用空格键，而不是Tab键。</p>
+
+<p>你需要在你仓库的根目录下创建一个名为<code>.gitlab-ci.yml</code>的文件，下面是一个工程示例。它是最简单的配置。</p>
+
+<pre><code class="language-yaml">`before_script:`` ``- hostname`` ``- ip addr` `stages:`` ``- test`` ``- deploy-app`` ` `sonar_analyze:`` ``stage: test`` ``script:``   ``- /usr/local/sonar-scanner/bin/sonar-scanner`` ``except:``  ``- master`` ``tags:``  ``- sonar` `deploy-app-to-test:`` ``stage: deploy-app`` ``only:``  ``- master`` ``script:``  ``- hostname``  ``- ls`` ``tags:``  ``- sonar`
+</code></pre>
+
+<p>上面的配置主要做了两件事：</p>
+
+<ol>
+<li>执行了两个job（名称是任意的）；</li>
+<li>在每个<code>job</code>之前，执行<code>before_script</code>定义的命令。</li>
+</ol>
+
+<p>关于<code>.gitlab-ci.yml</code>的语法讲解，可以查看<a href="https://docs.gitlab.com/ee/ci/yaml/">官网的介绍</a>，然后根据项目的具体需求，使用这些语法，创建自己的脚本。</p>
+
+<h2 id="三-配置runner"><strong>三、配置Runner</strong></h2>
+
+<p><strong>runner简单介绍</strong></p>
+
+<p>GitLab Runner是一个开源项目，用于运行您的作业并将结果发送回GitLab。它与GitLab CI一起使用，GitLab CI是GitLab随附的开源持续集成服务，用于协调作业。</p>
+
+<p>要求</p>
+
+<ul>
+<li>GitLab Runner是用Go编写的，可以作为单个二进制文件运行，不需要语言特定的要求。</li>
+<li>它运行在GNU / Linux，macOS和Windows操作系统上。只要您可以在其上编译Go二进制文件，它就可以正常工作。</li>
+<li>如果要使用Docker，请安装最新版本。GitLab Runner至少需要的Docker v1.13.0。</li>
+<li>建议使用和gitlab相同版本</li>
+</ul>
+
+<p><strong>1、Runner安装</strong></p>
+
+<p>请参考官方文档，这里不再详细说明   <a href="https://docs.gitlab.com/runner/">https://docs.gitlab.com/runner/</a></p>
+
+<p><strong>2、Runner注册</strong></p>
+
+<p>要求
+在注册Runner之前，您需要先：</p>
+
+<ul>
+<li>将其安装在与安装GitLab的位置不同的服务器上</li>
+<li>通过GitLab的界面获取共享或特定Runner的令牌</li>
+</ul>
+
+<p>如下图：</p>
+
+<p><img src="https://img-blog.csdnimg.cn/20190918172420610.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmc5MDE5,size_16,color_FFFFFF,t_70" alt="" /></p>
+
+<p><strong>GNU / Linux</strong></p>
+
+<p>1、运行以下命令：
+gitlab-runner register</p>
+
+<p>2、输入您的GitLab实例URL：
+Please enter the gitlab-ci coordinator URL (e.g. <a href="https://gitlab.com">https://gitlab.com</a> ):</p>
+
+<p><a href="https://gitlab.xxx.xxx">https://gitlab.xxx.xxx</a></p>
+
+<p>3、输入您获得的令牌以注册Runner：
+Please enter the gitlab-ci token for this runner:</p>
+
+<p>xxx</p>
+
+<p>4、输入Runner的描述，您可以稍后在GitLab的UI中更改：（根据需求更改）
+Please enter the gitlab-ci description for this runner:</p>
+
+<p>my-runner</p>
+
+<p>5、输入与Runner关联的标签，您可以稍后在GitLab的UI中更改：（根据需求更改）
+Please enter the gitlab-ci tags for this runner (comma separated):</p>
+
+<p>my-tag</p>
+
+<p>6、输入Runner执行程序：(每个执行程序的作用，详情请点击<a href="https://docs.gitlab.com/runner/executors/README.html">runner执行程序</a>，请根据需要选择执行器)
+Please enter the executor: ssh, docker+machine, docker-ssh+machine, kubernetes, docker, parallels, virtualbox, docker-ssh, shell:</p>
+
+<p>docker</p>
+
+<p>7、如果您选择Docker作为执行程序，您将被要求为没有在.gitlab-ci.yml中定义映像的项目使用默认映像（根据需要设置默认镜像）</p>
+
+<p>Please enter the Docker image (eg. ruby:2.1):</p>
+
+<p>maven:latest</p>
+
+<p><strong>3、查看注册是否成功</strong></p>
+
+<p><img src="https://img-blog.csdnimg.cn/20190918172602531.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dhbmc5MDE5,size_16,color_FFFFFF,t_70" alt="" /></p>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p> 「如果这篇文章对你有用,请随意打赏」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="https://like-ycy.github.io"><img src="/img/favicon.png" />权掌天下 Blog</a></span>
+        
+	        <p class="tip"><i></i><span>如果这篇文章对你有用,请随意打赏</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2020/01/02/aliyun-vpn/" data-toggle="tooltip" data-placement="top" title=" 阿里云搭建shadowsocks-vpn ">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2020/01/06/sonarqube-install/" data-toggle="tooltip" data-placement="top" title=" Docker安装sonarqube ">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        <a href="/tags/aliyun" title="aliyun">
+                            aliyun
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/architecture" title="architecture">
+                            architecture
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/cloudnative" title="cloudnative">
+                            cloudnative
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/gitlab" title="gitlab">
+                            gitlab
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/heart" title="heart">
+                            heart
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/http" title="http">
+                            http
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/https" title="https">
+                            https
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/kubernetes" title="kubernetes">
+                            kubernetes
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/linux" title="linux">
+                            linux
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/mesos" title="mesos">
+                            mesos
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/mysql" title="mysql">
+                            mysql
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/network" title="network">
+                            network
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/nginx" title="nginx">
+                            nginx
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/prometheus" title="prometheus">
+                            prometheus
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/python" title="python">
+                            python
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/servicemesh" title="servicemesh">
+                            servicemesh
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/tcp" title="tcp">
+                            tcp
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://github.com/ILIKETWICE">权掌天下-Github</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="权掌天下 Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:15210198546@163.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/6069853748/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/wechat_qrcode.jpg">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ILIKETWICE">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; 权掌天下 Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+</body>
+</html>

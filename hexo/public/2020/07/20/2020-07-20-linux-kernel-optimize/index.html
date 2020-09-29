@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="望翔">
+  <meta name="keywords" content="">
+  <title> Linux内核调优  - 权掌天下 Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>权掌天下</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background" parallax=true
+         style="background: url('https://image.my-blog.wang/header/header.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2020-07-20 17:08">
+      2020年7月20日 下午
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      789 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      10
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：2020年7月20日 下午
+                
+              </p>
+            
+            <article class="markdown-body">
+              <p>以nginx 10k并发连接为优化目标，附简单介绍，不一一解释。</p>
+<h3 id="tcp容量规划"><a href="#tcp容量规划" class="headerlink" title="tcp容量规划"></a>tcp容量规划</h3><pre><code class="hljs ini"><span class="hljs-attr">net.ipv4.tcp_mem</span>  = <span class="hljs-number">262144</span>  <span class="hljs-number">524288</span> <span class="hljs-number">786432</span>
+<span class="hljs-attr">net.core.wmem_max</span> = <span class="hljs-number">16777216</span>
+<span class="hljs-attr">net.core.wmem_default</span> = <span class="hljs-number">131072</span>
+<span class="hljs-attr">net.core.rmem_max</span> = <span class="hljs-number">16777216</span>
+<span class="hljs-attr">net.core.rmem_default</span> = <span class="hljs-number">131072</span>
+<span class="hljs-attr">net.ipv4.tcp_wmem</span> = <span class="hljs-number">4096</span>    <span class="hljs-number">131072</span>  <span class="hljs-number">16777216</span>
+<span class="hljs-attr">net.ipv4.tcp_rmem</span> = <span class="hljs-number">4096</span>    <span class="hljs-number">131072</span>  <span class="hljs-number">16777216</span></code></pre>
+
+<p>*<em>net.ipv4.tcp_mem *</em> 单位是内存页，一般是4k，三个值分别代表tcp内存使用的水平，低、中、高， 低表示无内存压力，中级表示内存压力状态，高表示内存吃紧，最高峰时系统将会拒绝分配内存。262144 代表1G内存，即（262144x4/1024/1024），其他类推。</p>
+<p>下面的参数单位都是字节 net.core.wmem_max 和net.core.wmem_default 会覆盖net.ipv4.tcp_wmem 的第二第三个值， 同理，net.core.rmem_max 和 net.core.rmem_default 会覆盖net.ipv4.tcp_rmem 的第二第三个值。稍微提高tcp读写缓冲区的容量，可以增加tcp传输效率，比如上文默认值131072=128k，现有一个1M的文件传输，只需8次传输即可，比较适合图片类传输。但也不是越大越好，比如一个文字页面只有15k，使用128k的内存显然有些浪费。上文tcp压力状态下的容量为2G，对应tcp读写缓冲区128k，可应对的连接数为16384 (2048x1024/128)，可满足10k要求。</p>
+<h3 id="tcp连接行为管理"><a href="#tcp连接行为管理" class="headerlink" title="tcp连接行为管理"></a>tcp连接行为管理</h3><pre><code class="hljs ini"><span class="hljs-attr">net.ipv4.tcp_tw_reuse</span> = <span class="hljs-number">1</span>
+<span class="hljs-attr">net.ipv4.tcp_tw_recycle</span> = <span class="hljs-number">1</span>
+<span class="hljs-attr">net.ipv4.tcp_timestamps</span> = <span class="hljs-number">1</span>
+<span class="hljs-attr">net.ipv4.tcp_fin_timeout</span> = <span class="hljs-number">30</span>
+<span class="hljs-attr">net.ipv4.tcp_max_tw_buckets</span> = <span class="hljs-number">8192</span>
+<span class="hljs-attr">net.ipv4.tcp_retries1</span> = <span class="hljs-number">3</span>
+<span class="hljs-attr">net.ipv4.tcp_retries2</span> = <span class="hljs-number">5</span>
+<span class="hljs-attr">net.ipv4.tcp_keepalive_time</span> = <span class="hljs-number">1800</span>
+<span class="hljs-attr">net.ipv4.tcp_keepalive_probes</span> = <span class="hljs-number">5</span>
+<span class="hljs-attr">net.ipv4.tcp_keepalive_intvl</span> = <span class="hljs-number">30</span>
+<span class="hljs-attr">net.ipv4.tcp_max_syn_backlog</span> = <span class="hljs-number">8192</span>
+<span class="hljs-attr">net.ipv4.tcp_max_orphans</span> = <span class="hljs-number">262144</span></code></pre>
+
+<p>上面主要是tcp连接行为的伴随的参数，主要是tcp重用，增加队列，减少等待重试频率等等来提升效率。</p>
+<h3 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h3><pre><code class="hljs ini"><span class="hljs-attr">vm.swappiness</span> = <span class="hljs-number">5</span>
+<span class="hljs-attr">vm.dirty_ratio</span> = <span class="hljs-number">40</span>
+<span class="hljs-attr">vm.min_free_kbytes</span> = <span class="hljs-number">524288</span>
+<span class="hljs-attr">vm.vfs_cache_pressure</span> = <span class="hljs-number">100</span></code></pre>
+
+<ul>
+<li>vm.swappiness = 5 表示物理内存剩余5%时，才考虑使用swap，默认60，这显然非常不合理</li>
+<li>•vm.dirty_ratio = 40 表示拿出物理内存的40%用于写缓存，而不立即将数据写入硬盘。由于硬盘是众所周知的瓶颈，扩大它可提升写的效率，40%是个比较合适的比例。</li>
+<li>vm.min_free_kbytes = 524288 这个用于控制剩余内存的大小，524288=512M，可根据需要调整。如果某些任务临时需要大量内存，可临时将它调大然后调小，回收页面缓存。它比vm.drop_caches 要温和得多，后者更粗暴。</li>
+<li>vm.vfs_cache_pressure = 100 ，如果要尽快将脏数据刷进硬盘，提高它，比如150 。</li>
+</ul>
+<h3 id="内核其他行为"><a href="#内核其他行为" class="headerlink" title="内核其他行为"></a>内核其他行为</h3><pre><code class="hljs stylus">net<span class="hljs-selector-class">.core</span><span class="hljs-selector-class">.somaxconn</span> = <span class="hljs-number">8192</span>
+net<span class="hljs-selector-class">.core</span><span class="hljs-selector-class">.netdev_max_backlog</span> = <span class="hljs-number">8192</span>
+net<span class="hljs-selector-class">.ipv4</span><span class="hljs-selector-class">.ip_local_port_range</span> = <span class="hljs-number">15000</span> <span class="hljs-number">65000</span>
+net<span class="hljs-selector-class">.netfilter</span><span class="hljs-selector-class">.nf_conntrack_max</span> = <span class="hljs-number">131072</span>
+net<span class="hljs-selector-class">.nf_conntrack_max</span> = <span class="hljs-number">131072</span>
+net<span class="hljs-selector-class">.ipv6</span><span class="hljs-selector-class">.conf</span><span class="hljs-selector-class">.all</span><span class="hljs-selector-class">.disable_ipv6</span> =<span class="hljs-number">1</span>
+net<span class="hljs-selector-class">.netfilter</span><span class="hljs-selector-class">.nf_conntrack_tcp_timeout_established</span> =<span class="hljs-number">3600</span>
+net<span class="hljs-selector-class">.core</span><span class="hljs-selector-class">.rps_sock_flow_entries</span> = <span class="hljs-number">32768</span></code></pre>
+
+<p>net.core.somaxconn 表示socket的最大连接数，默认128，对于php-fpm使用unix socket情况下，需要调大。</p>
+<p>net.netfilter.nf_conntrack_tcp_timeout_established = 3600 默认2天时间，多数情况下，调小这个参数是有益的，如果是tcp长连接，这个参数可能不太合适。</p>
+<p>net.core.rps_sock_flow_entries 这个参数启用RPS，自动将网卡中断均匀分配到多个CPU，改进网卡性能和系统负载。</p>
+<p>RPS还需要脚本配合</p>
+<pre><code class="hljs reasonml">for fileRfc <span class="hljs-keyword">in</span> <span class="hljs-constructor">$(<span class="hljs-params">ls</span> <span class="hljs-operator">/</span><span class="hljs-params">sys</span><span class="hljs-operator">/</span><span class="hljs-params">class</span><span class="hljs-operator">/</span><span class="hljs-params">net</span><span class="hljs-operator">/</span><span class="hljs-params">eth</span><span class="hljs-operator">*</span><span class="hljs-operator">/</span><span class="hljs-params">queues</span><span class="hljs-operator">/</span><span class="hljs-params">rx</span>-<span class="hljs-operator">*</span><span class="hljs-operator">/</span><span class="hljs-params">rps_flow_cnt</span>)</span>;<span class="hljs-keyword">do</span> echo <span class="hljs-number">2048</span> &gt; $fileRfc;<span class="hljs-keyword">done</span></code></pre>
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Linux/">Linux</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/07/20/2020-07-20-dockerfile/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"> Dockerfile就这么简单 </span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2020/07/20/2020-07-20-nginx-logs/">
+                        <span class="hidden-mobile"> Nginx日志配置详解 </span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-md">
+    <div class="container custom post-content mx-auto">
+      <img src="https://octodex.github.com/images/jetpacktocat.png" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        " Linux内核调优 &nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+  
+  
+    <script>
+      !function (e, t, a) {
+        function r() {
+          for (var e = 0; e < s.length; e++) s[e].alpha <= 0 ? (t.body.removeChild(s[e].el), s.splice(e, 1)) : (s[e].y--, s[e].scale += .004, s[e].alpha -= .013, s[e].el.style.cssText = "left:" + s[e].x + "px;top:" + s[e].y + "px;opacity:" + s[e].alpha + ";transform:scale(" + s[e].scale + "," + s[e].scale + ") rotate(45deg);background:" + s[e].color + ";z-index:99999");
+          requestAnimationFrame(r)
+        }
+
+        function n() {
+          var t = "function" == typeof e.onclick && e.onclick;
+          e.onclick = function (e) {
+            t && t(), o(e)
+          }
+        }
+
+        function o(e) {
+          var a = t.createElement("div");
+          a.className = "heart", s.push({
+            el: a,
+            x: e.clientX - 5,
+            y: e.clientY - 5,
+            scale: 1,
+            alpha: 1,
+            color: c()
+          }), t.body.appendChild(a)
+        }
+
+        function i(e) {
+          var a = t.createElement("style");
+          a.type = "text/css";
+          try {
+            a.appendChild(t.createTextNode(e))
+          } catch (t) {
+            a.styleSheet.cssText = e
+          }
+          t.getElementsByTagName("head")[0].appendChild(a)
+        }
+
+        function c() {
+          return "rgb(" + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + ")"
+        }
+
+        var s = [];
+        e.requestAnimationFrame = e.requestAnimationFrame || e.webkitRequestAnimationFrame || e.mozRequestAnimationFrame || e.oRequestAnimationFrame || e.msRequestAnimationFrame || function (e) {
+          setTimeout(e, 1e3 / 60)
+        }, i(".heart{width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: fixed;}.heart:after{top: -5px;}.heart:before{left: -5px;}"), n(), r()
+      }(window, document);
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

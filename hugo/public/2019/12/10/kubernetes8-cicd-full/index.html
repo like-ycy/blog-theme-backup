@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="权掌天下 Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://like-ycy.github.io/img/backend.jpg">
+    <meta property="twitter:image" content="https://like-ycy.github.io/img/backend.jpg" />
+    
+
+    
+    <meta name="title" content="【Kubernetes系列】第8篇 CI/CD 之全流程实践" />
+    <meta property="og:title" content="【Kubernetes系列】第8篇 CI/CD 之全流程实践" />
+    <meta property="twitter:title" content="【Kubernetes系列】第8篇 CI/CD 之全流程实践" />
+    
+
+    
+    <meta name="description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。">
+    <meta property="og:description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。" />
+    <meta property="twitter:description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="权掌天下的博客, Master Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>【Kubernetes系列】第8篇 CI/CD 之全流程实践-权掌天下的博客</title>
+
+    <link rel="canonical" href="/2019/12/10/kubernetes8-cicd-full/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">权掌天下 Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/categories/tech">tech</a>
+                    </li>
+                    
+                    
+		    
+                        <li><a href="/top/books/">BOOKS</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('https://image.my-blog.wang/header/header.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/kubernetes" title="Kubernetes">
+                            Kubernetes
+                        </a>
+                        
+                    </div>
+                    <h1>【Kubernetes系列】第8篇 CI/CD 之全流程实践</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                &#34;望翔&#34;
+                         
+                        on 
+                        Tuesday, December 10, 2019
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+<ul>
+<li><a href="#前言">前言</a></li>
+<li><a href="#1-准备基础数据">1、准备基础数据</a></li>
+<li><a href="#2-如何创建jenkins-pipline">2、如何创建Jenkins pipline</a></li>
+<li><a href="#3-触发构建">3、触发构建</a></li>
+<li><a href="#4-结果确认">4、结果确认</a></li>
+<li><a href="#5-附录">5、附录</a></li>
+</ul>
+</nav>
+                
+                
+
+<h1 id="前言">前言</h1>
+
+<p>1）本实践中已经的示例代码及jenkins-agent镜像已经推送归档至github，&ndash;&gt;传送门（<a href="https://github.com/Kubernetes-Best-Pratice/）">https://github.com/Kubernetes-Best-Pratice/）</a></p>
+
+<p>2）注意本实践中均为内网数据，你测试时一定要改为自己的环境的有效数据。</p>
+
+<p>3) 由于本实践涉及组件较多，若有操作不明确的话，你可以后台留言，我们一起完善。</p>
+
+<p>4) 具体操作时若有不清楚，或是错误可以留言，大家一起解决。</p>
+
+<h1 id="1-准备基础数据">1、准备基础数据</h1>
+
+<p><strong>step1：</strong>配置Gitlab</p>
+
+<ul>
+<li>创建项目</li>
+<li>上传示例代码</li>
+</ul>
+
+<p><em>注: 本次示例使用的gitlab项目地址：</em></p>
+
+<p><em><a href="http://gitlab.hanker.com/colynn/hanker-hello.git">http://gitlab.hanker.com/colynn/hanker-hello.git</a></em></p>
+
+<p><strong>step2：</strong>配置Harbor</p>
+
+<p>创建项目, 用于存储构建的镜像</p>
+
+<p><em>注: 本次示例使用的harbor地址为</em></p>
+
+<p><em>10.0.0.185:5000/hanker/hanker-hello:v1</em></p>
+
+<p><strong>step3：</strong>Jenkins验证信息</p>
+
+<ul>
+<li>添加 gitlab 帐号信息</li>
+</ul>
+
+<p><u>操作指引：【Credentials】-&gt; 【System】-&gt; 【Global credentials】-&gt; 【Add Credentials】</u></p>
+
+<p><img src="https://image.my-blog.wang/k8s-series/eight/1-3-a.png" alt="avatar" /></p>
+
+<ul>
+<li>harbor 信息</li>
+</ul>
+
+<p><u>操作指引：【Credentials】-&gt; 【System】-&gt; 【Global credentials】-&gt; 【Add Credentials】</u></p>
+
+<p><img src="https://image.my-blog.wang/k8s-series/eight/1-3-b.png" alt="avatar" /></p>
+
+<ul>
+<li>k8s namespace验证信息</li>
+</ul>
+
+<p>在你的k8s master节点上执行如下操作：</p>
+
+<p>1) 创建serviceaccount</p>
+
+<pre><code class="language-bash">$ kubectl -n devops create serviceaccount jenkins-robot
+</code></pre>
+
+<p>命令输出：</p>
+
+<pre><code class="language-bash">serviceaccount/jenkins-robot created
+</code></pre>
+
+<p>2) 角色绑定</p>
+
+<pre><code class="language-bash">$ kubectl -n devops create rolebinding jenkins-robot-binding --clusterrole=cluster-admin --serviceaccount=devops:jenkins-robot
+</code></pre>
+
+<p>命令输出：</p>
+
+<pre><code class="language-bash">rolebinding.rbac.authorization.k8s.io/jenkins-robot-binding created
+</code></pre>
+
+<p>3) 获取 ServiceAccount</p>
+
+<pre><code>$ kubectl -n devops get serviceaccount jenkins-robot -o go-template --template='{{range .secrets}}{{.name}}{{&quot;\n&quot;}}{{end}}'jenkins-robot-token-n8w6b
+</code></pre>
+
+<p>4) 基于base64解码 ServiceToken</p>
+
+<pre><code>$ kubectl -n devops get secrets jenkins-robot-token-n8w6b -o go-template --template '{{index .data &quot;token&quot;}}' | base64 --decode
+</code></pre>
+
+<p>命令输出：</p>
+
+<pre><code>eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZXZvcHMiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiamVua2lucy1yb2JvdC10b2tlbi1uOHc2YiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50Lm5hbWUiOiJqZW5raW5zLXJvYm90Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiOTcyZTY0OGYtMTYxZC00NmM5LWI0ZjgtYjFkNTdlOWY4NTBjIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OmRldm9wczpqZW5raW5zLXJvYm90In0.ArQvcaEqCaeU1ZcJ6nOC5rLaTZr_vLDrpLCt87asltMUWj2gSli_mXUTrl09hBnBDXI3A1D4rJXHKLHjIAA4nN8qRIRGbpqSNzDwmqJr-jmmmWWZFrZ3n3Al9-13KJnNOK8pcWr70rt3Rsigt4B6CIQ0-ZLK8BZhvROJSifeOfJ6xe2KBqdXBv1ccZZZfEhPLgGbaR5yWm5jLvOMr2MQiPDrZoHOEkcMt-C0xipytOp4sJCJ4bQhb-UoMu1owYydxbd6O7xO71fvqP_bMDpZXC601nA2ggK7h-vi6CJffHv5MM59q8X_DWe1NnZS6KXiMmkXqAmBn10Yu20PNj-kjg
+</code></pre>
+
+<p>5) 添加 Secret text验证信息</p>
+
+<p><u>操作指引：【首页】-&gt;【Credentials】-&gt; 【System】-&gt; 【Global credentials】-&gt; 【Add Credentials】-&gt; 选择【Secret text】类型</u></p>
+
+<p>然后将上一步 解码的结果 更新至 Secret, Pipeline 中</p>
+
+<p><img src="https://image.my-blog.wang/k8s-series/eight/1-5.png" alt="avatar" /></p>
+
+<h1 id="2-如何创建jenkins-pipline">2、如何创建Jenkins pipline</h1>
+
+<p><strong>step1：</strong>创建jenkins pipeline item</p>
+
+<p><u>操作指引：【首页】-&gt;【New Item】</u></p>
+
+<p><img src="https://image.my-blog.wang/k8s-series/eight/2-1.png" alt="avatar" /></p>
+
+<p><strong>step2:</strong> pipeline script 步骤说明</p>
+
+<p><em>注: pipeline主要包含三个阶段（检出代码、制作镜像、部署服务），下面跟大家解释下，如何编写pipeline， 借助Pipeline Syntax生成的只是部分代码，你可以根据语言规范将其完善。</em></p>
+
+<p>阶段1: 检出代码</p>
+
+<p><u>操作指引：【首页】-&gt;【hanker-hello-demo】-&gt; 【Pipeline Syntax】</u></p>
+
+<p><img src="https://image.my-blog.wang/k8s-series/eight/2-2-a.png" alt="avatar" /></p>
+
+<p><em>注: 本实践中选取的 git: Git 类型，当然你也可以选择 checkout: Check out from version control</em></p>
+
+<p>获取到该步骤的脚本</p>
+
+<pre><code class="language-bash">git credentialsId: 'gitlab-project-auth', url: 'http://gitlab.hanker.com/colynn/hanker-hello.git'
+</code></pre>
+
+<p>阶段2：构建建镜像操作指引,类似于阶段1</p>
+
+<p><img src="https://image.my-blog.wang/k8s-series/eight/2-2-b.png" alt="avatar" /></p>
+
+<p>完善获取该步骤脚本</p>
+
+<pre><code class="language-json">script {
+    withDockerRegistry(credentialsId: 'harbor-auth', url: 'http://10.0.0.185:5000') {
+        def customImage =  docker.build(&quot;10.0.0.185:5000/devops/hanker-hello:v1&quot;)
+        customImage.push()
+    }
+}
+</code></pre>
+
+<p><em>注: 支持本阶段需要jenkins-agent镜像里包含docker命令。</em></p>
+
+<p>阶段3. 部署服务</p>
+
+<p>参考: jenkins kubernetes cli plugin</p>
+
+<p><a href="https://github.com/jenkinsci/kubernetes-cli-plugin/blob/master/README.md">https://github.com/jenkinsci/kubernetes-cli-plugin/blob/master/README.md</a></p>
+
+<p><em>注: 支持本阶段需要jenkins-agent镜像里包含kubectl命令。</em></p>
+
+<p>**step3: **设置 pipeline</p>
+
+<p><em>注:General/ Build Triggers/ Advanced Project Options 这三块你可以根据自己需要设置，将各阶段的脚本合并，更新至 Pipline -&gt; Script内。</em></p>
+
+<p>合并后的pipeline脚本内容如下：</p>
+
+<pre><code class="language-json">pipeline {
+    agent any
+    stages {
+        stage('checkout') {
+            steps {
+                git credentialsId: 'gitlab-project-auth', url: 'http://gitlab.hanker.com/colynn/hanker-hello.git'    
+            }
+        }
+
+        stage('docker-publish') {
+            steps{
+                script {
+                    withDockerRegistry(credentialsId: 'harbor-auth', url: 'http://10.0.0.185:5000') {
+                        def customImage =  docker.build(&quot;10.0.0.185:5000/devops/hanker-hello:v1&quot;)
+                        customImage.push()
+                    }
+                }
+            }
+        }
+
+        stage('application-deploy') {
+            steps {
+                withKubeConfig([credentialsId: '5a5517f3-3d38-459d-bafc-12b55beeb588', serverUrl: 'https://10.0.0.182:6443']) {
+                    sh '/usr/bin/kubectl apply -f k8s-setup.yml'
+                }
+            }
+        }
+    }
+}
+</code></pre>
+
+<p><img src="https://image.my-blog.wang/k8s-series/eight/2-3.png" alt="avatar" /></p>
+
+<h1 id="3-触发构建">3、触发构建</h1>
+
+<p><img src="https://image.my-blog.wang/k8s-series/eight/3-1.png" alt="avatar" /></p>
+
+<h1 id="4-结果确认">4、结果确认</h1>
+
+<p>1) 确认 jenkina-agent 启动状态；</p>
+
+<pre><code class="language-bash">$ kubectl -n devops get pods |grep jnlp
+jnlp-sh8zl                                 1/1     Running   0          14s
+// 查看jenkins-agent pod日志
+$ kubectl -n devops logs -f [jenkins-agent-pod-name]
+</code></pre>
+
+<p><em>注: 如果长时间没有启动jenkins-agent, 可以确认下集群内是否有足够的资源。</em></p>
+
+<p>2) 确认pipeline 执行状态；</p>
+
+<p><img src="https://image.my-blog.wang/k8s-series/eight/4-2.png" alt="avatar" /></p>
+
+<p>3) 确认harbor镜像仓库里是否已经有新推送的镜像</p>
+
+<p><img src="https://image.my-blog.wang/k8s-series/eight/4-3.png" alt="avatar" /></p>
+
+<p><em>注: harbor里的项目是需要你先创建好的，不然推送时会报错。</em></p>
+
+<p>4) 确认部署的服务状态</p>
+
+<p>k8s master节点上执行如下操作:</p>
+
+<pre><code class="language-bash">$ kubectl -n devops get pod,deployment,svc,ingress |grep hanker-hello
+
+pod/hanker-hello-5b7586f86d-5j7kk              1/1     Running   0          173m
+
+
+deployment.extensions/hanker-hello              1/1     1            1           3h8m
+service/hanker-hello-svc          ClusterIP   10.233.22.19    &lt;none&gt;        8080/TCP             3h8m
+ingress.extensions/hanker-hello-ingress              hanker-hello-demo.dev.hanker.net                   80      3h8m
+</code></pre>
+
+<p><img src="https://image.my-blog.wang/k8s-series/eight/4-4.png" alt="avatar" /></p>
+
+<h1 id="5-附录">5、附录</h1>
+
+<p><strong>1）自定义jenkins-agent镜像</strong></p>
+
+<pre><code class="language-bash">## 基于 https://github.com/Kubernetes-Best-Pratice/jenkins-jnlp-agent.git
+$ git checkout  https://github.com/Kubernetes-Best-Pratice/jenkins-jnlp-agent.git
+$ cd jenkins-jnlp-agent
+$ docker build .
+$ docker tag tag-name custom-private-repository-addr
+</code></pre>
+
+<p><em>注: 你也可以基于基础镜像创建自定义的镜像</em></p>
+
+<p><strong>2）可以做的更完善</strong></p>
+
+<ol>
+<li>配置webhook, 自动触发jenkins job;</li>
+<li>当前我们实践时构建的镜像版本使用的是固定的, 你是否可以将其替换为依赖pipeline环境变量或是传参的形式，将其变是更有意义；</li>
+<li>上一篇文章（<a href="http://mp.weixin.qq.com/s?__biz=MzU5MTkyNzQ0MQ==&amp;mid=2247483797&amp;idx=1&amp;sn=770557060a5bc4507c2ba9a8d71b1ddb&amp;chksm=fe26c06bc951497d6596a2c9a717bcca04ad130ab8f14097ccd0cc9df9d39bb44adbc4d18768&amp;scene=21#wechat_redirect">点击这里</a>进入传送门）中在设置【配置Kubernetes Pod Template】时，我们提到可以挂载主机或是网络共享存储，你是否可以通过这个将你的构建快起来；</li>
+<li>我们的示例代码使用的go, 直接是镜像内打包，如何更好的就好的其他语言的构建，你可以参考Using Docker with Pipeline；</li>
+<li>你想过如何下载构建过程中的产物吗，等等</li>
+</ol>
+
+<p><strong>3）参考链接</strong></p>
+
+<ol>
+<li><p><a href="https://github.com/jenkinsci/kubernetes-cli-plugin/blob/master/README.md">https://github.com/jenkinsci/kubernetes-cli-plugin/blob/master/README.md</a></p></li>
+
+<li><p>下载kubectl:</p></li>
+</ol>
+
+<p><a href="https://docs.docker.com/ee/ucp/user-access/kubectl/">https://docs.docker.com/ee/ucp/user-access/kubectl/</a></p>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p> 「如果这篇文章对你有用,请随意打赏」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="https://like-ycy.github.io"><img src="/img/favicon.png" />权掌天下 Blog</a></span>
+        
+	        <p class="tip"><i></i><span>如果这篇文章对你有用,请随意打赏</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2019/12/09/kubernetes7-cicd/" data-toggle="tooltip" data-placement="top" title="【Kubernetes系列】第7篇 CI/CD 之组件部署">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2019/12/11/kubernetes9-network/" data-toggle="tooltip" data-placement="top" title="【Kubernetes系列】第9篇 网络原理解析">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        <a href="/tags/aliyun" title="aliyun">
+                            aliyun
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/architecture" title="architecture">
+                            architecture
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/cloudnative" title="cloudnative">
+                            cloudnative
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/gitlab" title="gitlab">
+                            gitlab
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/heart" title="heart">
+                            heart
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/http" title="http">
+                            http
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/https" title="https">
+                            https
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/kubernetes" title="kubernetes">
+                            kubernetes
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/linux" title="linux">
+                            linux
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/mesos" title="mesos">
+                            mesos
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/mysql" title="mysql">
+                            mysql
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/network" title="network">
+                            network
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/nginx" title="nginx">
+                            nginx
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/prometheus" title="prometheus">
+                            prometheus
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/python" title="python">
+                            python
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/servicemesh" title="servicemesh">
+                            servicemesh
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/tcp" title="tcp">
+                            tcp
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://github.com/ILIKETWICE">权掌天下-Github</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="权掌天下 Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:15210198546@163.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/6069853748/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/wechat_qrcode.jpg">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ILIKETWICE">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; 权掌天下 Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+</body>
+</html>

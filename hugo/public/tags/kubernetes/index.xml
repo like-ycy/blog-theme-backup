@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubernetes on 权掌天下 Blog</title>
+    <link>https://like-ycy.github.io/tags/kubernetes/</link>
+    <description>Recent content in Kubernetes on 权掌天下 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 13 Jan 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://like-ycy.github.io/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> 为什么微服务一定要有网关？ </title>
+      <link>https://like-ycy.github.io/2020/01/13/why-microservice-gateway/</link>
+      <pubDate>Mon, 13 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2020/01/13/why-microservice-gateway/</guid>
+      <description>一、什么是服务网关 服务网关 = 路由转发 + 过滤器 1、路由转发：接收一切外界请求，转发到后端的微服务上去； 2、过滤器：在服务网关中可以完成一系列的</description>
+    </item>
+    
+    <item>
+      <title>【Kubernetes系列】第9篇 网络原理解析</title>
+      <link>https://like-ycy.github.io/2019/12/11/kubernetes9-network/</link>
+      <pubDate>Wed, 11 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/11/kubernetes9-network/</guid>
+      <description>1、Linux网络基础 Network Namespace(网络命名空间)： Linux在网络栈中引入网络命名空间，将独立的网络协议栈隔离到不同的命令空间中，</description>
+    </item>
+    
+    <item>
+      <title>【Kubernetes系列】第8篇 CI/CD 之全流程实践</title>
+      <link>https://like-ycy.github.io/2019/12/10/kubernetes8-cicd-full/</link>
+      <pubDate>Tue, 10 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/10/kubernetes8-cicd-full/</guid>
+      <description>前言 1）本实践中已经的示例代码及jenkins-agent镜像已经推送归档至github，&amp;ndash;&amp;gt;传送门（https://gi</description>
+    </item>
+    
+    <item>
+      <title>【Kubernetes系列】第7篇 CI/CD 之组件部署</title>
+      <link>https://like-ycy.github.io/2019/12/09/kubernetes7-cicd/</link>
+      <pubDate>Mon, 09 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/09/kubernetes7-cicd/</guid>
+      <description>1、前言 应对敏捷开发的需求，对CI(持续集成))/CD（持续交付）的提出了更高的标准，今天来讨论下，如何基于开源组件（gitlab/jenk</description>
+    </item>
+    
+    <item>
+      <title>【Kubernetes系列】第6篇 Ingress controller - nginx组件介绍</title>
+      <link>https://like-ycy.github.io/2019/12/08/kubernetes6-nginx-introduction/</link>
+      <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/08/kubernetes6-nginx-introduction/</guid>
+      <description>1、概述 在上一篇文章中我们介绍了如何通过helm进行安装部署traefik组件（链接点这里），文中还提到常用的ingress controll</description>
+    </item>
+    
+    <item>
+      <title>【Kubernetes系列】第5篇 Ingress Controller - Traefik组件介绍</title>
+      <link>https://like-ycy.github.io/2019/12/07/kubernetes5-traefik-introduction/</link>
+      <pubDate>Sat, 07 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/07/kubernetes5-traefik-introduction/</guid>
+      <description>1、概述 为了能够让Ingress资源能够工作，在Kubernetes集群中必须至少有一个运行中的ingress controller组件。也就</description>
+    </item>
+    
+    <item>
+      <title>【Kubernetes系列】第4篇 Kubernetes包管理工具-helm介绍</title>
+      <link>https://like-ycy.github.io/2019/12/06/kubernetes4-helm-introduction/</link>
+      <pubDate>Fri, 06 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/06/kubernetes4-helm-introduction/</guid>
+      <description>1、概述 Helm是kubernetes包管理工具，可以方便快捷的安装、管理、卸载kubernetes应用，类似于Linux操作系统中yum或</description>
+    </item>
+    
+    <item>
+      <title>【Kubernetes系列】第3篇 Kubernetes集群安装部署</title>
+      <link>https://like-ycy.github.io/2019/12/05/kubernetes3-cluster-install/</link>
+      <pubDate>Thu, 05 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/05/kubernetes3-cluster-install/</guid>
+      <description>本文介绍了如何通过Kubespray来进行部署高可用k8s集群，k8s版本为1.12.5。 1、部署手册 代码仓库：https://github</description>
+    </item>
+    
+    <item>
+      <title>【Kubernetes系列】第2篇 基础概念介绍 </title>
+      <link>https://like-ycy.github.io/2019/12/04/kubernetes2-introduction-to-basic-concepts/</link>
+      <pubDate>Wed, 04 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/04/kubernetes2-introduction-to-basic-concepts/</guid>
+      <description>1、Pod - 实例 Pod是一组紧密关联的容器集合，支持多个容器在一个Pod中共享网络和文件系统，可以通过进程间通信和文件共享这种简单高效的方式</description>
+    </item>
+    
+    <item>
+      <title>【Kubernetes系列】第1篇 架构及组件介绍 </title>
+      <link>https://like-ycy.github.io/2019/11/29/kubernetes1-architecture-component/</link>
+      <pubDate>Fri, 29 Nov 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/11/29/kubernetes1-architecture-component/</guid>
+      <description>1、Kubernetes简介 Kubernetes是谷歌开源的容器集群管理系统，是Google多年大规模容器管理技术Borg的开源版本，主要功</description>
+    </item>
+    
+  </channel>
+</rss>

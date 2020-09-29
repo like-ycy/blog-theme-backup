@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="权掌天下 Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://like-ycy.github.io/img/backend.jpg">
+    <meta property="twitter:image" content="https://like-ycy.github.io/img/backend.jpg" />
+    
+
+    
+    <meta name="title" content=" Nginx 原理和架构 " />
+    <meta property="og:title" content=" Nginx 原理和架构 " />
+    <meta property="twitter:title" content=" Nginx 原理和架构 " />
+    
+
+    
+    <meta name="description" content="Nginx 是一个 免费的，开源的，高性能的 HTTP 服务器和反向代理。以其高性能，稳定性，丰富的功能，简单的配置和低资源消耗而闻名。Nginx是一个Web服务器，也可以用作负载均衡器和 HTTP 缓存 。">
+    <meta property="og:description" content="Nginx 是一个 免费的，开源的，高性能的 HTTP 服务器和反向代理。以其高性能，稳定性，丰富的功能，简单的配置和低资源消耗而闻名。Nginx是一个Web服务器，也可以用作负载均衡器和 HTTP 缓存 。" />
+    <meta property="twitter:description" content="Nginx 是一个 免费的，开源的，高性能的 HTTP 服务器和反向代理。以其高性能，稳定性，丰富的功能，简单的配置和低资源消耗而闻名。Nginx是一个Web服务器，也可以用作负载均衡器和 HTTP 缓存 。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="权掌天下的博客, Master Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title> Nginx 原理和架构 -权掌天下的博客</title>
+
+    <link rel="canonical" href="/2019/12/22/nginx-principle/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">权掌天下 Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/categories/tech">tech</a>
+                    </li>
+                    
+                    
+		    
+                        <li><a href="/top/books/">BOOKS</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('https://image.my-blog.wang/header/header.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/nginx" title="Nginx">
+                            Nginx
+                        </a>
+                        
+                    </div>
+                    <h1> Nginx 原理和架构 </h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                &#34;望翔&#34;
+                         
+                        on 
+                        Sunday, December 22, 2019
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+<ul>
+<li><a href="#1-nginx-的整体架构">1、Nginx 的整体架构</a></li>
+<li><a href="#2-nginx的模块化设计">2、Nginx的模块化设计</a></li>
+<li><a href="#3-nginx的请求方式处理">3、Nginx的请求方式处理</a></li>
+<li><a href="#4-nginx事件驱动模型">4、Nginx事件驱动模型</a></li>
+<li><a href="#5-nginx进程处理模型">5、Nginx进程处理模型</a></li>
+</ul>
+</nav>
+                
+                
+
+<h1 id="1-nginx-的整体架构">1、Nginx 的整体架构</h1>
+
+<p><img src="https://image.my-blog.wang/nginx-uages/191222/191222principle1.png" alt="" /></p>
+
+<p>Nginx 里有一个 master 进程和多个 worker 进程。master 进程并不处理网络请求，主要负责调度工作进程：加载配置、启动工作进程及非停升级。worker 进程负责处理网络请求与响应。</p>
+
+<p><strong>1.1. 主进程</strong></p>
+
+<p>master进程主要用来管理worker进程，具体包括如下4个主要功能：</p>
+
+<ol>
+<li>接收来自外界的信号。</li>
+<li>向各worker进程发送信号。</li>
+<li>监控woker进程的运行状态。</li>
+<li>当woker进程退出后（异常情况下），会自动重新启动新的woker进程。</li>
+</ol>
+
+<p><strong>1.2. 工作进程</strong></p>
+
+<p>woker进程主要用来处理基本的网络事件：</p>
+
+<ol>
+<li>多个worker进程之间是对等且相互独立的，他们同等竞争来自客户端的请求。</li>
+<li>一个请求，只可能在一个worker进程中处理，一个worker进程，不可能处理其它进程的请求。</li>
+<li>worker进程的个数是可以设置的，一般我们会设置与机器cpu核数一致。同时，nginx为了更好的利用多核特性，具有cpu绑定选项，我们可以将某一个进程绑定在某一个核上，这样就不会因为进程的切换带来cache的失效。</li>
+</ol>
+
+<p><strong>1.3. 模块化设计</strong></p>
+
+<p>Nginx的worker进程，包括核心和功能性模块，核心模块负责维持一个运行循环 （ run-loop ），执行网络请求处理的 不同阶段 的模块功能。</p>
+
+<p>比如： 网络读写 、 存储读写、 内容传输 、 外出过滤 ，以及将请求发往上游服务器等。</p>
+
+<p>而其代码的模块化设计 ，也使得我们可以根据需要对 功能模块 进行适当的 选择 和 修改 ，编译成具有 特定功能的服务器。</p>
+
+<p><strong>1.4. 事件驱动模型</strong></p>
+
+<p>基于 异步及非阻塞的事件驱动模型 ，可以说是 Nginx 得以获得高并发、高性能的关键因素，同时也得益于对 Linux 、 Solaris 及类 BSD 等操作系统内核中 事件通知 及 I/O 性能增强功能 的采用，如 kqueue 、 epoll 及 event ports 。</p>
+
+<p><strong>1.5. 代理（proxy）设计</strong></p>
+
+<p>代理设计，可以说是 Nginx 深入骨髓的设计，无论是对于 HTTP ，还是对于 FastCGI 、 Memcache 、 Redis 等的网络请求或响应，本质上都采用了 代理机制 。所以， Nginx 天生就是高性能的 代理服务器 。</p>
+
+<h1 id="2-nginx的模块化设计">2、Nginx的模块化设计</h1>
+
+<p>高度模块化的设计是 Nginx 的架构基础。Nginx 服务器被分解为多个模块 ，每个模块就是一个功能模块 ，只负责自身的功能，模块之间严格遵循 “高内聚，低耦合” 的原则。</p>
+
+<p>如下图所示：</p>
+
+<p><img src="https://image.my-blog.wang/nginx-uages/191222/191222principle2.png" alt="" /></p>
+
+<p><strong>2.1. 核心模块</strong></p>
+
+<p>核心模块是 Nginx 服务器正常运行 必不可少的模块，提供错误日志记录 、 配置文件解析 、 事件驱动机制 、 进程管理 等核心功能。</p>
+
+<p><strong>2.2. 标准HTTP模块</strong></p>
+
+<p>标准 HTTP 模块提供 HTTP 协议解析相关的功能，比如： 端口配置 、 网页编码设置 、 HTTP响应头设置 等等。</p>
+
+<p><strong>2.3. 可选HTTP模块</strong></p>
+
+<p>可选 HTTP 模块主要用于 扩展 标准的 HTTP 功能，让 Nginx 能处理一些特殊的服务，比如：Flash 多媒体传输 、解析 GeoIP 请求、 网络传输压缩 、 安全协议 SSL 支持等。</p>
+
+<p><strong>2.4. 邮件服务模块</strong></p>
+
+<p>邮件服务模块主要用于支持 Nginx 的 邮件服务 ，包括对 POP3 协议、 IMAP 协议和 SMTP协议的支持。</p>
+
+<p><strong>2.5. 第三方模块</strong></p>
+
+<p>第三方模块是为了扩展 Nginx 服务器应用，完成开发者自定义功能，比如：Json 支持、 Lua 支持等。</p>
+
+<h1 id="3-nginx的请求方式处理">3、Nginx的请求方式处理</h1>
+
+<p>Nginx 是一个 高性能 的 Web 服务器，能够同时处理大量的并发请求 。它结合多进程机制和 异步机制 ，异步机制使用的是 异步非阻塞方式 ，接下来就给大家介绍一下 Nginx 的 多线程机制 和 异步非阻塞机制 。</p>
+
+<p><strong>3.1. 多进程机制</strong></p>
+
+<p>服务器每当收到一个客户端时，就有 服务器主进程 （ master process ）生成一个 子进程（ worker process ）出来和客户端建立连接进行交互，直到连接断开，该子进程就结束了。</p>
+
+<p>使用 进程 的好处是 各个进程之间相互独立 ， 不需要加锁 ，减少了使用锁对性能造成影响，同时降低编程的复杂度，降低开发成本。</p>
+
+<p>其次，采用独立的进程，可以让 进程互相之间不会影响 ，如果一个进程发生异常退出时，其它进程正常工作， master 进程则很快启动新的 worker 进程，确保服务不会中断，从而将风险降到最低。</p>
+
+<p>缺点是操作系统生成一个 子进程 需要进行 内存复制 等操作，在 资源 和 时间 上会产生一定的开销。当有 大量请求 时，会导致 系统性能下降 。</p>
+
+<p><strong>3.2. 异步非阻塞机制</strong></p>
+
+<p>每个 工作进程 使用 异步非阻塞方式 ，可以处理多个客户端请求 。</p>
+
+<p>当某个 工作进程 接收到客户端的请求以后，调用 IO 进行处理，如果不能立即得到结果，就去处理其他请求 （即为非阻塞 ），而客户端在此期间也无需等待响应 ，可以去处理其他事情（即为异步 ）</p>
+
+<p>当 IO 返回时，就会通知此工作进程，该进程得到通知，暂时挂起当前处理的事务去 响应客户端请求 。</p>
+
+<h1 id="4-nginx事件驱动模型">4、Nginx事件驱动模型</h1>
+
+<p>在 Nginx 的 异步非阻塞机制 中， 工作进程在调用 IO 后，就去处理其他的请求，当 IO 调用返回后，会通知该工作进程 。</p>
+
+<p>对于这样的系统调用，主要使用 Nginx 服务器的<strong>事件驱动模型</strong>来实现，如下图所示：</p>
+
+<p><img src="https://image.my-blog.wang/nginx-uages/191222/191222principle3.png" alt="" /></p>
+
+<p>如上图所示， Nginx 的 事件驱动模型 由 事件收集器 、 事件发送器 和 事件处理器 三部分基本单元组成。</p>
+
+<ul>
+<li><strong>事件收集器</strong>：负责收集 worker 进程的各种 IO 请求；</li>
+<li><strong>事件发送器</strong>：负责将 IO 事件发送到 事件处理器 ；</li>
+<li><strong>事件处理器</strong>：负责各种事件的 响应工作 。</li>
+</ul>
+
+<p>事件发送器将每个请求放入一个 待处理事件列表 ，使用非阻塞 I/O 方式调用 事件处理器来处理该请求。</p>
+
+<p>其处理方式称为 “多路 IO 复用方法” ，常见的包括以下三种：select 模型、 poll模型、 epoll 模型。</p>
+
+<h1 id="5-nginx进程处理模型">5、Nginx进程处理模型</h1>
+
+<p>Nginx 服务器使用 <strong>master/worker</strong> 多进程模式，多线程启动和执行的流程如下：</p>
+
+<ol>
+<li><p>主程序Master process启动后，通过一个 for 循环来接收和处理外部信号</p></li>
+
+<li><p>主进程通过 fork() 函数产生 worker 子进程 ，每个 子进程 执行一个 for 循环来实现 Nginx 服务器 对事件的接收 和 处理</p></li>
+</ol>
+
+<p>一般推荐 worker 进程数 与 CPU 内核数 一致，这样一来不存在 大量的子进程 生成和管理任务，避免了进程之间 竞争 CPU 资源 和 进程切换 的开销。</p>
+
+<p>而且 Nginx 为了更好的利用 多核特性 ，提供了 CPU 亲缘性 的绑定选项，我们可以将某 一个进程绑定在某一个核上，这样就不会因为 进程的切换 带来 Cache 的失效。</p>
+
+<p>对于每个请求，有且只有一个 工作进程 对其处理。首先，每个 worker 进程都是从 master进程 fork 过来。在 master 进程里面，先建立好需要 listen 的 socket（listenfd） 之后，然后再 fork 出多个 worker 进程。</p>
+
+<p>所有 worker 进程的 listenfd 会在 新连接 到来时变得 可读 ，为保证只有一个进程处理该连接，所有 worker 进程在注册 listenfd 读事件前抢占 accept_mutex</p>
+
+<p>抢到 互斥锁 的那个进程注册 listenfd 读事件 ，在读事件里调用 accept 接受该连接。</p>
+
+<p>当一个 worker 进程在 accept 这个连接之后，就开始读取请求 ， 解析请求 ， 处理请求，产生数据后，再返回给客户端 ，最后才断开连接 ，一个完整的请求就是这样。</p>
+
+<p>我们可以看到，一个请求，完全由 worker 进程来处理，而且只在一个 worker 进程中处理。</p>
+
+<p>如下图所示：</p>
+
+<p><img src="https://image.my-blog.wang/nginx-uages/191222/191222principle4.png" alt="" /></p>
+
+<p>在 Nginx 服务器的运行过程中， 主进程 和 工作进程 需要进程交互。交互依赖于 Socket 实现的管道来实现。</p>
+
+<p><strong>5.1. 主进程与工作进程交互</strong></p>
+
+<p>这条管道与普通的管道不同，它是由 主进程 指向 工作进程 的单向管道 ，包含主进程向工作进程发出的指令工，作进程 ID 等。同时主进程与外界通过信号通信 ；每个子进程具备接收信号 ，并处理相应的事件的能力。</p>
+
+<p><strong>5.2. 工作进程与工作进程交互</strong></p>
+
+<p>这种交互和 主进程-工作进程 交互基本一致，但是会通过主进程间接完成，工作进程之间是相互隔离的。</p>
+
+<p>所以当工作进程 W1 需要向工作进程 W2 发指令时，首先找到 W2 的 进程ID ，然后将正确的指令写入指向 W2 的 通道，W2 收到信号采取相应的措施。</p>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p> 「如果这篇文章对你有用,请随意打赏」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="https://like-ycy.github.io"><img src="/img/favicon.png" />权掌天下 Blog</a></span>
+        
+	        <p class="tip"><i></i><span>如果这篇文章对你有用,请随意打赏</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2019/12/21/operation-law/" data-toggle="tooltip" data-placement="top" title=" 运维工程师必知必会的一些定律 ">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2019/12/23/cloudnativemap/" data-toggle="tooltip" data-placement="top" title=" 云原生云景高清大图 ">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        <a href="/tags/aliyun" title="aliyun">
+                            aliyun
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/architecture" title="architecture">
+                            architecture
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/cloudnative" title="cloudnative">
+                            cloudnative
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/gitlab" title="gitlab">
+                            gitlab
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/heart" title="heart">
+                            heart
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/http" title="http">
+                            http
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/https" title="https">
+                            https
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/kubernetes" title="kubernetes">
+                            kubernetes
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/linux" title="linux">
+                            linux
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/mesos" title="mesos">
+                            mesos
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/mysql" title="mysql">
+                            mysql
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/network" title="network">
+                            network
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/nginx" title="nginx">
+                            nginx
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/prometheus" title="prometheus">
+                            prometheus
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/python" title="python">
+                            python
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/servicemesh" title="servicemesh">
+                            servicemesh
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/tcp" title="tcp">
+                            tcp
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://github.com/ILIKETWICE">权掌天下-Github</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="权掌天下 Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:15210198546@163.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/6069853748/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/wechat_qrcode.jpg">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ILIKETWICE">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; 权掌天下 Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+</body>
+</html>

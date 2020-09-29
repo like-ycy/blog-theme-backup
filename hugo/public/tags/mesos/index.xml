@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mesos on 权掌天下 Blog</title>
+    <link>https://like-ycy.github.io/tags/mesos/</link>
+    <description>Recent content in Mesos on 权掌天下 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 01 Jan 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://like-ycy.github.io/tags/mesos/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> mesos 以容器方式启动,拉取镜像失败问题 </title>
+      <link>https://like-ycy.github.io/2020/01/01/mesos-pull-images-error/</link>
+      <pubDate>Wed, 01 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2020/01/01/mesos-pull-images-error/</guid>
+      <description>为了方便快速部署,将 mesos、marathon进行了容器化部署, 但是容器化完后发现在marathon 上创建应用一直创建不成功 分析过程 因为是</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="望翔">
+  <meta name="keywords" content="">
+  <title> 为什么执行自己的程序要在前面加./  - 权掌天下 Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>权掌天下</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background" parallax=true
+         style="background: url('https://image.my-blog.wang/header/header.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2020-01-15 00:00">
+      2020年1月15日 凌晨
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.8k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      20
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：2020年6月1日 下午
+                
+              </p>
+            
+            <article class="markdown-body">
+              <p>在Linux中，我们执行内置命令时，直接输入命令名称即可，如：</p>
+<pre><code class="hljs bash">$ mv a b <span class="hljs-comment">#将a重命名为b</span></code></pre>
+
+<p>而在执行自己写好的程序时，却要带上./，例如：</p>
+<pre><code class="hljs bash">$ hello
+hello: <span class="hljs-built_in">command</span> not found
+$ ./hello
+hello world</code></pre>
+
+<p>这是为什么呢？它们有什么区别呢？</p>
+<h1 id="shell是如何运行程序的"><a href="#shell是如何运行程序的" class="headerlink" title="shell是如何运行程序的"></a>shell是如何运行程序的</h1><p>在说明清楚问题之前，我们必须了解shell是如何运行程序的。首先我们必须要清楚的是，执行一条Linux命令，本质是在运行一个程序，如执行ls命令，它执行的是ls程序。那么在shell中输入一条命令，到底发生了什么？如果没有给出当前路径或绝对路径，它会经历哪几个查找过程？</p>
+<h2 id="alias中查找"><a href="#alias中查找" class="headerlink" title="alias中查找"></a>alias中查找</h2><p>alias命令可用来设置命令别名，而单独输入alias可以查看到已设置的别名：</p>
+<pre><code class="hljs bash">$ <span class="hljs-built_in">alias</span>
+<span class="hljs-built_in">alias</span> egrep=<span class="hljs-string">'egrep --color=auto'</span>
+<span class="hljs-built_in">alias</span> fgrep=<span class="hljs-string">'fgrep --color=auto'</span>
+<span class="hljs-built_in">alias</span> grep=<span class="hljs-string">'grep --color=auto'</span>
+<span class="hljs-built_in">alias</span> l=<span class="hljs-string">'ls -CF'</span>
+<span class="hljs-built_in">alias</span> la=<span class="hljs-string">'ls -A'</span>
+<span class="hljs-built_in">alias</span> ll=<span class="hljs-string">'ls -alF'</span>
+<span class="hljs-built_in">alias</span> ls=<span class="hljs-string">'ls --color=auto'</span></code></pre>
+
+<p>如果这里没有找到你执行的命令，那么就会接下去查找。如果找到了，那么就会执行下去。</p>
+<h2 id="内置命令中查找"><a href="#内置命令中查找" class="headerlink" title="内置命令中查找"></a>内置命令中查找</h2><p>不同的shell包含一些不同的内置命令，通常不需要shell到磁盘中去搜索。通过help命令可以看到有哪些内置命令：</p>
+<pre><code class="hljs bash">$ <span class="hljs-built_in">help</span></code></pre>
+
+<p>通过type 命令可以查看命令类型：</p>
+<pre><code class="hljs bash">$ <span class="hljs-built_in">type</span> <span class="hljs-built_in">echo</span>
+<span class="hljs-built_in">echo</span> is a shell <span class="hljs-built_in">builtin</span></code></pre>
+
+<p>如果是内置命令，则会直接执行，否则继续查找。</p>
+<h2 id="PATH中查找"><a href="#PATH中查找" class="headerlink" title="PATH中查找"></a>PATH中查找</h2><p>以ls为例，在shell输入ls时，首先它会从PATH环境变量中查找，PATH内容是什么呢，我们看看：</p>
+<pre><code class="hljs bash">$ <span class="hljs-built_in">echo</span> <span class="hljs-variable">$PATH</span>
+/usr/<span class="hljs-built_in">local</span>/sbin:/usr/<span class="hljs-built_in">local</span>/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/<span class="hljs-built_in">local</span>/games</code></pre>
+
+<p>所以它会在这些路径下去寻找ls程序，按照路径找到的第一个ls程序就会被执行。使用whereis也能确定ls的位置：</p>
+<pre><code class="hljs bash">$ whereis ls
+ls: /bin/ls /usr/share/man/man1/ls.1.g</code></pre>
+
+<p>既然它是在bin目录下，那么我把ls从bin目录下移走是不是就找不到了呢？是的。</p>
+<pre><code class="hljs bash">$ mv /bin/ls /temp/ls_bak  <span class="hljs-comment">#测试完后记得改回来奥</span></code></pre>
+
+<p>现在再来执行ls命令看看：</p>
+<pre><code class="hljs bash">$ ls 
+The program <span class="hljs-string">'ls'</span> is currently not installed. You can install it by typing:
+apt install coreutils</code></pre>
+
+<p>没错，它会提示你没有安装这个程序或者命令没有找到。</p>
+<p>所以你现在明白为什么你第一次安装jdk或者python的时候要设置环境变量了吧？不设置的话行不行？</p>
+<p>行。这个时候你就需要指定路径了。怎么指定路径？无非就是那么几种，相对路径，绝对路径等等。<br>比如：</p>
+<pre><code class="hljs bash">$ <span class="hljs-built_in">cd</span> /temp
+$ ./ls_bak</code></pre>
+
+<p>或者：</p>
+<pre><code class="hljs bash">$ /temp/ls_bak</code></pre>
+
+<p>是不是发现和运行自己的普通程序方式没什么差别呢？</p>
+<p>到这里，如果还没有找到你要执行的命令，那么就会报错。</p>
+<h2 id="确定解释程序"><a href="#确定解释程序" class="headerlink" title="确定解释程序"></a>确定解释程序</h2><p>在找到程序之后呢，需要确定解释程序。什么意思呢？<br>shell通常可以执行两种程序，一种是二进制程序，一种是脚本程序。</p>
+<p>而一旦发现要执行的程序文件是文本文件，且文本未指定解释程序，那么就会默认当成shell脚本来执行。例如，假设有test.txt内容如下：</p>
+<pre><code class="hljs bash"><span class="hljs-built_in">echo</span> -e <span class="hljs-string">"hello world"</span></code></pre>
+
+<p>赋予执行权限并执行：</p>
+<pre><code class="hljs bash">$ chmod +x test.txt
+$ ./test.txt
+hello world</code></pre>
+
+<p>当然了，我们通常会在shell脚本程序的来头带上下面这句：</p>
+<pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash</span></code></pre>
+
+<p>这是告诉shell，你要用bash程序来解释执行test.txt。作为一位调皮的开发者，如果开头改成下面这样呢？</p>
+<pre><code class="hljs bash"><span class="hljs-comment">#!/usr/bin/python</span></code></pre>
+
+<p>再次执行之后结果如下：</p>
+<pre><code class="hljs bash">$ ./test.txt
+  File <span class="hljs-string">"./test.txt"</span>, line 2
+    <span class="hljs-built_in">echo</span> -e <span class="hljs-string">"hello world"</span>
+                        ^
+SyntaxError: invalid syntax</code></pre>
+
+<p>是的，它被当成python脚本来执行了，自然就会报错了。</p>
+<p>那么如果是二进制程序呢？就会使用execl族函数去创建一个新的进程来运行新的程序了。</p>
+<p>小结一下前面的内容，就是说，如果是文本程序，且开头没有指定解释程序，则按照shell脚本处理，如果指定了解释程序，则使用解释程序来解释运行；对于二进制程序，则直接创建新的进程即可。</p>
+<h1 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h1><p>前面我们也已经看到了运行方式，设置环境变量或者使用相对路径，绝对路径即可。不过对于shell脚本，你还可以像下面这样执行：</p>
+<pre><code class="hljs bash">$ sh test.txt
+$ . test.txt</code></pre>
+
+<p>即便test.txt没有执行权限，也能够正常执行。</p>
+<p>什么？你说为什么txt也能执行？注意，Linux下的文件后缀不过是为了方便识别文件类型罢了，以.txt结尾，并不代表一定是文本。当然在这里它确实是，而且还是ASCII text executable：</p>
+<pre><code class="hljs bash">$ file test.txt
+test.txt: Bourne-Again shell script, ASCII text executable
+$ file hello
+hello: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/l, <span class="hljs-keyword">for</span> GNU/Linux 2.6.32, BuildID[sha1]=8ae48f0f84912dec98511581c876aa042824efdb, not stripped</code></pre>
+
+<h1 id="扩展一下"><a href="#扩展一下" class="headerlink" title="扩展一下"></a>扩展一下</h1><p>那么如果让我们自己的程序也能够像Linux内置命令一样输入即可被识别呢？</p>
+<h2 id="将程序放到PATH路径下"><a href="#将程序放到PATH路径下" class="headerlink" title="将程序放到PATH路径下"></a>将程序放到PATH路径下</h2><p>第一种方法就是将我们自己的程序放到PATH中的路径中去，这样在shell输入hello时，也能找到，例如我们将其放在/bin目录下：</p>
+<pre><code class="hljs bash">$ hello
+hello world
+$ whereis hello
+hello: /bin/hello</code></pre>
+
+<p>也就是说，如果你的程序安装在了PATH指定的路径，就需要配置PATH环境变量，在命令行输入就可以直接找到了。</p>
+<h2 id="设置PATH环境变量"><a href="#设置PATH环境变量" class="headerlink" title="设置PATH环境变量"></a>设置PATH环境变量</h2><p>那么如果想在指定的目录能够直接运行呢？很简单，那就是添加环境变量，例如将当前路径加入到PATH中：</p>
+<pre><code class="hljs bash">$ PATH=<span class="hljs-variable">$PATH</span>:./   <span class="hljs-comment">#这种方式只在当前shell有效，所有shell生效可修改/etc/profile文件</span>
+$ hello
+hello world</code></pre>
+
+<h2 id="设置别名"><a href="#设置别名" class="headerlink" title="设置别名"></a>设置别名</h2><p>例如：</p>
+<pre><code class="hljs bash">$ <span class="hljs-built_in">alias</span> hello=<span class="hljs-string">"/temp/hello"</span>
+$ hello
+hello world</code></pre>
+
+<p>以上三种方法都可以达到目的。</p>
+<h1 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h1><p>那么假设我写了一个自己的printf程序，当执行printf的时候，到底执行的是哪一个呢？</p>
+<p>实际上它的查找顺序可以可以通过type -a来查看：</p>
+<pre><code class="hljs bash">$ <span class="hljs-built_in">type</span> -a <span class="hljs-built_in">printf</span>
+<span class="hljs-built_in">printf</span> is aliased to `<span class="hljs-built_in">printf</span> <span class="hljs-string">"hello</span>
+<span class="hljs-string">"</span><span class="hljs-string">'</span>
+<span class="hljs-string">printf is a shell builtin</span>
+<span class="hljs-string">printf is /usr/bin/printf</span>
+<span class="hljs-string">printf is ./printf</span></code></pre>
+
+<p>这里就可以很清楚地看到查找顺序了。也就是说，如果你输入printf，它执行的是：</p>
+<pre><code class="hljs bash">$ <span class="hljs-built_in">printf</span>
+hello</code></pre>
+
+<p>而如果删除别名：</p>
+<pre><code class="hljs bash"><span class="hljs-built_in">unalias</span> <span class="hljs-built_in">printf</span></code></pre>
+
+<p>它执行的将会是内置命令printf。<br>以此类推。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>说到这里，想必标题的问题以及下面的问题你都清楚了：</p>
+<ul>
+<li>安装Python或者Jdk程序为什么要设置PATH环境变量？如果不设置，该如何运行？</li>
+<li>除了./方式运行自己的程序还有什么方式？</li>
+<li>如果让自己的程序能够像内置命令一样被识别？</li>
+<li>如何查看文件类型？</li>
+<li>执行一条命令，如何确定是哪里的命令被执行</li>
+</ul>
+<p>本文涉及命令：</p>
+<ul>
+<li>mv 移动/重命名</li>
+<li>file 查看文件信息</li>
+<li>whereis 查看命令或者手册位置</li>
+<li>type 查看命令类别</li>
+</ul>
+
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Linux/">Linux</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/01/16/2020-01-16-what-is-servicemesh/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"> 听上去超酷的 Service Mesh 到底是什么？ </span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2020/01/14/2020-01-14-distributed-and-cluster-difference/">
+                        <span class="hidden-mobile"> 分布式和集群的区别 </span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-md">
+    <div class="container custom post-content mx-auto">
+      <img src="https://octodex.github.com/images/jetpacktocat.png" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        " 为什么执行自己的程序要在前面加./ &nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+  
+  
+    <script>
+      !function (e, t, a) {
+        function r() {
+          for (var e = 0; e < s.length; e++) s[e].alpha <= 0 ? (t.body.removeChild(s[e].el), s.splice(e, 1)) : (s[e].y--, s[e].scale += .004, s[e].alpha -= .013, s[e].el.style.cssText = "left:" + s[e].x + "px;top:" + s[e].y + "px;opacity:" + s[e].alpha + ";transform:scale(" + s[e].scale + "," + s[e].scale + ") rotate(45deg);background:" + s[e].color + ";z-index:99999");
+          requestAnimationFrame(r)
+        }
+
+        function n() {
+          var t = "function" == typeof e.onclick && e.onclick;
+          e.onclick = function (e) {
+            t && t(), o(e)
+          }
+        }
+
+        function o(e) {
+          var a = t.createElement("div");
+          a.className = "heart", s.push({
+            el: a,
+            x: e.clientX - 5,
+            y: e.clientY - 5,
+            scale: 1,
+            alpha: 1,
+            color: c()
+          }), t.body.appendChild(a)
+        }
+
+        function i(e) {
+          var a = t.createElement("style");
+          a.type = "text/css";
+          try {
+            a.appendChild(t.createTextNode(e))
+          } catch (t) {
+            a.styleSheet.cssText = e
+          }
+          t.getElementsByTagName("head")[0].appendChild(a)
+        }
+
+        function c() {
+          return "rgb(" + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + ")"
+        }
+
+        var s = [];
+        e.requestAnimationFrame = e.requestAnimationFrame || e.webkitRequestAnimationFrame || e.mozRequestAnimationFrame || e.oRequestAnimationFrame || e.msRequestAnimationFrame || function (e) {
+          setTimeout(e, 1e3 / 60)
+        }, i(".heart{width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: fixed;}.heart:after{top: -5px;}.heart:before{left: -5px;}"), n(), r()
+      }(window, document);
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

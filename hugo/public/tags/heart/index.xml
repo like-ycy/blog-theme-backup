@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Heart on 权掌天下 Blog</title>
+    <link>https://like-ycy.github.io/tags/heart/</link>
+    <description>Recent content in Heart on 权掌天下 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 21 Dec 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://like-ycy.github.io/tags/heart/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> 运维工程师必知必会的一些定律 </title>
+      <link>https://like-ycy.github.io/2019/12/21/operation-law/</link>
+      <pubDate>Sat, 21 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/21/operation-law/</guid>
+      <description>墨菲定律 墨菲定律，指的是小概率事情，只要某件事情发生概率不为0，如果样本数足够多，那么这个事情最终会发生。 海恩法则 海恩法则，每一起严重事故的</description>
+    </item>
+    
+    <item>
+      <title> 执行力，才是拉开人与人差距的关键 </title>
+      <link>https://like-ycy.github.io/2019/12/14/execution/</link>
+      <pubDate>Sat, 14 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/14/execution/</guid>
+      <description>01 如果你想变得更好 首先要学会执行 我们常常慨叹，为什么都是吃五谷杂粮长大的，人与人之间的差距怎么就那么大呢？ 为什么毕业于同一个学校的人，几年后</description>
+    </item>
+    
+  </channel>
+</rss>

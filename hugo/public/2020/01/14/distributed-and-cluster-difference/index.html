@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="权掌天下 Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://like-ycy.github.io/img/backend.jpg">
+    <meta property="twitter:image" content="https://like-ycy.github.io/img/backend.jpg" />
+    
+
+    
+    <meta name="title" content=" 分布式和集群的区别 " />
+    <meta property="og:title" content=" 分布式和集群的区别 " />
+    <meta property="twitter:title" content=" 分布式和集群的区别 " />
+    
+
+    
+    <meta name="description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。">
+    <meta property="og:description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。" />
+    <meta property="twitter:description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="权掌天下的博客, Master Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title> 分布式和集群的区别 -权掌天下的博客</title>
+
+    <link rel="canonical" href="/2020/01/14/distributed-and-cluster-difference/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">权掌天下 Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/categories/tech">tech</a>
+                    </li>
+                    
+                    
+		    
+                        <li><a href="/top/books/">BOOKS</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('https://image.my-blog.wang/header/header.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/architecture" title="Architecture">
+                            Architecture
+                        </a>
+                        
+                    </div>
+                    <h1> 分布式和集群的区别 </h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                &#34;望翔&#34;
+                         
+                        on 
+                        Tuesday, January 14, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                
+                
+                <p>分布式开发的时代实际上早已悄悄地成为了时代的主流，吵得很热的云计算实际上只是包装在分布式之外的商业概念，很多开发者（包括我）都想加入研究云计算这个潮流，在 Google 上通过 “云计算” 这个关键词来查询资料，查到的都是些概念性或商业性的宣传资料，其实真正需要深入的还是那个早以被人熟知的概念——分布式。</p>
+
+<p>分布式可繁也可以简，最简单的分布式就是大家最常用的，在负载均衡服务器后加一堆 Web 服务器，然后在上面搞一个缓存服务器来保存临时状态，后面共享一个数据库，其实很多号称分布式专家的人也就停留于此，大致结构如下图所示：</p>
+
+<p><img src="https://image.my-blog.wang/2020-01-14-distributed-and-cluster-difference/1.png" alt="" /></p>
+
+<p>这种环境下真正进行分布式的只是 Web Server 而已，并且 Web Server 之间没有任何联系，所以结构和实现都非常简单。</p>
+
+<p>有些情况下，对分布式的需求就没这么简单，在每个环节上都有分布式的需求，比如 Load Balance、DB、Cache 和文件等等，并且当分布式节点之间有关联时，还得考虑之间的通讯，另外，节点非常多的时候，得有监控和管理来支撑。这样看起来，分布式是一个非常庞大的体系，只不过你可以根据具体需求进行适当地裁剪。按照最完备的分布式体系来看，可以由以下模块组成：</p>
+
+<p><img src="https://image.my-blog.wang/2020-01-14-distributed-and-cluster-difference/2.png" alt="" /></p>
+
+<ul>
+<li>分布式任务处理服务：负责具体的业务逻辑处理</li>
+<li>分布式节点注册和查询：负责管理所有分布式节点的命名和物理信息的注册与查询，是节点之间联系的桥梁</li>
+<li>分布式 DB：分布式结构化数据存取</li>
+<li>分布式 Cache：分布式缓存数据（非持久化）存取</li>
+<li>分布式文件：分布式文件存取</li>
+<li>网络通信：节点之间的网络数据通信</li>
+<li>监控管理：搜集、监控和诊断所有节点运行状态</li>
+<li>分布式编程语言：用于分布式环境下的专有编程语言，比如 Elang、Scala</li>
+<li>分布式算法：为解决分布式环境下一些特有问题的算法，比如解决一致性问题的 Paxos 算法</li>
+</ul>
+
+<p>因此，若要深入研究云计算和分布式，就得深入研究以上领域，而这些领域每一块的水都很深，都需要很底层的知识和技术来支撑，所以说，对于想提升技术的开发者来说，以分布式来作为切入点是非常好的，可以以此为线索，探索计算机世界的各个角落。</p>
+
+<p>集群是个物理形态，分布式是个工作方式。</p>
+
+<p>只要是一堆机器，就可以叫集群，他们是不是一起协作着干活，这个谁也不知道；一个程序或系统，只要运行在不同的机器上，就可以叫分布式，嗯，C/S 架构也可以叫分布式。</p>
+
+<p>集群一般是物理集中、统一管理的，而分布式系统则不强调这一点。</p>
+
+<p>所以，集群可能运行着一个或多个分布式系统，也可能根本没有运行分布式系统；分布式系统可能运行在一个集群上，也可能运行在不属于一个集群的多台（2 台也算多台）机器上。</p>
+
+<p>布式是相对中心化而来，强调的是任务在多个物理隔离的节点上进行。中心化带来的主要问题是可靠性，若中心节点宕机则整个系统不可用，分布式除了解决部分中心化问题，也倾向于分散负载，但分布式会带来很多的其他问题，最主要的就是一致性。</p>
+
+<p>集群就是逻辑上处理同一任务的机器集合，可以属于同一机房，也可分属不同的机房。分布式这个概念可以运行在某个集群里面，某个集群也可作为分布式概念的一个节点。</p>
+
+<p>一句话，就是：“分头做事” 与 “一堆人” 的区别。</p>
+
+<p>分布式是指将不同的业务分布在不同的地方。而集群指的是将几台服务器集中在一起，实现同一业务。</p>
+
+<p>分布式中的每一个节点，都可以做集群。而集群并不一定就是分布式的。</p>
+
+<p>举例：就比如新浪网，访问的人多了，他可以做一个群集，前面放一个响应服务器，后面几台服务器完成同一业务，如果有业务访问的时候，响应服务器看哪台服务器的负载不是很重，就将给哪一台去完成。</p>
+
+<p>而分布式，从窄意上理解，也跟集群差不多， 但是它的组织比较松散，不像集群，有一个组织性，一台服务器垮了，其它的服务器可以顶上来。</p>
+
+<p>分布式的每一个节点，都完成不同的业务，一个节点垮了，哪这个业务就不可访问了。</p>
+
+<p>简单说，分布式是以缩短单个任务的执行时间来提升效率的，而集群则是通过提高单位时间内执行的任务数来提升效率。</p>
+
+<p>例如：如果一个任务由 10 个子任务组成，每个子任务单独执行需 1 小时，则在一台服务器上执行该任务需 10 小时。</p>
+
+<p>采用分布式方案，提供 10 台服务器，每台服务器只负责处理一个子任务，不考虑子任务间的依赖关系，执行完这个任务只需一个小时。(这种工作模式的一个典型代表就是 Hadoop 的 Map/Reduce 分布式计算模型）</p>
+
+<p>而采用集群方案，同样提供 10 台服务器，每台服务器都能独立处理这个任务。假设有 10 个任务同时到达，10 个服务器将同时工作，1 小时后，10 个任务同时完成，这样，整身来看，还是 1 小时内完成一个任务！</p>
+
+<p>集群一般被分为三种类型，高可用集群如 RHCS、LifeKeeper 等，负载均衡集群如 LVS 等、高性能运算集群;分布式应该是高性能运算集群范畴内。</p>
+
+<ul>
+<li>分布式：不同的业务模块部署在不同的服务器上或者同一个业务模块分拆多个子业务，部署在不同的服务器上，解决高并发的问题</li>
+<li>集群：同一个业务部署在多台机器上，提高系统可用性</li>
+</ul>
+
+<p>大白话讲：</p>
+
+<p>小饭店原来只有一个厨师，切菜洗菜备料炒菜全干。后来客人多了，厨房一个厨师忙不过来，又请了个厨师，两个厨师都能炒一样的菜，这两个厨师的关系是集群。为了让厨师专心炒菜，把菜做到极致，又请了个配菜师负责切菜，备菜，备料，厨师和配菜师的关系是分布式，一个配菜师也忙不过来了，又请了个配菜师，两个配菜师关系是集群。</p>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p> 「如果这篇文章对你有用,请随意打赏」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="https://like-ycy.github.io"><img src="/img/favicon.png" />权掌天下 Blog</a></span>
+        
+	        <p class="tip"><i></i><span>如果这篇文章对你有用,请随意打赏</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2020/01/13/why-microservice-gateway/" data-toggle="tooltip" data-placement="top" title=" 为什么微服务一定要有网关？ ">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2020/01/15/why-exec-program/" data-toggle="tooltip" data-placement="top" title=" 为什么执行自己的程序要在前面加./ ">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        <a href="/tags/aliyun" title="aliyun">
+                            aliyun
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/architecture" title="architecture">
+                            architecture
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/cloudnative" title="cloudnative">
+                            cloudnative
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/gitlab" title="gitlab">
+                            gitlab
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/heart" title="heart">
+                            heart
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/http" title="http">
+                            http
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/https" title="https">
+                            https
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/kubernetes" title="kubernetes">
+                            kubernetes
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/linux" title="linux">
+                            linux
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/mesos" title="mesos">
+                            mesos
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/mysql" title="mysql">
+                            mysql
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/network" title="network">
+                            network
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/nginx" title="nginx">
+                            nginx
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/prometheus" title="prometheus">
+                            prometheus
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/python" title="python">
+                            python
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/servicemesh" title="servicemesh">
+                            servicemesh
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/tcp" title="tcp">
+                            tcp
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://github.com/ILIKETWICE">权掌天下-Github</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="权掌天下 Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:15210198546@163.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/6069853748/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/wechat_qrcode.jpg">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ILIKETWICE">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; 权掌天下 Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+</body>
+</html>

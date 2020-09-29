@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="望翔">
+  <meta name="keywords" content="">
+  <title> Nginx的这些妙用，你肯定有不知道的  - 权掌天下 Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>权掌天下</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background" parallax=true
+         style="background: url('https://image.my-blog.wang/header/header.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2019-12-19 00:00">
+      2019年12月19日 凌晨
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      9.6k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      111
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：2020年9月29日 下午
+                
+              </p>
+            
+            <article class="markdown-body">
+              <h1 id="Nginx-简介"><a href="#Nginx-简介" class="headerlink" title="Nginx 简介"></a>Nginx 简介</h1><p>Nginx 是一个免费、开源、高性能、轻量级的 HTTP 和反向代理服务器，也是一个电子邮件（IMAP/POP3）代理服务器，其特点是占有内存少，并发能力强。</p>
+<p>Nginx 由内核和一系列模块组成，内核提供 Web 服务的基本功能，如启用网络协议，创建运行环境，接收和分配客户端请求，处理模块之间的交互。</p>
+<p>Nginx 的各种功能和操作都由模块来实现。Nginx 的模块从结构上分为：</p>
+<ul>
+<li><strong>核心模块：</strong>HTTP 模块、EVENT 模块和 MAIL 模块。</li>
+<li><strong>基础模块：</strong>HTTP Access 模块、HTTP FastCGI 模块、HTTP Proxy 模块和 HTTP Rewrite 模块。</li>
+<li><strong>第三方模块：</strong>HTTP Upstream Request Hash 模块、Notice 模块和 HTTP Access Key 模块及用户自己开发的模块。</li>
+</ul>
+<p>这样的设计使 Nginx 方便开发和扩展，也正因此才使得 Nginx 功能如此强大。</p>
+<p>Nginx 的模块默认编译进 Nginx 中，如果需要增加或删除模块，需要重新编译 Nginx，这一点不如 Apache 的动态加载模块方便。</p>
+<p>如果有需要动态加载模块，可以使用由淘宝网发起的 Web 服务器 Tengine，在 Nginx 的基础上增加了很多高级特性，完全兼容 Nginx，已被国内很多网站采用。</p>
+<p>Nginx 有很多扩展版本：</p>
+<ul>
+<li><p><strong>开源版 nginx.org</strong></p>
+</li>
+<li><p><strong>商业版 NGINX Plus</strong></p>
+</li>
+<li><p><strong>淘宝网发起的 Web 服务器 Tengine</strong></p>
+</li>
+<li><p><strong>基于 Nginx 和 Lua 的 Web 平台 OpenResty</strong></p>
+</li>
+</ul>
+<h1 id="Nginx-作为-Web-服务器"><a href="#Nginx-作为-Web-服务器" class="headerlink" title="Nginx 作为 Web 服务器"></a>Nginx 作为 Web 服务器</h1><p>Web 服务器也称为 WWW（World Wide Web）服务器，主要功能是提供网上信息浏览服务，常常以 B/S（Browser/Server）方式提供服务：</p>
+<ul>
+<li><strong>应用层使用 HTTP 协议。</strong></li>
+<li><strong>HTML 文档格式。</strong></li>
+<li><strong>浏览器统一资源定位器(URL)。</strong></li>
+</ul>
+<p>Nginx 可以作为静态页面的 Web 服务器，同时还支持 CGI 协议的动态语言，比如 Perl、PHP 等，但是不支持 Java。</p>
+<p>Java 程序一般都通过与 Tomcat 配合完成。作为一名 Java 程序员，肯定要理解下 Nginx 和 Tomcat 的区别了。</p>
+<p>Nginx、Apache 和 Tomcat：</p>
+<ul>
+<li><p><strong>Nginx：</strong>由俄罗斯程序员 Igor Sysoev 所开发的轻量级、高并发 HTTP 服务器。</p>
+</li>
+<li><p><strong>Apache HTTP Server Project：</strong>一个 Apache 基金会下的 HTTP 服务项目，和 Nginx 功能类似。</p>
+</li>
+<li><p><strong>Apache Tomcat：</strong>是 Apache 基金会下的另外一个项目，是一个 Application Server。</p>
+<p>更准确的说是一个 Servlet 应用容器，与 Apache HTTP Server 和 Nginx 相比，Tomcat 能够动态的生成资源并返回到客户端。</p>
+</li>
+</ul>
+<p>Apache HTTP Server 和 Nginx 本身不支持生成动态页面，但它们可以通过其他模块来支持（例如通过 Shell、PHP、Python 脚本程序来动态生成内容）。</p>
+<p>一个 HTTP Server 关心的是 HTTP 协议层面的传输和访问控制，所以在 Apache/Nginx 上你可以看到代理、负载均衡等功能。</p>
+<p>客户端通过 HTTP Server 访问服务器上存储的资源（HTML 文件、图片文件等等）。</p>
+<p>通过 CGI 技术，也可以将处理过的内容通过 HTTP Server 分发，但是一个 HTTP Server 始终只是把服务器上的文件如实的通过 HTTP 协议传输给客户端。</p>
+<p>而应用服务器，则是一个应用执行的容器。它首先需要支持开发语言的运行（对于 Tomcat 来说，就是 Java），保证应用能够在应用服务器上正常运行。</p>
+<p>其次，需要支持应用相关的规范，例如类库、安全方面的特性。对于 Tomcat 来说，就是需要提供 JSP/Sevlet 运行需要的标准类库、Interface 等。</p>
+<p>为了方便，应用服务器往往也会集成 HTTP Server 的功能，但是不如专业的 HTTP Server 那么强大。</p>
+<p>所以应用服务器往往是运行在 HTTP Server 的背后，执行应用，将动态的内容转化为静态的内容之后，通过 HTTP Server 分发到客户端。</p>
+<h2 id="正向代理"><a href="#正向代理" class="headerlink" title="正向代理"></a>正向代理</h2><p><strong>正向代理：</strong>如果把局域网外的 Internet 想象成一个巨大的资源库，则局域网中的客户端要访问 Internet，则需要通过代理服务器来访问，这种代理服务就称为正向代理。</p>
+<p>正向代理“代理”的是客户端。比如你想去 Google 看个“动作片”，可国内不允许呀，就需要找翻墙代理，这个就是所谓的“正向代理”。</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-19/1.png" srcset="/img/loading.gif" alt="avatar"></p>
+<h2 id="反向代理与负载均衡"><a href="#反向代理与负载均衡" class="headerlink" title="反向代理与负载均衡"></a>反向代理与负载均衡</h2><p>反向代理正好与正向代理相反，反向代理是指以代理服务器来接收 Internet 上的连接请求，然后将请求转发到内部网络上的服务器，并将服务器上得到的结果返回给客户端。</p>
+<p>此时代理服务器对外表现就是一个服务器，客户端对代理是无感知的。反向代理“代理”的是服务端。</p>
+<p>再比如，你想本本分分的在“优酷”上看个“爱情片”，youku.com 会把你的请求分发到存放片片的那台机器上，这个就是所谓的“反向代理”。</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-19/2.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p>为什么使用反向代理，原因如下：</p>
+<ul>
+<li><strong>保护和隐藏原始资源服务器</strong></li>
+<li><strong>加密和 SSL 加速</strong></li>
+<li><strong>通过缓存静态资源，加速 Web 请求</strong></li>
+<li><strong>实现负载均衡</strong></li>
+</ul>
+<p><strong>负载均衡：</strong>TODO: 留一个负载均衡详细介绍传送门。</p>
+<p><strong>地址重定向：</strong>Nginx 的 Rewrite 主要的功能就是实现 URL 重写，比如输入 360.com  跳转到了 360.cn，baidu.cn 跳转到了 baidu.com。</p>
+<h2 id="动静分离"><a href="#动静分离" class="headerlink" title="动静分离"></a>动静分离</h2><p>为了加快网站的解析速度，可以把动态页面和静态页面由不同的服务器来解析，加快解析速度，降低原来单个服务器的压力。</p>
+<p>这里指的就是让动态程序（Java、PHP）去访问应用服务器，让缓存、图片、JS、CSS 等去访问 Nginx。</p>
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><p>nginx.conf 配置文件主要分为三部分：</p>
+<ul>
+<li><strong>全局块</strong></li>
+<li><strong>Events 块</strong></li>
+<li><strong>HTTPS 块</strong></li>
+</ul>
+<p>Nginx 配置语法：</p>
+<ul>
+<li>配置文件由指令和指令块构成</li>
+<li>每条指令以分号（;）结尾，指令和参数间以空格符分隔</li>
+<li>指令块以大括号{}将多条指令组织在一起</li>
+<li>include 语句允许组合多个配置文件以提高可维护性</li>
+<li>使用 # 添加注释</li>
+<li>使用 $ 定义变量</li>
+<li>部分指令的参数支持正则表达式</li>
+</ul>
+<h3 id="全局块"><a href="#全局块" class="headerlink" title="全局块"></a>全局块</h3><p>全局配置部分用来配置对整个 Server 都有效的参数。主要会设置一些影响 Nginx 服务器整体运行的配置指令，包括配置运行 Nginx 服务器的用户（组）、允许生成的 Worker Process 数，进程 PID 存放路径、日志存放路径和类型以及配置文件的引入等。</p>
+<p>示例如下：</p>
+<pre><code class="hljs bash">user nobody;
+worker_processes  4;
+error_log  /data/nginx/logs/error.log  notice;</code></pre>
+
+
+
+<h3 id="Events-块"><a href="#Events-块" class="headerlink" title="Events 块"></a>Events 块</h3><p>Events 块涉及的指令主要影响 Nginx 服务器与用户的网络连接，常用的设置包括是否开启对多 Work Process 下的网络连接进行序列化，是否允许同时接收多个网络连接，选取哪种事件驱动模型来处理连接请求，每个 Word Process 可以同时支持的最大连接数等。</p>
+<pre><code class="hljs bash">events &#123;
+    <span class="hljs-comment">#每个 work process 支持的最大连接数为 1024.</span>
+    worker_connections  1024;
+&#125;</code></pre>
+
+
+
+<h3 id="HTTP-块"><a href="#HTTP-块" class="headerlink" title="HTTP 块"></a>HTTP 块</h3><p>这算是 Nginx 服务器配置中最频繁的部分，代理、缓存和日志定义等绝大多数功能和第三方模块的配置都在这里。 需要注意的是：HTTP 块也可以包括 HTTP 全局块、Server 块。</p>
+<p><strong>①HTTP 全局块</strong></p>
+<p>HTTP 全局块配置的指令包括文件引入、MIME-TYPE 定义、日志自定义、连接超时时间、单链接请求数上限等。</p>
+<pre><code class="hljs bash">http &#123;
+    include       mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;
+    keepalive_timeout  65;</code></pre>
+
+<p><strong>②Server 块</strong></p>
+<p>这块和虚拟主机有密切关系，虚拟主机从用户角度看，和一台独立的硬件主机是完全一样的，该技术的产生是为了节省互联网服务器硬件成本。</p>
+<p>每个 HTTP 块可以包括多个 Server 块，而每个 Server 块就相当于一个虚拟主机。</p>
+<p>而每个 Server 块也分为全局 Server 块，以及可以同时包含多个 Locaton 块。</p>
+<p><strong>全局 Server 块：</strong>也被叫做“虚拟服务器”部分，它描述的是一组根据不同server_name指令逻辑分割的资源，这些虚拟服务器响应 HTTP 请求，因此都包含在 HTTP 部分。</p>
+<p>最常见的配置是本虚拟机主机的监听配置和本虚拟主机的名称或 IP 配置。</p>
+<pre><code class="hljs bash">server &#123;
+  listen       80;
+  <span class="hljs-comment">#server_name也支持通配符，*.example.com、www.example.*、.example.com</span>
+  server_name  localhost;
+  <span class="hljs-comment">#charset koi8-r;</span>
+  <span class="hljs-comment">#access_log  logs/host.access.log  main;</span></code></pre>
+
+<p><strong>Location 块：</strong>一个 Server 块可以配置多个 Location 块。</p>
+<p>这块的主要作用是基于 Nginx 服务器接收到的请求字符串（例如 server_name/uri-string），对虚拟主机名称 （也可以是 IP 别名）之外的字符串（例如前面的 /uri-string）进行匹配，对特定的请求进行处理。</p>
+<p>地址定向、数据缓存和应答控制等功能，还有许多第三方模块的配置也在这里进行。</p>
+<p><strong>Location 指令说明：</strong>该指令用于匹配 URL。</p>
+<p>语法如下：</p>
+<pre><code class="hljs nginx"><span class="hljs-attribute">location</span> [ = | <span class="hljs-regexp">~ |</span> <span class="hljs-regexp">~* |</span><span class="hljs-regexp"> ^~]</span> uri&#123;&#125;</code></pre>
+
+<ul>
+<li><strong>= ：</strong>该修饰符使用精确匹配并且终止搜索。</li>
+<li><strong>~：</strong>该修饰符使用区分大小写的正则表达式匹配。</li>
+<li><strong>~*：</strong>该修饰符使用不区分大小写的正则表达式匹配。</li>
+<li><strong>^~：</strong>用于不含正则表达式的 URI 前，要求 Nginx 服务器找到标识 URI 和请求字符串匹配度最高的 Location 后，立即使用此 Location 处理请求，而不再使用 Location 块中的正则 URI 和请求字符串做匹配。</li>
+</ul>
+<p>?&gt;Tip 注意：如果 URI 包含正则表达式，则必须要有 ~ 或者 ~* 标识。</p>
+<p>当一个请求进入时，URI 将会被检测匹配一个最佳的 Location：</p>
+<ul>
+<li>没有正则表达式的 Location 被作为最佳的匹配，独立于含有正则表达式的 Location 顺序。</li>
+<li>在配置文件中按照查找顺序进行正则表达式匹配。在查找到第一个正则表达式匹配之后结束查找。由这个最佳的 Location 提供请求处理。</li>
+</ul>
+<pre><code class="hljs bash">location / &#123;
+    root   html;
+   index  index.html index.htm;
+   &#125;
+
+ <span class="hljs-comment">#error_page  404              /404.html;</span>
+
+ <span class="hljs-comment"># redirect server error pages to the static page /50x.html</span>
+ <span class="hljs-comment">#</span>
+ error_page   500 502 503 504  /50x.html;
+ location = /50x.html &#123;
+     root   html;
+ &#125;
+ location / &#123;
+     <span class="hljs-comment">#try_files指令将会按照给定的参数顺序进行匹配尝试</span>
+     try_files <span class="hljs-variable">$uri</span> <span class="hljs-variable">$uri</span>/ /index.html;
+ &#125;</code></pre>
+
+
+
+<p>nginx.conf 详细配置如下：</p>
+<pre><code class="hljs bash"><span class="hljs-comment">#定义Nginx运行的用户和用户组</span>
+user www www; 
+
+<span class="hljs-comment">#nginx进程数，通常设置成和cpu的数量相等</span>
+worker_processes 4; 
+
+<span class="hljs-comment">#全局错误日志定义类型，[debug | info | notice | warn | error | crit]</span>
+<span class="hljs-comment">#error_log  /data/nginx/logs/error.log;</span>
+<span class="hljs-comment">#error_log  /data/nginx/logs/error.log  notice;</span>
+
+<span class="hljs-comment">#日志文件存放路径 access_log path [format [buffer=size | off]]</span>
+access_log /data/nginx/logs/lazyegg.com/web/access.log combinedio;
+
+<span class="hljs-comment">#进程pid文件</span>
+<span class="hljs-comment">#pid        logs/nginx.pid;</span>
+
+<span class="hljs-comment">#指定进程可以打开的最大描述符：数目</span>
+<span class="hljs-comment">#工作模式与连接数上限</span>
+<span class="hljs-comment">##这个指令是指当一个nginx进程打开的最多文件描述符数目，理论值应该是最多打开文件数（ulimit -n）与nginx进程数相除，但是nginx分配请求并不是那么均匀，所以最好与ulimit -n 的值保持一致。</span>
+<span class="hljs-comment">#这是因为nginx调度时分配请求到进程并不是那么的均衡，所以假如填写10240，总并发量达到3-4万时就有进程可能超过10240了，这时会返回502错误。</span>
+worker_rlimit_nofile 65535;
+
+<span class="hljs-comment">#################################  events  ###############################</span>
+events &#123;
+    <span class="hljs-comment">#参考事件模型，use [ kqueue | rtsig | epoll | /dev/poll | select | poll ]; epoll模型</span>
+    use epoll
+    <span class="hljs-comment">#单个进程最大连接数（最大连接数=连接数+进程数）</span>
+    worker_connections  1024;
+
+    <span class="hljs-comment">#keepalive 超时时间</span>
+    keepalive_timeout 60;
+
+    <span class="hljs-comment">#客户端请求头部的缓冲区大小。</span>
+    client_header_buffer_size 4k;
+
+    <span class="hljs-comment">#这个将为打开文件指定缓存，默认是没有启用的，max指定缓存数量，建议和打开文件数一致，inactive是指经过多长时间文件没被请求后删除缓存。</span>
+    open_file_cache max=65535 inactive=60s;
+    <span class="hljs-comment">#这个是指多长时间检查一次缓存的有效信息。</span>
+    open_file_cache_valid 80s;
+        <span class="hljs-comment">#open_file_cache指令中的inactive参数时间内文件的最少使用次数，如果超过这个数字，文件描述符一直是在缓存中打开的，如上例，如果有一个文件在inactive时间内一次没被使用，它将被移除。</span>
+    open_file_cache_min_uses 1;
+
+    <span class="hljs-comment">#语法:open_file_cache_errors on | off 默认值:open_file_cache_errors off 使用字段:http, server, location 这个指令指定是否在搜索一个文件是记录cache错误.</span>
+    open_file_cache_errors on;
+&#125;
+
+<span class="hljs-comment">##############################   http    ##################################</span>
+
+<span class="hljs-comment">#设定http服务器，利用它的反向代理功能提供负载均衡支持</span>
+http&#123;
+    <span class="hljs-comment">#文件扩展名与文件类型映射表</span>
+    include mime.types;
+
+    <span class="hljs-comment">#默认文件类型</span>
+    default_type application/octet-stream;
+
+    <span class="hljs-comment">#默认编码</span>
+    charset utf-8;
+
+    <span class="hljs-comment">#服务器名字的hash表大小</span>
+    server_names_hash_bucket_size 128;
+
+    <span class="hljs-comment">#客户端请求头部的缓冲区大小。</span>
+    client_header_buffer_size 32k;
+
+    <span class="hljs-comment">#客户请求头缓冲大小。</span>
+    large_client_header_buffers 4 64k;
+
+    <span class="hljs-comment">#允许客户端请求的最大单个文件字节数</span>
+    client_max_body_size 8m;
+
+    <span class="hljs-comment">#开启高效文件传输模式，sendfile指令指定nginx是否调用sendfile函数来输出文件，对于普通应用设为 on，如果用来进行下载等应用磁盘IO重负载应用，可设置为off，以平衡磁盘与网络I/O处理速度，降低系统的负载。注意：如果图片显示不正常把这个改成off。</span>
+    sendfile on;
+
+    <span class="hljs-comment">#开启目录列表访问，适合下载服务器，默认关闭。</span>
+    autoindex on;
+
+    <span class="hljs-comment">#此选项允许或禁止使用socke的TCP_CORK的选项，此选项仅在使用sendfile的时候使用</span>
+    tcp_nopush on;
+
+    tcp_nodelay on;
+
+    <span class="hljs-comment">#长连接超时时间，单位是秒</span>
+    keepalive_timeout 120;
+
+    <span class="hljs-comment">#FastCGI相关参数是为了改善网站的性能：减少资源占用，提高访问速度。下面参数看字面意思都能理解。</span>
+    fastcgi_connect_timeout 300;
+    fastcgi_send_timeout 300;
+    fastcgi_read_timeout 300;
+    fastcgi_buffer_size 64k;
+    fastcgi_buffers 4 64k;
+    fastcgi_busy_buffers_size 128k;
+    fastcgi_temp_file_write_size 128k;
+
+    <span class="hljs-comment">#gzip模块设置</span>
+    gzip on; <span class="hljs-comment">#开启gzip压缩输出</span>
+    gzip_min_length 1k;    <span class="hljs-comment">#最小压缩文件大小</span>
+    gzip_buffers 4 16k;    <span class="hljs-comment">#压缩缓冲区</span>
+    gzip_http_version 1.0; <span class="hljs-comment">#压缩版本（默认1.1，前端如果是squid2.5请使用1.0）</span>
+    gzip_comp_level 2;     <span class="hljs-comment">#压缩等级</span>
+    gzip_types text/plain application/x-javascript text/css application/xml;    <span class="hljs-comment">#压缩类型，默认就已经包含textml，所以下面就不用再写了，写上去也不会有问题，但是会有一个warn。</span>
+    gzip_vary on;
+
+    <span class="hljs-comment">#开启限制IP连接数的时候需要使用</span>
+    <span class="hljs-comment">#limit_zone crawler $binary_remote_addr 10m;</span>
+
+        <span class="hljs-comment">#负载均衡配置</span>
+    upstream lazyegg.net &#123;
+
+        <span class="hljs-comment">#upstream的负载均衡，weight是权重，可以根据机器配置定义权重。weigth参数表示权值，权值越高被分配到的几率越大。</span>
+        server 192.168.80.121:80 weight=3;
+        server 192.168.80.122:80 weight=2;
+        server 192.168.80.123:80 weight=3;
+
+        <span class="hljs-comment">#nginx的upstream目前支持4种方式的分配</span>
+        <span class="hljs-comment">#1、轮询（默认）</span>
+        <span class="hljs-comment">#每个请求按时间顺序逐一分配到不同的后端服务器，如果后端服务器down掉，能自动剔除。</span>
+        <span class="hljs-comment">#2、weight</span>
+        <span class="hljs-comment">#指定轮询几率，weight和访问比率成正比，用于后端服务器性能不均的情况。</span>
+        <span class="hljs-comment">#例如：</span>
+        <span class="hljs-comment">#upstream bakend &#123;</span>
+        <span class="hljs-comment">#    server 192.168.0.14 weight=10;</span>
+        <span class="hljs-comment">#    server 192.168.0.15 weight=10;</span>
+        <span class="hljs-comment">#&#125;</span>
+        <span class="hljs-comment">#2、ip_hash</span>
+        <span class="hljs-comment">#每个请求按访问ip的hash结果分配，这样每个访客固定访问一个后端服务器，可以解决session的问题。</span>
+        <span class="hljs-comment">#例如：</span>
+        <span class="hljs-comment">#upstream bakend &#123;</span>
+        <span class="hljs-comment">#    ip_hash;</span>
+        <span class="hljs-comment">#    server 192.168.0.14:88;</span>
+        <span class="hljs-comment">#    server 192.168.0.15:80;</span>
+        <span class="hljs-comment">#&#125;</span>
+        <span class="hljs-comment">#3、fair（第三方）</span>
+        <span class="hljs-comment">#按后端服务器的响应时间来分配请求，响应时间短的优先分配。</span>
+        <span class="hljs-comment">#upstream backend &#123;</span>
+        <span class="hljs-comment">#    server server1;</span>
+        <span class="hljs-comment">#    server server2;</span>
+        <span class="hljs-comment">#    fair;</span>
+        <span class="hljs-comment">#&#125;</span>
+        <span class="hljs-comment">#4、url_hash（第三方）</span>
+        <span class="hljs-comment">#按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，后端服务器为缓存时比较有效。</span>
+        <span class="hljs-comment">#例：在upstream中加入hash语句，server语句中不能写入weight等其他的参数，hash_method是使用的hash算法</span>
+        <span class="hljs-comment">#upstream backend &#123;</span>
+        <span class="hljs-comment">#    server squid1:3128;</span>
+        <span class="hljs-comment">#    server squid2:3128;</span>
+        <span class="hljs-comment">#    hash $request_uri;</span>
+        <span class="hljs-comment">#    hash_method crc32;</span>
+        <span class="hljs-comment">#&#125;</span>
+
+        <span class="hljs-comment">#tips:</span>
+        <span class="hljs-comment">#upstream bakend&#123;#定义负载均衡设备的Ip及设备状态&#125;&#123;</span>
+        <span class="hljs-comment">#    ip_hash;</span>
+        <span class="hljs-comment">#    server 127.0.0.1:9090 down;</span>
+        <span class="hljs-comment">#    server 127.0.0.1:8080 weight=2;</span>
+        <span class="hljs-comment">#    server 127.0.0.1:6060;</span>
+        <span class="hljs-comment">#    server 127.0.0.1:7070 backup;</span>
+        <span class="hljs-comment">#&#125;</span>
+        <span class="hljs-comment">#在需要使用负载均衡的server中增加 proxy_pass http://bakend/;</span>
+
+        <span class="hljs-comment">#每个设备的状态设置为:</span>
+        <span class="hljs-comment">#1.down表示单前的server暂时不参与负载</span>
+        <span class="hljs-comment">#2.weight为weight越大，负载的权重就越大。</span>
+        <span class="hljs-comment">#3.max_fails：允许请求失败的次数默认为1.当超过最大次数时，返回proxy_next_upstream模块定义的错误</span>
+        <span class="hljs-comment">#4.fail_timeout:max_fails次失败后，暂停的时间。</span>
+        <span class="hljs-comment">#5.backup： 其它所有的非backup机器down或者忙的时候，请求backup机器。所以这台机器压力会最轻。</span>
+
+        <span class="hljs-comment">#nginx支持同时设置多组的负载均衡，用来给不用的server来使用。</span>
+        <span class="hljs-comment">#client_body_in_file_only设置为On 可以讲client post过来的数据记录到文件中用来做debug</span>
+        <span class="hljs-comment">#client_body_temp_path设置记录文件的目录 可以设置最多3层目录</span>
+        <span class="hljs-comment">#location对URL进行匹配.可以进行重定向或者进行新的代理 负载均衡</span>
+    &#125;
+
+       <span class="hljs-comment">#虚拟主机的配置</span>
+    server &#123;
+        <span class="hljs-comment">#监听端口</span>
+        listen 80;
+
+        <span class="hljs-comment">#域名可以有多个，用空格隔开</span>
+        server_name lazyegg.net;
+        <span class="hljs-comment">#默认入口文件名称</span>
+        index index.html index.htm index.php;
+        root /data/www/lazyegg;
+
+        <span class="hljs-comment">#对******进行负载均衡</span>
+        location ~ .*.(php|php5)?$
+        &#123;
+            fastcgi_pass 127.0.0.1:9000;
+            fastcgi_index index.php;
+            include fastcgi.conf;
+        &#125;
+
+        <span class="hljs-comment">#图片缓存时间设置</span>
+        location ~ .*.(gif|jpg|jpeg|png|bmp|swf)$
+        &#123;
+            expires 10d;
+        &#125;
+
+        <span class="hljs-comment">#JS和CSS缓存时间设置</span>
+        location ~ .*.(js|css)?$
+        &#123;
+            expires 1h;
+        &#125;
+
+        <span class="hljs-comment">#日志格式设定</span>
+        <span class="hljs-comment">#$remote_addr与$http_x_forwarded_for用以记录客户端的ip地址；</span>
+        <span class="hljs-comment">#$remote_user：用来记录客户端用户名称；</span>
+        <span class="hljs-comment">#$time_local： 用来记录访问时间与时区；</span>
+        <span class="hljs-comment">#$request： 用来记录请求的url与http协议；</span>
+        <span class="hljs-comment">#$status： 用来记录请求状态；成功是200，</span>
+        <span class="hljs-comment">#$body_bytes_sent ：记录发送给客户端文件主体内容大小；</span>
+        <span class="hljs-comment">#$http_referer：用来记录从那个页面链接访问过来的；</span>
+        <span class="hljs-comment">#$http_user_agent：记录客户浏览器的相关信息；</span>
+        <span class="hljs-comment">#通常web服务器放在反向代理的后面，这样就不能获取到客户的IP地址了，通过$remote_add拿到的IP地址是反向代理服务器的iP地址。反向代理服务器在转发请求的http头信息中，可以增加x_forwarded_for信息，用以记录原有客户端的IP地址和原来客户端的请求的服务器地址。</span>
+        log_format access <span class="hljs-string">'$remote_addr - $remote_user [$time_local] "$request" '</span>
+        <span class="hljs-string">'$status $body_bytes_sent "$http_referer" '</span>
+        <span class="hljs-string">'"$http_user_agent" $http_x_forwarded_for'</span>;
+
+        <span class="hljs-comment">#定义本虚拟主机的访问日志</span>
+        access_log  /usr/<span class="hljs-built_in">local</span>/nginx/logs/host.access.log  main;
+        access_log  /usr/<span class="hljs-built_in">local</span>/nginx/logs/host.access.404.log  log404;
+
+        <span class="hljs-comment">#对 "/connect-controller" 启用反向代理</span>
+        location /connect-controller &#123;
+            proxy_pass http://127.0.0.1:88; <span class="hljs-comment">#请注意此处端口号不能与虚拟主机监听的端口号一样（也就是server监听的端口）</span>
+            proxy_redirect off;
+            proxy_set_header X-Real-IP <span class="hljs-variable">$remote_addr</span>;
+
+            <span class="hljs-comment">#后端的Web服务器可以通过X-Forwarded-For获取用户真实IP</span>
+            proxy_set_header X-Forwarded-For <span class="hljs-variable">$proxy_add_x_forwarded_for</span>;
+
+            <span class="hljs-comment">#以下是一些反向代理的配置，可选。</span>
+            proxy_set_header Host <span class="hljs-variable">$host</span>;
+
+            <span class="hljs-comment">#允许客户端请求的最大单文件字节数</span>
+            client_max_body_size 10m;
+
+            <span class="hljs-comment">#缓冲区代理缓冲用户端请求的最大字节数，</span>
+            <span class="hljs-comment">#如果把它设置为比较大的数值，例如256k，那么，无论使用firefox还是IE浏览器，来提交任意小于256k的图片，都很正常。如果注释该指令，使用默认的client_body_buffer_size设置，也就是操作系统页面大小的两倍，8k或者16k，问题就出现了。</span>
+            <span class="hljs-comment">#无论使用firefox4.0还是IE8.0，提交一个比较大，200k左右的图片，都返回500 Internal Server Error错误</span>
+            client_body_buffer_size 128k;
+
+            <span class="hljs-comment">#表示使nginx阻止HTTP应答代码为400或者更高的应答。</span>
+            proxy_intercept_errors on;
+
+            <span class="hljs-comment">#后端服务器连接的超时时间_发起握手等候响应超时时间</span>
+            <span class="hljs-comment">#nginx跟后端服务器连接超时时间(代理连接超时)</span>
+            proxy_connect_timeout 90;
+
+            <span class="hljs-comment">#后端服务器数据回传时间(代理发送超时)</span>
+            <span class="hljs-comment">#后端服务器数据回传时间_就是在规定时间之内后端服务器必须传完所有的数据</span>
+            proxy_send_timeout 90;
+
+            <span class="hljs-comment">#连接成功后，后端服务器响应时间(代理接收超时)</span>
+            <span class="hljs-comment">#连接成功后_等候后端服务器响应时间_其实已经进入后端的排队之中等候处理（也可以说是后端服务器处理请求的时间）</span>
+            proxy_read_timeout 90;
+
+            <span class="hljs-comment">#设置代理服务器（nginx）保存用户头信息的缓冲区大小</span>
+            <span class="hljs-comment">#设置从被代理服务器读取的第一部分应答的缓冲区大小，通常情况下这部分应答中包含一个小的应答头，默认情况下这个值的大小为指令proxy_buffers中指定的一个缓冲区的大小，不过可以将其设置为更小</span>
+            proxy_buffer_size 4k;
+
+            <span class="hljs-comment">#proxy_buffers缓冲区，网页平均在32k以下的设置</span>
+            <span class="hljs-comment">#设置用于读取应答（来自被代理服务器）的缓冲区数目和大小，默认情况也为分页大小，根据操作系统的不同可能是4k或者8k</span>
+            proxy_buffers 4 32k;
+
+            <span class="hljs-comment">#高负荷下缓冲大小（proxy_buffers*2）</span>
+            proxy_busy_buffers_size 64k;
+
+            <span class="hljs-comment">#设置在写入proxy_temp_path时数据的大小，预防一个工作进程在传递文件时阻塞太长</span>
+            <span class="hljs-comment">#设定缓存文件夹大小，大于这个值，将从upstream服务器传</span>
+            proxy_temp_file_write_size 64k;
+        &#125;
+
+        <span class="hljs-comment">#本地动静分离反向代理配置</span>
+        <span class="hljs-comment">#所有jsp的页面均交由tomcat或resin处理</span>
+        location ~ .(jsp|jspx|<span class="hljs-keyword">do</span>)?$ &#123;
+            proxy_set_header Host <span class="hljs-variable">$host</span>;
+            proxy_set_header X-Real-IP <span class="hljs-variable">$remote_addr</span>;
+            proxy_set_header X-Forwarded-For <span class="hljs-variable">$proxy_add_x_forwarded_for</span>;
+            proxy_pass http://127.0.0.1:8080;
+        &#125;
+    &#125;
+&#125;</code></pre>
+
+
+
+<h2 id="Nginx-配置：负载均衡"><a href="#Nginx-配置：负载均衡" class="headerlink" title="Nginx 配置：负载均衡"></a>Nginx 配置：负载均衡</h2><p>随着互联网信息的爆炸性增长，负载均衡（Load Balance）已经不再是一个很陌生的话题。</p>
+<p>顾名思义，负载均衡即是将负载分摊到不同的服务单元，既保证服务的可用性，又保证响应足够快，给用户很好的体验。</p>
+<p>快速增长的访问量和数据流量催生了各式各样的负载均衡产品，很多专业的负载均衡硬件提供了很好的功能，但却价格不菲。</p>
+<p>这使得负载均衡软件大受欢迎，Nginx 就是其中的一个，在 Linux 下有 Nginx、LVS、Haproxy 等等服务可以提供负载均衡服务。</p>
+<p>Nginx 的负载均衡是 Proxy 模块和 Upstream 模块搭配实现的。Upstream模块将会启用一个新的配置区段，在该区段定义了一组上游服务器。</p>
+<p><strong>实现效果：配置负载均衡。</strong></p>
+<p>①同时启动两个 Tomcat（为了方便验证效果，修改 Tomcat 端口号的同时，顺便将 Tomcat 默认欢迎页面 apache-tomcat-9.0.29/webapps/ROOR 目录下的 index.jsp 修改下，看下 8081 欢迎页的“蛋蛋”没）：</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-19/3.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p>②修改 nginx.conf：</p>
+<pre><code class="hljs bash">http &#123;
+    upstream myserver &#123;
+        server localhost:8080;
+        server localhost:8081;
+    &#125;
+    server &#123;
+        listen 80;
+        location / &#123;
+            proxy_pass http://myserver;
+        &#125;
+    &#125;
+&#125;</code></pre>
+
+
+
+<p>③重启 Nginx，验证效果（默认轮询的方式，每次打开新窗口，8080 和 8081 会交替出现，同一个窗口的话需要关闭浏览器缓存)。</p>
+<p>Nginx 分配策略：</p>
+<ul>
+<li>轮询（默认） 每个请求按时间顺序逐一分配到不同的后端服务器，如果后端服务器 Down 掉，能自动剔除。</li>
+<li>Weight 代表权重，默认为 1，权重越高被分配的客户端越多，指定轮询几率，Weight 和访问比率成正比，用于后端服务器性能不均的情况。</li>
+</ul>
+<p>例如：</p>
+<pre><code class="hljs bash">upstream server_pool&#123; 
+   server 192.168.5.21 weight=10; 
+   server 192.168.5.22 weight=10; &#125;</code></pre>
+
+<p>ip_hash 每个请求按访问 IP 的 Hash 结果分配，这样每个访客固定访问一个后端服务器，可以解决 Session 的问题。 </p>
+<p>例如：</p>
+<pre><code class="hljs bash">upstream server_pool&#123;
+    ip_hash; server 192.168.5.21:80; 
+    server 192.168.5.22:80; 
+&#125;</code></pre>
+
+<p>Fair（第三方） 按后端服务器的响应时间来分配请求，响应时间短的优先分配。</p>
+<pre><code class="hljs bash">upstream server_pool&#123; 
+    server 192.168.5.21:80;
+    server 192.168.5.22:80; fair;
+ &#125;</code></pre>
+
+
+
+<h2 id="Nginx-配置：动静分离"><a href="#Nginx-配置：动静分离" class="headerlink" title="Nginx 配置：动静分离"></a>Nginx 配置：动静分离</h2><p>Nginx 动静分离简单来说就是把动态跟静态请求分开，不能理解成只是单纯的把动态页面和静态页面物理分离。</p>
+<p>严格意义上说应该是动态请求跟静态请求分开，可以理解成使用 Nginx 处理静态页面，Tomcat 处理动态页面。</p>
+<p>动静分离从目前实现角度来讲大致分为两种：</p>
+<ul>
+<li>纯粹把静态文件独立成单独的域名，放在独立的服务器上，也是目前主流推崇的方案； </li>
+<li>动态跟静态文件混合在一起发布，通过 Nginx 来分开。 </li>
+</ul>
+<p>通过 Location 指定不同的后缀名实现不同的请求转发。通过 Expires 参数设置，可以使浏览器缓存过期时间，减少与服务器之前的请求和流量。</p>
+<p><strong>具体 Expires 定义：</strong>是给一个资源设定一个过期时间，也就是说无需去服务端验证，直接通过浏览器自身确认是否过期即可， 所以不会产生额外的流量。</p>
+<p>此种方法非常适合不经常变动的资源（如果经常更新的文件， 不建议使用 Expires 来缓存）。</p>
+<p>我这里设置 3d，表示在这 3 天之内访问这个 URL，发送一个请求，比对服务器该文件最后更新时间没有变化，则不会从服务器抓取，返回状态码 304，如果有修改，则直接从服务器重新下载，返回状态码 200。</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-19/4.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p>①服务器找个目录存放自己的静态文件：</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-19/12.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p>②修改 nginx.conf：</p>
+<pre><code class="hljs bash">server &#123;
+    listen       80;
+    server_name  localhost;
+    location /static/ &#123;
+        root   /usr/data/www;
+    &#125;
+    location /image/ &#123;
+         root /usr/data/;
+         autoindex on;
+    &#125;</code></pre>
+<p>③./nginx -s reload，验证效果：</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-19/5.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p>添加监听端口、访问名字重点是添加 Location，最后检查 Nginx 配置是否正确即可，然后测试动静分离是否成功，只需要删除后端 Tomcat 服务器上的某个静态文件，查看是否能访问，如果可以访问说明静态资源 Nginx 直接返回了，不走后端 Tomcat 服务器。</p>
+<h2 id="Nginx-的-Rewrite"><a href="#Nginx-的-Rewrite" class="headerlink" title="Nginx 的 Rewrite"></a>Nginx 的 Rewrite</h2><p>Rewrite 是 Nginx 服务器提供的一个重要的功能，它可以实现 URL 重写和重定向功能。</p>
+<p>场景如下：</p>
+<ul>
+<li>URL 访问跳转，支持开发设计。页面跳转、兼容性支持（新旧版本更迭）、展示效果（网址精简）等</li>
+<li>SEO 优化（Nginx 伪静态的支持）</li>
+<li>后台维护、流量转发等</li>
+<li>安全（动态界面进行伪装）</li>
+</ul>
+<p>该指令是通过正则表达式的使用来改变 URI。可以同时存在一个或多个指令。需要按照顺序依次对 URL 进行匹配和处理。</p>
+<p>该指令可以在 Server 块或 Location 块中配置，其基本语法结构如下：</p>
+<pre><code class="hljs bash">rewrite regex replacement [flag];</code></pre>
+
+<p>①采用反向代理 Demo2 中的例子，修改 nginx.conf（只多加了一行 Rewrite）：</p>
+<pre><code class="hljs bash">server &#123;
+        listen       80;
+        server_name  localhost;
+
+        location /java/ &#123;
+            proxy_pass http://127.0.0.1:8080;
+            rewrite ^/java /egg/ redirect;
+        &#125;
+
+        location /egg/ &#123;
+            proxy_pass http://127.0.0.1:8081;
+        &#125;
+&#125;</code></pre>
+
+<p>②./nginx -s reload，验证效果（输入 ip/java/ 被重定向到了 egg）：</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-19/6.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p>Rewrite 指令可以在 Server 块或 Location 块中配置，其基本语法结构如下：</p>
+<pre><code class="hljs abnf">rewrite regex replacement [flag]<span class="hljs-comment">;</span></code></pre>
+
+<ul>
+<li><strong>rewrite 的含义：</strong>该指令是实现 URL 重写的指令。</li>
+<li><strong>regex 的含义：</strong>用于匹配 URI 的正则表达式。</li>
+<li><strong>replacement：</strong>将 regex 正则匹配到的内容替换成 replacement。</li>
+<li><strong>flag：</strong>flag 标记。</li>
+</ul>
+<p>flag 有如下值：</p>
+<ul>
+<li><strong>last：</strong>本条规则匹配完成后，继续向下匹配新的 Location URI 规则。(不常用)</li>
+<li><strong>break：</strong>本条规则匹配完成即终止，不再匹配后面的任何规则(不常用)。</li>
+<li><strong>redirect：</strong>返回 302 临时重定向，浏览器地址会显示跳转新的 URL 地址。</li>
+<li><strong>permanent：</strong>返回 301 永久重定向。浏览器地址会显示跳转新的 URL 地址。</li>
+</ul>
+<pre><code class="hljs nginx"><span class="hljs-attribute">rewrite</span><span class="hljs-regexp"> ^/(.*)</span> http://www.360.cn/<span class="hljs-variable">$1</span> <span class="hljs-literal">permanent</span>;</code></pre>
+
+<h2 id="Nginx-高可用"><a href="#Nginx-高可用" class="headerlink" title="Nginx 高可用"></a>Nginx 高可用</h2><p>如果将 Web 服务器集群当做一个城池，那么负载均衡服务器就相当于城门。如果“城门”关闭了，与外界的通道就断了。</p>
+<p>如果只有一台 Nginx 负载服务器，当故障宕机的时候，就会导致整个网站无法访问。</p>
+<p>所以我们需要两台以上 Nginx 来实现故障转移和高可用：</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-19/7.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p><strong>那么如何配置高可用?</strong></p>
+<p><strong>①双机热备方案</strong></p>
+<p>这种方案是国内企业中最为普遍的一种高可用方案，双机热备其实就是指一台服务器在提供服务，另一台为某服务的备用状态，当一台服务器不可用另外一台就会顶替上去。</p>
+<p>Keepalived 是什么？Keepalived 软件起初是专为 LVS 负载均衡软件设计的，用来管理并监控 LVS 集群系统中各个服务节点的状态。</p>
+<p>后来又加入了可以实现高可用的 VRRP (Virtual Router Redundancy Protocol ，虚拟路由器冗余协议）功能。</p>
+<p>因此，Keepalived 除了能够管理 LVS 软件外，还可以作为其他服务（例如：Nginx、Haproxy、MySQL 等）的高可用解决方案软件。</p>
+<p><strong>②故障转移机制</strong></p>
+<p>Keepalived 高可用服务之间的故障切换转移，是通过 VRRP 来实现的。</p>
+<p>在 Keepalived服务正常工作时，主 Master 节点会不断地向备节点发送（多播的方式）心跳消息，用以告诉备 Backup 节点自己还活着。</p>
+<p>当主 Master 节点发生故障时，就无法发送心跳消息，备节点也就因此无法继续检测到来自主  Master 节点的心跳了，于是调用自身的接管程序，接管主 Master 节点的 IP 资源及服务。</p>
+<p>而当主 Master节点恢复时，备 Backup 节点又会释放主节点故障时自身接管的 IP 资源及服务，恢复到原来的备用角色。</p>
+<p>实现方法如下：</p>
+<p>①准备两台安装 Nginx 和 Keepaliver(yum install keepalived -y)的服务器</p>
+<p>②修改两台服务器上的 /etc/keepalived/keepalived.conf</p>
+<pre><code class="hljs bash"><span class="hljs-comment">#主机</span>
+<span class="hljs-comment">#检测脚本</span>
+vrrp_script chk_http_port &#123;
+    script <span class="hljs-string">"/usr/local/src/check_nginx.sh"</span> <span class="hljs-comment">#心跳执行的脚本，检测nginx是否启动</span>
+    interval 2                          <span class="hljs-comment">#（检测脚本执行的间隔，单位是秒）</span>
+    weight 2                            <span class="hljs-comment">#权重</span>
+&#125;
+<span class="hljs-comment">#vrrp 实例定义部分</span>
+vrrp_instance VI_1 &#123;
+    state MASTER            <span class="hljs-comment"># 指定keepalived的角色，MASTER为主，BACKUP为备</span>
+    interface ens33         <span class="hljs-comment"># 当前进行vrrp通讯的网络接口卡(当前centos的网卡) 用ifconfig查看你具体的网卡</span>
+    virtual_router_id 66    <span class="hljs-comment"># 虚拟路由编号，主从要一直</span>
+    priority 100            <span class="hljs-comment"># 优先级，数值越大，获取处理请求的优先级越高</span>
+    advert_int 1            <span class="hljs-comment"># 检查间隔，默认为1s(vrrp组播周期秒数)</span>
+    <span class="hljs-comment">#授权访问</span>
+    authentication &#123;
+        auth_type PASS <span class="hljs-comment">#设置验证类型和密码，MASTER和BACKUP必须使用相同的密码才能正常通信</span>
+        auth_pass 1111
+    &#125;
+    track_script &#123;
+        chk_http_port            <span class="hljs-comment">#（调用检测脚本）</span>
+    &#125;
+    virtual_ipaddress &#123;
+        192.168.16.150            <span class="hljs-comment"># 定义虚拟ip(VIP)，可多设，每行一个</span>
+    &#125;
+&#125;</code></pre>
+
+<pre><code class="hljs bash"><span class="hljs-comment"># 备机</span>
+<span class="hljs-comment">#检测脚本</span>
+vrrp_script chk_http_port &#123;
+    script <span class="hljs-string">"/usr/local/src/check_nginx.sh"</span> <span class="hljs-comment">#心跳执行的脚本，检测nginx是否启动</span>
+    interval 2                          <span class="hljs-comment">#（检测脚本执行的间隔）</span>
+    weight 2                            <span class="hljs-comment">#权重</span>
+&#125;
+<span class="hljs-comment">#vrrp 实例定义部分</span>
+vrrp_instance VI_1 &#123;
+    state BACKUP                        <span class="hljs-comment"># 指定keepalived的角色，MASTER为主，BACKUP为备</span>
+    interface ens33                      <span class="hljs-comment"># 当前进行vrrp通讯的网络接口卡(当前centos的网卡) 用ifconfig查看你具体的网卡</span>
+    virtual_router_id 66                <span class="hljs-comment"># 虚拟路由编号，主从要一直</span>
+    priority 99                         <span class="hljs-comment"># 优先级，数值越大，获取处理请求的优先级越高</span>
+    advert_int 1                        <span class="hljs-comment"># 检查间隔，默认为1s(vrrp组播周期秒数)</span>
+    <span class="hljs-comment">#授权访问</span>
+    authentication &#123;
+        auth_type PASS <span class="hljs-comment">#设置验证类型和密码，MASTER和BACKUP必须使用相同的密码才能正常通信</span>
+        auth_pass 1111
+    &#125;
+    track_script &#123;
+        chk_http_port                   <span class="hljs-comment">#（调用检测脚本）</span>
+    &#125;
+    virtual_ipaddress &#123;
+        192.168.16.150                   <span class="hljs-comment"># 定义虚拟ip(VIP)，可多设，每行一个</span>
+    &#125;
+&#125;</code></pre>
+
+<p>③新建检测脚本(chmod 775 check_nginx.sh)：</p>
+<pre><code class="hljs bash"><span class="hljs-meta">#!/bin/bash</span>
+<span class="hljs-comment">#检测nginx是否启动了</span>
+A=`ps -C nginx --no-header |wc -l`        
+<span class="hljs-keyword">if</span> [ <span class="hljs-variable">$A</span> -eq 0 ];<span class="hljs-keyword">then</span>    <span class="hljs-comment">#如果nginx没有启动就启动nginx                        </span>
+      systemctl start nginx                <span class="hljs-comment">#重启nginx</span>
+      <span class="hljs-keyword">if</span> [ `ps -C nginx --no-header |wc -l` -eq 0 ];<span class="hljs-keyword">then</span>    <span class="hljs-comment">#nginx重启失败，则停掉keepalived服务，进行VIP转移</span>
+              killall keepalived                    
+      <span class="hljs-keyword">fi</span>
+<span class="hljs-keyword">fi</span></code></pre>
+<p>④启动 Nginx 和 Keepalived（systemctl start keepalived.service）</p>
+<p>⑤模拟 Nginx 故障（关闭主服务器 Nginx），验证，仍可以通过配置的虚拟 IP 访问，OK。</p>
+<h1 id="Nginx-原理与优化参数配置"><a href="#Nginx-原理与优化参数配置" class="headerlink" title="Nginx 原理与优化参数配置"></a>Nginx 原理与优化参数配置</h1><p>Nginx 默认采用多进程工作方式，Nginx 启动后，会运行一个 Master 进程和多个 Worker 进程。</p>
+<p>其中 Master 充当整个进程组与用户的交互接口，同时对进程进行监护，管理 Worker 进程来实现重启服务、平滑升级、更换日志文件、配置文件实时生效等功能。</p>
+<p>Worker 用来处理基本的网络事件，Worker 之间是平等的，他们共同竞争来处理来自客户端的请求。</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-19/8.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p><strong>master-workers 的机制的好处：</strong></p>
+<ul>
+<li>可以使用 nginx-s reload 热部署。</li>
+<li>每个 Worker 是独立的进程，不需要加锁，省掉了锁带来的开销。采用独立的进程，可以让互相之间不会影响，一个进程退出后，其他进程还在工作，服务不会中断，Master 进程则很快启动新的 Worker 进程。</li>
+</ul>
+<p><strong>需要设置多少个 Worker？</strong>Nginx 同 Redis 类似都采用了 IO 多路复用机制，每个 Worker 都是一个独立的进程，但每个进程里只有一个主线程，通过异步非阻塞的方式来处理请求，即使是成千上万个请求也不在话下。</p>
+<p>每个 Worker 的线程可以把一个 CPU 的性能发挥到极致。所以 Worker 数和服务器的 CPU 数相等是最为适宜的。设少了会浪费 CPU，设多了会造成 CPU 频繁切换上下文带来的损耗。</p>
+<pre><code class="hljs bash"><span class="hljs-comment">#设置 worker 数量。</span>
+ worker_processes 4 
+<span class="hljs-comment">#work 绑定 cpu(4 work 绑定 4cpu)。 </span>
+ worker_cpu_affinity 0001 0010 0100 1000 
+<span class="hljs-comment">#work 绑定 cpu (4 work 绑定 8cpu 中的 4 个) 。 </span>
+ worker_cpu_affinity 0000001 00000010 00000100 00001000</code></pre>
+
+
+
+<p><strong>连接数 worker_connection：</strong>这个值是表示每个 Worker 进程所能建立连接的最大值。</p>
+<p>所以，一个 Nginx 能建立的最大连接数，应该是 worker_connections*worker_processes。</p>
+<p>当然，这里说的是最大连接数，对于 HTTP 请 求 本 地 资 源 来 说 ， 能 够 支 持 的 最 大 并 发 数 量 是 worker_connections*worker_processes，如果是支持 http1.1 的浏览器每次访问要占两个连接。</p>
+<p>所以普通的静态访问最大并发数是：worker_connections*worker_processes /2。</p>
+<p>而如果是 HTTP 作为反向代理来说，最大并发数量应该是 worker_connections*worker_processes/4。</p>
+<p>因为作为反向代理服务器，每个并发会建立与客户端的连接和与后端服务的连接，会占用两个连接。</p>
+<p><strong>Nginx 请求处理流程如下图：</strong></p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-19/9.png" srcset="/img/loading.gif" alt="avatar"></p>
+<h1 id="Nginx-模块开发"><a href="#Nginx-模块开发" class="headerlink" title="Nginx 模块开发"></a>Nginx 模块开发</h1><p>由于 Nginx 的模块化特性，所以可以支持模块配置，也可以自定义模块，Nginx 的模块开发，程序员目前还不需要太深入。</p>
+<p>Nginx 模块分类如下图：</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-19/10.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p><strong>Nginx配置选项，解压 Nginx 后的配置操作示例：</strong></p>
+<pre><code class="hljs jboss-cli"><span class="hljs-string">./configure</span> <span class="hljs-params">--prefix=/usr/local/nginx</span> <span class="hljs-params">--with-http_stub_status_module</span> <span class="hljs-params">--with-pcre</span>  <span class="hljs-params">--with-http_ssl_module</span></code></pre>
+
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-19/11.png" srcset="/img/loading.gif" alt="avatar"></p>
+<h1 id="Nginx-面试题"><a href="#Nginx-面试题" class="headerlink" title="Nginx 面试题"></a>Nginx 面试题</h1><p>①Nginx 功能，你们项目中用到的 Nginx？</p>
+<ul>
+<li><strong>反向代理服务器</strong></li>
+<li><strong>实现负载均衡</strong></li>
+<li><strong>做静态资源服务器</strong></li>
+<li><strong>作为 HTTP Server</strong></li>
+</ul>
+<p>②Nginx 常用命令有哪些？</p>
+<pre><code class="hljs bash">启动nginx    ./sbin/nginx
+停止nginx    ./sbin/nginx -s stop   ./sbin/nginx -s quit
+重载配置      ./sbin/nginx -s reload(平滑重启) service nginx reload
+重载指定配置文件    ./sbin/nginx -c  /usr/<span class="hljs-built_in">local</span>/nginx/conf/nginx.conf
+查看nginx版本  ./sbin/nginx -v
+检查配置文件是否正确  ./sbin/nginx -t
+显示帮助信息  ./sbin/nginx  -h</code></pre>
+
+<p>③Nginx 常用配置？</p>
+<pre><code class="hljs bash">worker_processes 4;   <span class="hljs-comment">#工作进程数</span>
+work_connections 65535; <span class="hljs-comment">#每个进程的并发能力</span>
+error_log  /data/nginx/logs/error.log;  <span class="hljs-comment">#错误日志</span></code></pre>
+
+<p>④Nginx 是如何实现高并发的？</p>
+<p>Nginx 采用的是多进程（单线程）&amp;多路 IO 复用模型，异步，非阻塞。</p>
+<p>一个主进程 Master，多个工作进程 Worker，每个工作进程可以处理多个请求 ，Master 进程主要负责收集、分发请求。</p>
+<p>每当一个请求过来时，Master 就拉起一个 Worker 进程负责处理这个请求。同时 Master 进程也负责监控 Woker 的状态，保证高可靠性。</p>
+<p>在 Nginx 中的 Work 进程中，为了应对高并发场景，采取了 Reactor 模型（也就是 I/O 多路复用，NIO）。</p>
+<p><strong>I/O 多路复用模型：</strong>在 I/O 多路复用模型中，最重要的系统调用函数就是 Select（其他的还有 epoll 等）。</p>
+<p>该方法能够同时监控多个文件描述符的可读可写情况（每一个网络连接其实都对应一个文件描述符），当其中的某些文件描述符可读或者可写时，Select 方法就会返回可读以及可写的文件描述符个数。</p>
+<p>Nginx Work 进程使用 I/O 多路复用模块同时监听多个 FD（文件描述符），当 Accept、Read、Write 和 Close 事件产生时，操作系统就会回调 FD 绑定的事件处理器。</p>
+<p>这时候 Work 进程再去处理相应事件，而不是阻塞在某个请求连接上等待。</p>
+<p>这样就可以实现一个进程同时处理多个连接。每一个 Worker 进程通过 I/O 多路复用处理多个连接请求。</p>
+<p>为了减少进程切换（需要系统调用）的性能损耗，一般设置 Worker 进程数量和 CPU 数量一致。</p>
+<p>⑤Nginx 和 Apache 的区别？</p>
+<p>轻量级，同样起 Web 服务，比 Apache 占用更少的内存及资源抗并发，Nginx 处理请求是异步非阻塞的，而 Apache 则是阻塞型的。</p>
+<p>在高并发下 Nginx 能保持低资源低消耗高性能高度模块化的设计，编写模块相对简单，最核心的区别在于 Apache 是同步多进程模型，一个连接对应一个进程；Nginx是异步的，多个连接（万级别）可以对应一个进程。</p>
+<p>⑥Nginx 的 Upstream 支持的负载均衡方式？</p>
+<ul>
+<li><strong>轮询（默认）</strong></li>
+<li><strong>weight：</strong>指定权重</li>
+<li><strong>ip_hash：</strong>每个请求按访问 ip 的 hash 结果分配，这样每个访客固定访问一个后端服务器</li>
+<li><strong>第三方：</strong>fair、url_hash</li>
+</ul>
+<p>⑦Nginx 常见的优化配置有哪些?</p>
+<ul>
+<li><strong>调整 worker_processes：</strong>指 Nginx 要生成的 Worker 数量，最佳实践是每个 CPU 运行 1 个工作进程。</li>
+<li><strong>最大化 worker_connections。</strong></li>
+<li><strong>启用 Gzip 压缩：</strong>压缩文件大小，减少了客户端 HTTP 的传输带宽，因此提高了页面加载速度。</li>
+<li><strong>为静态文件启用缓存。</strong></li>
+<li><strong>禁用 access_logs：</strong>访问日志记录，它记录每个 Nginx 请求，因此消耗了大量 CPU 资源，从而降低了 Nginx 性能。</li>
+</ul>
+
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Nginx/">Nginx</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/12/20/2019-12-20-linux-find/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile"> Linux find命令教程：15个find命令用法 </span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2019/12/18/2019-12-18-prometheus1-architecture/">
+                        <span class="hidden-mobile"> Prometheus 部署架构选择 </span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-md">
+    <div class="container custom post-content mx-auto">
+      <img src="https://octodex.github.com/images/jetpacktocat.png" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        " Nginx的这些妙用，你肯定有不知道的 &nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+  
+  
+    <script>
+      !function (e, t, a) {
+        function r() {
+          for (var e = 0; e < s.length; e++) s[e].alpha <= 0 ? (t.body.removeChild(s[e].el), s.splice(e, 1)) : (s[e].y--, s[e].scale += .004, s[e].alpha -= .013, s[e].el.style.cssText = "left:" + s[e].x + "px;top:" + s[e].y + "px;opacity:" + s[e].alpha + ";transform:scale(" + s[e].scale + "," + s[e].scale + ") rotate(45deg);background:" + s[e].color + ";z-index:99999");
+          requestAnimationFrame(r)
+        }
+
+        function n() {
+          var t = "function" == typeof e.onclick && e.onclick;
+          e.onclick = function (e) {
+            t && t(), o(e)
+          }
+        }
+
+        function o(e) {
+          var a = t.createElement("div");
+          a.className = "heart", s.push({
+            el: a,
+            x: e.clientX - 5,
+            y: e.clientY - 5,
+            scale: 1,
+            alpha: 1,
+            color: c()
+          }), t.body.appendChild(a)
+        }
+
+        function i(e) {
+          var a = t.createElement("style");
+          a.type = "text/css";
+          try {
+            a.appendChild(t.createTextNode(e))
+          } catch (t) {
+            a.styleSheet.cssText = e
+          }
+          t.getElementsByTagName("head")[0].appendChild(a)
+        }
+
+        function c() {
+          return "rgb(" + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + ")"
+        }
+
+        var s = [];
+        e.requestAnimationFrame = e.requestAnimationFrame || e.webkitRequestAnimationFrame || e.mozRequestAnimationFrame || e.oRequestAnimationFrame || e.msRequestAnimationFrame || function (e) {
+          setTimeout(e, 1e3 / 60)
+        }, i(".heart{width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: fixed;}.heart:after{top: -5px;}.heart:before{left: -5px;}"), n(), r()
+      }(window, document);
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="望翔">
+  <meta name="keywords" content="">
+  <title> 迄今为止把同步/异步/阻塞/非阻塞/BIO/NIO/AIO讲的这么清楚的好文章  - 权掌天下 Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>权掌天下</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background" parallax=true
+         style="background: url('https://image.my-blog.wang/header/header.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2020-01-10 00:00">
+      2020年1月10日 凌晨
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      3k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      30
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：2020年6月1日 下午
+                
+              </p>
+            
+            <article class="markdown-body">
+              <p><strong>常规的误区</strong></p>
+<p>假设有一个展示用户详情的需求，分两步，先调用一个HTTP接口拿到详情数据，然后使用适合的视图展示详情数据。</p>
+<p>如果网速很慢，代码发起一个HTTP请求后，就卡住不动了，直到十几秒后才拿到HTTP响应，然后继续往下执行。</p>
+<p>这个时候你问别人，刚刚代码发起的这个请求是不是一个同步请求，对方一定回答是。这是对的，它确实是。</p>
+<p>但你要问它为什么是呢？对方一定是这样回答的，“因为发起请求后，代码就卡住不动了，直到拿到响应后才可以继续往下执行”。</p>
+<p>我相信很多人也都是这样认为的，其实这是不对的，是把因果关系搞反了：</p>
+<p>不是因为代码卡住不动了才叫同步请求，而是因为它是同步请求所以代码才卡住不动了。</p>
+<p>至于为什么能卡住不动，这是由操作系统和CPU决定的：</p>
+<p>因为内核空间里的对应函数会卡住不动，造成用户空间发起的系统调用卡住不动，继而使程序里的用户代码卡住不动了。</p>
+<p>因此卡住不动了只是同步请求的一个副作用，并不能用它来定义同步请求，那该如何定义呢？</p>
+<p><strong>同步和异步</strong></p>
+<p>所谓同步，指的是协同步调。既然叫协同，所以至少要有2个以上的事物存在。协同的结果就是：</p>
+<p>多个事物不能同时进行，必须一个一个的来，上一个事物结束后，下一个事物才开始。</p>
+<p>那当一个事物正在进行时，其它事物都在干嘛呢？</p>
+<p>严格来讲这个并没有要求，但一般都是处于一种“等待”的状态，因为通常后面事物的正常进行都需要依赖前面事物的结果或前面事物正在使用的资源。</p>
+<p>因此，可以认为，同步更希望关注的是从宏观整体来看，多个事物是一种逐个逐个的串行化关系，绝对不会出现交叉的情况。</p>
+<p>所以，自然也不太会去关注某个瞬间某个具体事物是处于一个什么状态。</p>
+<p>把这个理论应用的出神入化的非“排队”莫属。凡是在资源少需求多的场景下都会用到排队。</p>
+<p>比如排队买火车票这件事：</p>
+<p>其实售票大厅更在意的是旅客一个一个的到窗口去买票，因为一次只能卖一张票。</p>
+<p>即使大家一窝蜂的都围上去，还是一次只能卖一张票，何必呢？挤在一起又不安全。</p>
+<p>只是有些人素质太差，非要往上挤，售票大厅迫不得已，采用排队这种形式来达到自己的目的，即一个一个的买票。</p>
+<p>至于每个旅客排队时的状态，是看手机呀还是说话呀，根本不用去在意。</p>
+<p>除了这种由于资源导致的同步外，还存在一种由于逻辑上的先后顺序导致的同步。</p>
+<p>比如，先更新代码，然后再编译，接着再打包。这些操作由于后一步要使用上一步的结果，所以只能按照这种顺序一个一个的执行。</p>
+<p>关于同步还需知道两个小的点：</p>
+<p>一是范围，并不需要在全局范围内都去同步，只需要在某些关键的点执行同步即可。</p>
+<p>比如食堂只有一个卖饭窗口，肯定是同步的，一个人买完，下一个人再买。但吃饭的时候也是一个人吃完，下一个人才开始吃吗？当然不是啦。</p>
+<p>二是粒度，并不是只有大粒度的事物才有同步，小粒度的事物也有同步。</p>
+<p>只不过小粒度的事物同步通常是天然支持的，而大粒度的事物同步往往需要手工处理。</p>
+<p>比如两个线程的同步就需要手工处理，但一个线程里的两个语句天然就是同步的。</p>
+<p>所谓异步，就是步调各异。既然是各异，那就是都不相同。所以结果就是：</p>
+<p>多个事物可以你进行你的、我进行我的，谁都不用管谁，所有的事物都在同时进行中。</p>
+<p>一言以蔽之，同步就是多个事物不能同时开工，异步就是多个事物可以同时开工。</p>
+<p>注：一定要去体会“多个事物”，多个线程是多个事物，多个方法是多个事物，多个语句是多个事物，多个CPU指令是多个事物。等等等等。</p>
+<p><strong>阻塞和非阻塞</strong></p>
+<p>所谓阻塞，指的是阻碍堵塞。它的本意可以理解为由于遇到了障碍而造成的动弹不得。</p>
+<p>所谓非阻塞，自然是和阻塞相对，可以理解为由于没有遇到障碍而继续畅通无阻。</p>
+<p>对这两个词最好的诠释就是，当今中国一大交通难题，堵车：</p>
+<p>汽车可以正常通行时，就是非阻塞。一旦堵上了，全部趴窝，一动不动，就是阻塞。</p>
+<p>因此阻塞关注的是不能动，非阻塞关注的是可以动。</p>
+<p>不能动的结果就是只能等待，可以动的结果就是继续前行。</p>
+<p>因此和阻塞搭配的词一定是等待，和非阻塞搭配的词一定是进行。</p>
+<p>回到程序里，阻塞同样意味着停下来等待，非阻塞表明可以继续向下执行。</p>
+<p><strong>阻塞和等待</strong></p>
+<p>等待只是阻塞的一个副作用而已，表明随着时间的流逝，没有任何有意义的事物发生或进行。</p>
+<p>阻塞的真正含义是你关心的事物由于某些原因无法继续进行，因此让你等待。但没必要干等，你可以做一些其它无关的事物，因为这并不影响你对相关事物的等待。</p>
+<p>在堵车时，你可以干等。也可以玩手机、和别人聊天，或者打牌、甚至先去吃饭都行。因为这些事物并不影响你对堵车的等待。不过你的车必须呆在原地。</p>
+<p>在计算机里，是没有人这么灵活的，一般在阻塞时，选在干等，因为这最容易实现，只需要挂起线程，让出CPU即可。在条件满足时，会重新调度该线程。</p>
+<p><strong>两两组合</strong></p>
+<p>所谓同步/异步，关注的是能不能同时开工。</p>
+<p>所谓阻塞/非阻塞，关注的是能不能动。</p>
+<p>通过推理进行组合：</p>
+<p>同步阻塞，不能同时开工，也不能动。只有一条小道，一次只能过一辆车，可悲的是还TMD的堵上了。</p>
+<p>同步非阻塞，不能同时开工，但可以动。只有一条小道，一次只能过一辆车，幸运的是可以正常通行。</p>
+<p>异步阻塞，可以同时开工，但不可以动。有多条路，每条路都可以跑车，可气的是全都TMD的堵上了。</p>
+<p>异步非阻塞，可以工时开工，也可以动。有多条路，每条路都可以跑车，很爽的是全都可以正常通行。</p>
+<p>是不是很容易理解啊。其实它们的关注点是不同的，只要搞明白了这点，组合起来也不是事儿。</p>
+<p>回到程序里，把它们和线程关联起来：</p>
+<p>同步阻塞，相当于一个线程在等待。</p>
+<p>同步非阻塞，相当于一个线程在正常运行。</p>
+<p>异步阻塞，相当于多个线程都在等待。</p>
+<p>异步非阻塞，相当于多个线程都在正常运行。</p>
+<p><strong>I/O</strong></p>
+<p>IO指的就是读入/写出数据的过程，和<strong>等待</strong>读入/写出数据的过程。一旦拿到数据后就变成了数据操作了，就不是IO了。</p>
+<p>拿网络IO来说，等待的过程就是数据从网络到网卡再到内核空间。读写的过程就是内核空间和用户空间的相互拷贝。</p>
+<p>所以IO就包括两个过程，一个是等待数据的过程，一个是读写（拷贝）数据的过程。而且还要明白，一定<strong>不</strong>能包括操作数据的过程。</p>
+<p><strong>阻塞IO和非阻塞IO</strong></p>
+<p>应用程序都是运行在用户空间的，所以它们能操作的数据也都在用户空间。按照这样子来理解，只要数据没有到达用户空间，用户线程就操作不了。</p>
+<p>如果此时用户线程已经参与，那它一定会被阻塞在IO上。这就是常说的阻塞IO。用户线程被阻塞在等待数据上或拷贝数据上。</p>
+<p>非阻塞IO就是用户线程不参与以上两个过程，即数据已经拷贝到用户空间后，才去通知用户线程，一上来就可以直接操作数据了。</p>
+<p>用户线程没有因为IO的事情出现阻塞，这就是常说的非阻塞IO。</p>
+<p><strong>同步IO和同步阻塞IO</strong></p>
+<p>按照上文中对同步的理解，同步IO是指发起IO请求后，必须拿到IO的数据才可以继续执行。</p>
+<p>按照程序的表现形式又分为两种：</p>
+<p>在等待数据的过程中，和拷贝数据的过程中，线程都在阻塞，这就是同步阻塞IO。</p>
+<p>在等待数据的过程中，线程采用死循环式轮询，在拷贝数据的过程中，线程在阻塞，这其实还是同步阻塞IO。</p>
+<p>网上很多文章把第二种归为同步非阻塞IO，这肯定是<strong>错误</strong>的，它一定是阻塞IO，因为拷贝数据的过程，线程是阻塞的。</p>
+<p>严格来讲，在IO的概念上，同步和非阻塞是不可能搭配的，因为它们是一对相悖的概念。</p>
+<p>同步IO意味着必须拿到IO的数据，才可以继续执行。因为后续操作依赖IO数据，所以它必须是阻塞的。</p>
+<p>非阻塞IO意味着发起IO请求后，可以继续往下执行。说明后续执行不依赖于IO数据，所以它肯定不是同步的。</p>
+<p>因此，在IO上，同步和非阻塞是互斥的，所以不存在同步非阻塞IO。但同步非阻塞是存在的，那不叫IO，叫操作数据了。</p>
+<p>所以，同步IO一定是阻塞IO，同步IO也就是同步阻塞IO。</p>
+<p><strong>异步IO和异步阻塞/非阻塞IO</strong></p>
+<p>按照上文中对异步的理解，异步IO是指发起IO请求后，不用拿到IO的数据就可以继续执行。</p>
+<p>用户线程的继续执行，和操作系统准备IO数据的过程是同时进行的，因此才叫做异步IO。</p>
+<p>按照IO数据的两个过程，又可以分为两种：</p>
+<p>在等待数据的过程中，用户线程继续执行，在拷贝数据的过程中，线程在阻塞，这就是异步阻塞IO。</p>
+<p>在等待数据的过程中，和拷贝数据的过程中，用户线程都在继续执行，这就是异步非阻塞IO。</p>
+<p>第一种情况是，用户线程没有参与数据等待的过程，所以它是异步的。但用户线程参与了数据拷贝的过程，所以它又是阻塞的。合起来就是异步阻塞IO。</p>
+<p>第二种情况是，用户线程既没有参与等待过程也没有参与拷贝过程，所以它是异步的。当它接到通知时，数据已经准备好了，它没有因为IO数据而阻塞过，所以它又是非阻塞的。合起来就是异步非阻塞IO。</p>
+
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Network/">Network</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/01/13/2020-01-13-why-microservice-gateway/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">为什么需要微服务网关</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2020/01/09/2020-01-09-aliyun-terway/">
+                        <span class="hidden-mobile"> 阿里云terway源码分析 </span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-md">
+    <div class="container custom post-content mx-auto">
+      <img src="https://octodex.github.com/images/jetpacktocat.png" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        " 迄今为止把同步/异步/阻塞/非阻塞/BIO/NIO/AIO讲的这么清楚的好文章 &nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+  
+  
+    <script>
+      !function (e, t, a) {
+        function r() {
+          for (var e = 0; e < s.length; e++) s[e].alpha <= 0 ? (t.body.removeChild(s[e].el), s.splice(e, 1)) : (s[e].y--, s[e].scale += .004, s[e].alpha -= .013, s[e].el.style.cssText = "left:" + s[e].x + "px;top:" + s[e].y + "px;opacity:" + s[e].alpha + ";transform:scale(" + s[e].scale + "," + s[e].scale + ") rotate(45deg);background:" + s[e].color + ";z-index:99999");
+          requestAnimationFrame(r)
+        }
+
+        function n() {
+          var t = "function" == typeof e.onclick && e.onclick;
+          e.onclick = function (e) {
+            t && t(), o(e)
+          }
+        }
+
+        function o(e) {
+          var a = t.createElement("div");
+          a.className = "heart", s.push({
+            el: a,
+            x: e.clientX - 5,
+            y: e.clientY - 5,
+            scale: 1,
+            alpha: 1,
+            color: c()
+          }), t.body.appendChild(a)
+        }
+
+        function i(e) {
+          var a = t.createElement("style");
+          a.type = "text/css";
+          try {
+            a.appendChild(t.createTextNode(e))
+          } catch (t) {
+            a.styleSheet.cssText = e
+          }
+          t.getElementsByTagName("head")[0].appendChild(a)
+        }
+
+        function c() {
+          return "rgb(" + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + ")"
+        }
+
+        var s = [];
+        e.requestAnimationFrame = e.requestAnimationFrame || e.webkitRequestAnimationFrame || e.mozRequestAnimationFrame || e.oRequestAnimationFrame || e.msRequestAnimationFrame || function (e) {
+          setTimeout(e, 1e3 / 60)
+        }, i(".heart{width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: fixed;}.heart:after{top: -5px;}.heart:before{left: -5px;}"), n(), r()
+      }(window, document);
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

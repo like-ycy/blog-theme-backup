@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/06/11/nginx-config-location/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/categories/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/nginx/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/post/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/categories/tech/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/</loc>
+    <lastmod>2020-06-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/05/26/nginx-config-location-proxypass/</loc>
+    <lastmod>2020-05-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/05/25/mysql-examination-questions/</loc>
+    <lastmod>2020-05-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/mysql/</loc>
+    <lastmod>2020-05-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/05/19/http-interviews/</loc>
+    <lastmod>2020-05-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/http/</loc>
+    <lastmod>2020-05-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/01/19/tcp-second-talk/</loc>
+    <lastmod>2020-01-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/tcp/</loc>
+    <lastmod>2020-01-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/01/17/why-tcp-third-hand/</loc>
+    <lastmod>2020-01-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/01/16/what-is-servicemesh/</loc>
+    <lastmod>2020-01-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/servicemesh/</loc>
+    <lastmod>2020-01-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/01/15/why-exec-program/</loc>
+    <lastmod>2020-01-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/linux/</loc>
+    <lastmod>2020-01-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/01/14/distributed-and-cluster-difference/</loc>
+    <lastmod>2020-01-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/architecture/</loc>
+    <lastmod>2020-01-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/01/13/why-microservice-gateway/</loc>
+    <lastmod>2020-01-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/kubernetes/</loc>
+    <lastmod>2020-01-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/01/10/sync-async/</loc>
+    <lastmod>2020-01-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/network/</loc>
+    <lastmod>2020-01-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/01/09/aliyun-terway/</loc>
+    <lastmod>2020-01-09T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/aliyun/</loc>
+    <lastmod>2020-01-09T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/01/08/nginx-event-handling/</loc>
+    <lastmod>2020-01-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/01/07/sonarqube-and-gitlab/</loc>
+    <lastmod>2020-01-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/gitlab/</loc>
+    <lastmod>2020-01-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/01/06/sonarqube-install/</loc>
+    <lastmod>2020-01-06T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/01/03/gitlab-ci/</loc>
+    <lastmod>2020-01-03T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/01/02/aliyun-vpn/</loc>
+    <lastmod>2020-01-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2020/01/01/mesos-pull-images-error/</loc>
+    <lastmod>2020-01-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/mesos/</loc>
+    <lastmod>2020-01-01T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/31/tcp-timeout-and-retransmission/</loc>
+    <lastmod>2019-12-31T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/30/tcp-handshake/</loc>
+    <lastmod>2019-12-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/27/talk-tcp/</loc>
+    <lastmod>2019-12-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/26/nginx-reload/</loc>
+    <lastmod>2019-12-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/25/linux-inode/</loc>
+    <lastmod>2019-12-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/24/https-principle/</loc>
+    <lastmod>2019-12-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/https/</loc>
+    <lastmod>2019-12-24T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/23/cloudnativemap/</loc>
+    <lastmod>2019-12-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/cloudnative/</loc>
+    <lastmod>2019-12-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/22/nginx-principle/</loc>
+    <lastmod>2019-12-22T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/21/operation-law/</loc>
+    <lastmod>2019-12-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/heart/</loc>
+    <lastmod>2019-12-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/20/linux-find/</loc>
+    <lastmod>2019-12-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/19/nginx-usage/</loc>
+    <lastmod>2019-12-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/18/prometheus6-alertmanager/</loc>
+    <lastmod>2019-12-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/18/prometheus5-grafana/</loc>
+    <lastmod>2019-12-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/18/prometheus3-kube-state-metrics/</loc>
+    <lastmod>2019-12-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/18/prometheus4-node-expoter/</loc>
+    <lastmod>2019-12-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/18/prometheus2-server/</loc>
+    <lastmod>2019-12-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/18/prometheus1-architecture/</loc>
+    <lastmod>2019-12-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/prometheus/</loc>
+    <lastmod>2019-12-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/17/prometheus-introduction/</loc>
+    <lastmod>2019-12-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/16/gitlab-k8s/</loc>
+    <lastmod>2019-12-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/15/aliyun-policy/</loc>
+    <lastmod>2019-12-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/14/execution/</loc>
+    <lastmod>2019-12-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/13/one-line-of-python-code/</loc>
+    <lastmod>2019-12-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/tags/python/</loc>
+    <lastmod>2019-12-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/12/nginx-chinese/</loc>
+    <lastmod>2019-12-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/11/kubernetes9-network/</loc>
+    <lastmod>2019-12-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/10/kubernetes8-cicd-full/</loc>
+    <lastmod>2019-12-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/09/kubernetes7-cicd/</loc>
+    <lastmod>2019-12-09T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/08/kubernetes6-nginx-introduction/</loc>
+    <lastmod>2019-12-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/07/kubernetes5-traefik-introduction/</loc>
+    <lastmod>2019-12-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/06/kubernetes4-helm-introduction/</loc>
+    <lastmod>2019-12-06T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/05/kubernetes3-cluster-install/</loc>
+    <lastmod>2019-12-05T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/12/04/kubernetes2-introduction-to-basic-concepts/</loc>
+    <lastmod>2019-12-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/2019/11/29/kubernetes1-architecture-component/</loc>
+    <lastmod>2019-11-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/search/placeholder/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/top/about/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/top/books/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/search/</loc>
+  </url>
+  
+  <url>
+    <loc>https://like-ycy.github.io/top/</loc>
+  </url>
+  
+</urlset>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Prometheus on 权掌天下 Blog</title>
+    <link>https://like-ycy.github.io/tags/prometheus/</link>
+    <description>Recent content in Prometheus on 权掌天下 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 18 Dec 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://like-ycy.github.io/tags/prometheus/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> AlertManager 组件安装 </title>
+      <link>https://like-ycy.github.io/2019/12/18/prometheus6-alertmanager/</link>
+      <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/18/prometheus6-alertmanager/</guid>
+      <description>在 Prometheus 监控中， AlertManager 主要是用来除了告警信息和发送告警的。 yaml文件地址：https://github.com/ILIKETWICE/promet</description>
+    </item>
+    
+    <item>
+      <title> Grafana 可视化组件安装 </title>
+      <link>https://like-ycy.github.io/2019/12/18/prometheus5-grafana/</link>
+      <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/18/prometheus5-grafana/</guid>
+      <description>Grafana 是一个开源的 dashboard，支持用 prometheus 作为数据源，部署起来也比较简单，这里我用的是 ConfigMap 做配置，所以看起来比较复杂。 yaml文件地址：htt</description>
+    </item>
+    
+    <item>
+      <title> kube-state-metrics 组件安装 </title>
+      <link>https://like-ycy.github.io/2019/12/18/prometheus3-kube-state-metrics/</link>
+      <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/18/prometheus3-kube-state-metrics/</guid>
+      <description>在这里 kube-state-metrics 是作为 prometheus 的一个 exporter 来使用，主要用来提供集群中的 deployment、daemonset、cronjob 等服务的监控数据。 yaml文件地</description>
+    </item>
+    
+    <item>
+      <title> Node-Expoter 组件安装 </title>
+      <link>https://like-ycy.github.io/2019/12/18/prometheus4-node-expoter/</link>
+      <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/18/prometheus4-node-expoter/</guid>
+      <description>node-exporter 这里主要用来提供集群节点本身的信息的，包括 CPU、内存、硬盘、IO 等等信息。 yaml文件地址：https://github.com/ILI</description>
+    </item>
+    
+    <item>
+      <title> Prometheus Server组件安装 </title>
+      <link>https://like-ycy.github.io/2019/12/18/prometheus2-server/</link>
+      <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/18/prometheus2-server/</guid>
+      <description>这里 Prometheus Server 使用一个带 RBAC 权限的账号采集集群中现有监控信息（其实是从 cadvisor 获取）和节点信息。本次部署是基于比较新的 v2.11.1 版本，网上的一些教程还停留在比较早</description>
+    </item>
+    
+    <item>
+      <title> Prometheus 部署架构选择 </title>
+      <link>https://like-ycy.github.io/2019/12/18/prometheus1-architecture/</link>
+      <pubDate>Wed, 18 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/18/prometheus1-architecture/</guid>
+      <description>本次 Prometheus 实践采用的是 Prometheus Sever + Kube-state-metrics + Grafana 的架构，每一个组件的作用如下: Promethues：提供强大的数据采集、数据存储、数据展示、告警等，天生完美支</description>
+    </item>
+    
+    <item>
+      <title> Prometheus架构原理及其组成 </title>
+      <link>https://like-ycy.github.io/2019/12/17/prometheus-introduction/</link>
+      <pubDate>Tue, 17 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/17/prometheus-introduction/</guid>
+      <description>Prometheus 系统介绍 首先，Prometheus 受启发于 Google 的 Brogmon 监控系统，相似的 Kubernetes 是从 Google 的 Brog 系统演变而来，从 2012 年开始由前 Google 工程师在 Soundcloud 以开源软件的形式进行研</description>
+    </item>
+    
+  </channel>
+</rss>

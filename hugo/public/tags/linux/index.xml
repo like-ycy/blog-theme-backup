@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux on 权掌天下 Blog</title>
+    <link>https://like-ycy.github.io/tags/linux/</link>
+    <description>Recent content in Linux on 权掌天下 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 15 Jan 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://like-ycy.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> 为什么执行自己的程序要在前面加./ </title>
+      <link>https://like-ycy.github.io/2020/01/15/why-exec-program/</link>
+      <pubDate>Wed, 15 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2020/01/15/why-exec-program/</guid>
+      <description>在Linux中，我们执行内置命令时，直接输入命令名称即可，如： $ mv a b #将a重命名为b 而在执行自己写好的程序时，却要带上./，例如： $ hello hello: command</description>
+    </item>
+    
+    <item>
+      <title> linux中inode包含什么内容？ </title>
+      <link>https://like-ycy.github.io/2019/12/25/linux-inode/</link>
+      <pubDate>Wed, 25 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/25/linux-inode/</guid>
+      <description>1、inode是什么 理解inode，要从文件储存说起。 文件储存在硬盘上，硬盘的最小存储单位叫做&amp;rdquo;扇区&amp;rdquo;（Sector</description>
+    </item>
+    
+    <item>
+      <title> Linux find命令教程：15个find命令用法 </title>
+      <link>https://like-ycy.github.io/2019/12/20/linux-find/</link>
+      <pubDate>Fri, 20 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/20/linux-find/</guid>
+      <description>查找目录 您可以使用-type d选项告诉find命令专门查找目录。这将使find命令仅搜索匹配的目录名，而不搜索文件名。 $ find /path/to/search -type d -name &amp;quot;name-of-dir&amp;quot; #查找隐</description>
+    </item>
+    
+  </channel>
+</rss>

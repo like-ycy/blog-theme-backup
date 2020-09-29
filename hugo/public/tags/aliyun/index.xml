@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Aliyun on 权掌天下 Blog</title>
+    <link>https://like-ycy.github.io/tags/aliyun/</link>
+    <description>Recent content in Aliyun on 权掌天下 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 09 Jan 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://like-ycy.github.io/tags/aliyun/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> 阿里云terway源码分析 </title>
+      <link>https://like-ycy.github.io/2020/01/09/aliyun-terway/</link>
+      <pubDate>Thu, 09 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2020/01/09/aliyun-terway/</guid>
+      <description>背景 随着公司业务的发展，底层容器环境也需要在各个区域部署，实现多云架构， 使用各个云厂商提供的CNI插件是k8s多云环境下网络架构的一种高效的</description>
+    </item>
+    
+    <item>
+      <title> 阿里云搭建shadowsocks-vpn </title>
+      <link>https://like-ycy.github.io/2020/01/02/aliyun-vpn/</link>
+      <pubDate>Thu, 02 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2020/01/02/aliyun-vpn/</guid>
+      <description>阿里云服务器购买国外节点，建议香港、日本、新加坡 系统选择linux，脚本支持centos、debian、ubuntu 1、下载脚本文件，并执行</description>
+    </item>
+    
+    <item>
+      <title> 阿里云子账号权限策略 </title>
+      <link>https://like-ycy.github.io/2019/12/15/aliyun-policy/</link>
+      <pubDate>Sun, 15 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/15/aliyun-policy/</guid>
+      <description>1、OSS读写权限 { &amp;quot;Version&amp;quot;: &amp;quot;1&amp;quot;, &amp;quot;Statement&amp;quot;: [ { &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;, &amp;quot;Action&amp;quot;: [ &amp;quot;oss:ListBuckets&amp;quot;, &amp;quot;oss:GetBucketStat&amp;quot;, &amp;quot;oss:GetBucketInfo&amp;quot;, &amp;quot;oss:GetBucketTagging&amp;quot;, &amp;quot;oss:GetBucketAcl&amp;quot; ], &amp;quot;Resource&amp;quot;: &amp;quot;acs:oss:*:*:*&amp;quot; }, { &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;, &amp;quot;Action&amp;quot;: [ &amp;quot;oss:Get*&amp;quot;, &amp;quot;oss:List*&amp;quot; ], &amp;quot;Resource&amp;quot;: &amp;quot;acs:oss:*:*:oss名称&amp;quot; }, { &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,</description>
+    </item>
+    
+  </channel>
+</rss>

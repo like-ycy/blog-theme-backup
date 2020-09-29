@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nginx on 权掌天下 Blog</title>
+    <link>https://like-ycy.github.io/tags/nginx/</link>
+    <description>Recent content in Nginx on 权掌天下 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 11 Jun 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://like-ycy.github.io/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> Nginx location匹配规则 </title>
+      <link>https://like-ycy.github.io/2020/06/11/nginx-config-location/</link>
+      <pubDate>Thu, 11 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2020/06/11/nginx-config-location/</guid>
+      <description>一、location语法 location [=|~|~*|^~] uri { … } 其中，方括号中的四种标识符是可选项，用来改变请求字符串和uri的匹配方式。uri是待匹配的请求字符串，可</description>
+    </item>
+    
+    <item>
+      <title> Nginx配置location中的&#39;/&#39;号的作用 </title>
+      <link>https://like-ycy.github.io/2020/05/26/nginx-config-location-proxypass/</link>
+      <pubDate>Tue, 26 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2020/05/26/nginx-config-location-proxypass/</guid>
+      <description>真实案例，就因为在配置时，少写了一个字符“/”，就造成访问不通报错，因而接到投诉。那么是怎么引起的呢？原因就是：Nginx在配置proxy_</description>
+    </item>
+    
+    <item>
+      <title> Nginx对网络事件的处理 </title>
+      <link>https://like-ycy.github.io/2020/01/08/nginx-event-handling/</link>
+      <pubDate>Wed, 08 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2020/01/08/nginx-event-handling/</guid>
+      <description>网络传输 接下来看上面这张图，比如主机 A 就是一台家里的笔记本电脑，那么主机 B 就是一台服务器，上面跑着 Nginx 服务。从主机 A 发送一个 HTTP 的 GET 请求到主机 B</description>
+    </item>
+    
+    <item>
+      <title> TCP 超时与重传 </title>
+      <link>https://like-ycy.github.io/2019/12/31/tcp-timeout-and-retransmission/</link>
+      <pubDate>Tue, 31 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/31/tcp-timeout-and-retransmission/</guid>
+      <description>我们都知道 TCP 协议具有重传机制，也就是说，如果发送方认为发生了丢包现象，就重发这些数据包。很显然，我们需要一个方法来「猜测」是否发生了丢包。最</description>
+    </item>
+    
+    <item>
+      <title> Nginx 中 reload 流程 </title>
+      <link>https://like-ycy.github.io/2019/12/26/nginx-reload/</link>
+      <pubDate>Thu, 26 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/26/nginx-reload/</guid>
+      <description>今天这篇文章主要来介绍下 Nginx 的 reload 流程。实际上在之前文章中，在更改了 nginx 配置文件时，我们都会执行 nginx -s reload 命令，我们执行这条命令的原因是希望 nginx 不停止服</description>
+    </item>
+    
+    <item>
+      <title> Nginx 原理和架构 </title>
+      <link>https://like-ycy.github.io/2019/12/22/nginx-principle/</link>
+      <pubDate>Sun, 22 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/22/nginx-principle/</guid>
+      <description>1、Nginx 的整体架构 Nginx 里有一个 master 进程和多个 worker 进程。master 进程并不处理网络请求，主要负责调度工作进程：加载配置、启动工作进程及非停升</description>
+    </item>
+    
+    <item>
+      <title> Nginx的这些妙用，你肯定有不知道的 </title>
+      <link>https://like-ycy.github.io/2019/12/19/nginx-usage/</link>
+      <pubDate>Thu, 19 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/19/nginx-usage/</guid>
+      <description>Nginx 简介 Nginx 是一个免费、开源、高性能、轻量级的 HTTP 和反向代理服务器，也是一个电子邮件（IMAP/POP3）代理服务器，其特点是占有内存少，并发能力</description>
+    </item>
+    
+    <item>
+      <title>Nginx 配置参数中文说明 </title>
+      <link>https://like-ycy.github.io/2019/12/12/nginx-chinese/</link>
+      <pubDate>Thu, 12 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/12/nginx-chinese/</guid>
+      <description>Nginx 配置参数中文详细说明： #定义Nginx运行的用户和用户组 user www www; # #nginx进程数,建议设置为等于CPU总核心数. worker_processes 8; # #全局错误日志定义</description>
+    </item>
+    
+  </channel>
+</rss>

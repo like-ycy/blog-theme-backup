@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python on 权掌天下 Blog</title>
+    <link>https://like-ycy.github.io/tags/python/</link>
+    <description>Recent content in Python on 权掌天下 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 13 Dec 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://like-ycy.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> 一行 Python 代码能实现这么多丧心病狂的功能？</title>
+      <link>https://like-ycy.github.io/2019/12/13/one-line-of-python-code/</link>
+      <pubDate>Fri, 13 Dec 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2019/12/13/one-line-of-python-code/</guid>
+      <description>一行代码打印乘法口诀 print(&#39;\n&#39;.join([&#39; &#39;.join([&amp;quot;%2s x%2s = %2s&amp;quot;%(j,i,i*j) for j in range(1,i+1)]) for i in range(1,10)])) 一行代码打印迷宫 print(&#39;&#39;.join(__import__(&#39;random&#39;).choice(&#39;\u2571\u2572&#39;) for i in range(50*24))) 一行代码表白爱情 print(&#39;\n&#39;.join([&#39;&#39;.join([(&#39;Love&#39;[(x-y) % len(&#39;Love&#39;)] if ((x*0.05)**2+(y*0.1)**2-1)**3-(x*0.05)**2*(y*0.1)**3 &amp;lt;= 0else&#39; &#39;) for x in range(-30, 30)]) for y in range(30, -30, -1)]))！ 一</description>
+    </item>
+    
+  </channel>
+</rss>

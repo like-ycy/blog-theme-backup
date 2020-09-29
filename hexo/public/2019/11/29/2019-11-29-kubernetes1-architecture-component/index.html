@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="望翔">
+  <meta name="keywords" content="">
+  <title>【Kubernetes系列】第1篇 架构及组件介绍  - 权掌天下 Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>权掌天下</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background" parallax=true
+         style="background: url('https://image.my-blog.wang/header/header.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2019-11-29 00:00">
+      2019年11月29日 凌晨
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.1k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      22
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：2020年9月29日 下午
+                
+              </p>
+            
+            <article class="markdown-body">
+              <h1 id="1、Kubernetes简介"><a href="#1、Kubernetes简介" class="headerlink" title="1、Kubernetes简介"></a>1、Kubernetes简介</h1><p>Kubernetes是谷歌开源的容器集群管理系统，是Google多年大规模容器管理技术Borg的开源版本，主要功能包括:    </p>
+<ul>
+<li><p>基于容器的应用部署、维护和滚动升级</p>
+</li>
+<li><p>负载均衡和服务发现</p>
+</li>
+<li><p>跨机器和跨地区的集群调度</p>
+</li>
+<li><p>自动伸缩</p>
+</li>
+<li><p>无状态服务和有状态服务 </p>
+</li>
+<li><p>广泛的Volume支持 </p>
+</li>
+<li><p>插件机制保证扩展性</p>
+</li>
+</ul>
+<p>Kubernetes发展非常迅速，已经成为容器编排领域的领导者。</p>
+<h1 id="2、Kubernetes-架构及组件介绍"><a href="#2、Kubernetes-架构及组件介绍" class="headerlink" title="2、Kubernetes 架构及组件介绍"></a>2、Kubernetes 架构及组件介绍</h1><h2 id="2-1-kubernetes-架构"><a href="#2-1-kubernetes-架构" class="headerlink" title="2.1 kubernetes 架构"></a>2.1 kubernetes 架构</h2><p>Kubernetes架构如图所示：</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-11-29/2-1.jpg" srcset="/img/loading.gif" alt="avatar"></p>
+<p>Kubernetes主要由以下几个核心组件构成：</p>
+<ul>
+<li><p>etcd 保存整个集群的状态；</p>
+</li>
+<li><p>apiserver 提供了资源操作的唯一入口，并提供认证、授权、访问控制、API注册和发现等机制；</p>
+</li>
+<li><p>controller manager 负责维护集群的状态，比如故障检测、自动扩展、滚动更新等；</p>
+</li>
+<li><p>scheduler 负责资源的调度，按照预定的调度策略将实例（Pod）调度到相应的主机上；</p>
+</li>
+<li><p>kubelet 负责维护容器的生命周期，同时也负责存储卷和网络的管理；</p>
+</li>
+<li><p>container runtime 负责镜像管理以及容器的真正执行，在我们系统中指的是Docker</p>
+</li>
+<li><p>kube-proxy 负责为应用提供集群内部的服务发现和负载均衡</p>
+</li>
+<li><p>推荐的插件</p>
+<ul>
+<li><p>helm - kubernetes包管理工具</p>
+</li>
+<li><p>kube-dns/coreDNS 负责为整个集群提供DNS服务</p>
+</li>
+<li><p>Ingress Controller 为服务提供外网入口</p>
+</li>
+<li><p>Heapster 提供资源监控</p>
+</li>
+<li><p>Dashboard 提供GUI</p>
+</li>
+<li><p>Federation 提供跨可用区的集群</p>
+</li>
+<li><p>Fluentd-elasticsearch 提供集群日志采集、存储与查询</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-2-Kubernetes组件介绍"><a href="#2-2-Kubernetes组件介绍" class="headerlink" title="2.2 Kubernetes组件介绍"></a>2.2 Kubernetes组件介绍</h2><h3 id="2-2-1-etcd"><a href="#2-2-1-etcd" class="headerlink" title="2.2.1 etcd"></a>2.2.1 etcd</h3><p>etcd是基于Raft一致性算法开发的分布式key-value存储，可用于服务发现、共享配置以及一致性保障（如数据库选主、分布式锁等）</p>
+<p>   <strong>etcd主要功能：</strong></p>
+<ul>
+<li><p>基本的key-value存储</p>
+</li>
+<li><p>监听机制</p>
+</li>
+<li><p>key的过期及续约机制，用于监控和服务发现</p>
+</li>
+<li><p>原子CAS和CAD，用于分布式锁和leader选举</p>
+</li>
+</ul>
+<p> <strong>Etcd基于RAFT的一致性</strong></p>
+<p> <strong>leader节点选举方法</strong></p>
+<ul>
+<li><p>初始启动时，节点处于follower状态并被设定一个election timeout，如果在这一时间周期内没有收到来自leader的心跳检测，节点将发起选举，将自己切换为candidate（候选人）节点之后，向集群中的其他follow节点发送请求，询问其是否选举自己为leader</p>
+</li>
+<li><p>当收到来自集群中过半数节点的接受投票后，节点即成为leader，开始接收保存client的数据并向其他的follower节点同步日志。如果没有达成一致，则candidate节点随机选择一个等待时间（150ms ～ 300ms）再次发起投票，得到集群中半数以上的follower接受的candidate将成为leader</p>
+</li>
+<li><p>leader节点依靠定时向follower节点发送心跳检测来保持其地位</p>
+</li>
+<li><p>任何时候如果其他follower在election timeout期间没有收到来自leader的心跳检测，同样会将自己的状态切换为candidate并发起选举。每成功选举一次，新leader的步进数（Term）都会比之前leader的步进数加1 </p>
+</li>
+</ul>
+<p><strong>失效处理</strong></p>
+<ul>
+<li><p>leader失效：其他没有收到心跳检测的节点将发起新的选举，当leader恢复后由于步进数小自动成为follower（日志会被新leader的日志覆盖）</p>
+</li>
+<li><p>follower节点不可用：follower节点不可用的情况相对比较容易解决。因为集群中的日志内容始终是从leader节点同步，只要这一节点再次加入集群时重新从leader节点处复制日志即可</p>
+</li>
+<li><p>多个候选人（candidate）：冲突后candidate将随机选择一个等待时间（150ms ～ 300ms）再次发起投票，得到集群中半数以上的follower接受的candidate将成为leader  </p>
+</li>
+</ul>
+<p>讲到这里可能有同学发现Etcd和Zookeeper、Consul等一致性协议实现框架有些类似，的确这些中间件是比较类似的，关于其中的异同点，大家可以自行查阅资料。</p>
+<h3 id="2-2-2-kube-apiserver"><a href="#2-2-2-kube-apiserver" class="headerlink" title="2.2.2 kube-apiserver"></a>2.2.2 kube-apiserver</h3><p>kube-apiserver是Kubernetes最重要的核心组件之一，主要提供了如下功能：</p>
+<ul>
+<li><p>提供集群管理的REST API接口，包括认证授权、数据校验以及集群状态变更等</p>
+</li>
+<li><p>提供同其他模块之间的数据交互(其他模块通过API Server查询或修改数据，只有API Server才直接操作etcd)</p>
+</li>
+</ul>
+<h3 id="2-2-3-kube-scheduler"><a href="#2-2-3-kube-scheduler" class="headerlink" title="2.2.3 kube-scheduler"></a>2.2.3 kube-scheduler</h3><p>kube-scheduler负责分配调度Pod到集群内的节点上，它监听kube-<br>apiserver，查询还未分配Node的Pod，然后根据调度策略为这些Pod分配节点</p>
+<p>通过以下三种方式可以指定Pod只运行在特定的Node节点上</p>
+<ul>
+<li><p>nodeSelector:只调度到匹配指定label的Node上 </p>
+</li>
+<li><p>nodeAffinity:功能更丰富的Node选择器，比如支持集合操作 </p>
+</li>
+<li><p>podAffinity:调度到满足条件的Pod所在的Node上</p>
+</li>
+</ul>
+<h3 id="2-2-4-kube-controller-manager"><a href="#2-2-4-kube-controller-manager" class="headerlink" title="2.2.4 kube-controller-manager"></a>2.2.4 kube-controller-manager</h3><p>kube-controller-manager是Kubernetes的大脑，通过kube-<br>apiserver监控整个集群的状态，并确保集群处于预期的工作状态，它由一系列的控制器组成，这些控制器主要包括三组：</p>
+<p> <strong>1. 必须启动的控制器</strong>  </p>
+<ul>
+<li><p>eploymentController</p>
+</li>
+<li><p>DaemonSetController</p>
+</li>
+<li><p>NamesapceController</p>
+</li>
+<li><p>ReplicationController</p>
+</li>
+<li><p>RelicaSet</p>
+</li>
+<li><p>JobController</p>
+</li>
+<li><p>…</p>
+<p><strong>2. 默认启动的控制器</strong>  </p>
+</li>
+<li><p>NodeController</p>
+</li>
+<li><p>ServiceController</p>
+</li>
+<li><p>PVBinderController</p>
+</li>
+<li><p>…</p>
+<p><strong>3. 默认禁止的可选控制器</strong></p>
+</li>
+<li><p>BootstrapSignerController</p>
+</li>
+<li><p>TokenCleanerController</p>
+</li>
+</ul>
+<h3 id="2-2-5-Kubelet"><a href="#2-2-5-Kubelet" class="headerlink" title="2.2.5 Kubelet"></a>2.2.5 Kubelet</h3><p>每个Node节点上都运行一个kubelet守护进程，默认监听10250端口，接收并执行master发来的指令，管理Pod及Pod中的容器。每个kubelet进程会在API<br>Server上注册节点自身信息，定期向master节点汇报节点的资源使用情况</p>
+<p> <strong>节点管理</strong></p>
+<p>主要是节点自注册和节点状态更新:</p>
+<ul>
+<li><p>Kubelet可以通过设置启动参数 –register-node 来确定是否向API Server注册自己; </p>
+</li>
+<li><p>如果Kubelet没有选择自注册模式，则需要用户自己配置Node资源信息，同时需要在Kubelet上配置集群中API Server的信息;</p>
+</li>
+<li><p>Kubelet在启动时通过API Server注册节点信息，并定时向API Server发送节点状态消息，API Server在接收到新消息后，将信息写入etcd  </p>
+<p><strong>容器健康检查</strong></p>
+</li>
+</ul>
+<p>Pod通过两类探针检查容器的健康状态</p>
+<ul>
+<li><p>LivenessProbe 存活探针：通过该探针判断容器是否健康，告诉Kubelet一个容器什么时候处于不健康的状态。如果LivenessProbe探针探测到容器不健康，则kubelet将删除该容器，并根据容器的重启策略做相应的处理。如果一个容器不包含LivenessProbe探针，那么kubelet认为该容器的LivenessProbe探针返回的值永远是“Success”。</p>
+</li>
+<li><p>ReadinessProbe 就绪探针：用于判断容器是否启动完成且准备接收请求。如果 ReadinessProbe 探针探测到失败，则Pod的状态将被修改。Endpoint Controller将从Service的Endpoint中删除包含该容器所在Pod的IP地址的Endpoint条目。</p>
+</li>
+</ul>
+<p>以下是Pod的启动流程：</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-11-29/2-2-5.jpg" srcset="/img/loading.gif" alt="avatar"></p>
+<h3 id="2-2-6-kube-proxy"><a href="#2-2-6-kube-proxy" class="headerlink" title="2.2.6 kube-proxy"></a>2.2.6 kube-proxy</h3><p>每台机器上都运行一个kube-proxy服务，它监听API<br>Server中service和Pod的变化情况，并通过userspace、iptables、ipvs等proxier来为服务配置负载均衡</p>
+<p>代理模式（proxy-mode）提供如下三种类型：</p>
+<p> <strong>1. userspace</strong></p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-11-29/2-2-6-1.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p>最早的负载均衡方案，它在用户空间监听一个端口，所有请求通过 iptables 转发到这个端口，然后在其内部负载均衡到实际的<br>Pod。service的请求会先从用户空间进入内核iptables，然后再回到用户空间（kube-proxy），由kube-<br>proxy完成后端Endpoints的选择和代理工作，这样流量从用户空间进出内核带来的性能损耗是不可接受的，所以产生了iptables的代理模式</p>
+<p> <strong>2. iptables:</strong></p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-11-29/2-2-6-2.png" srcset="/img/loading.gif" alt="avatar"></p>
+<p>iptables<br>mode完全使用iptables来完成请求过滤和转发。但是如果集群中存在大量的Service/Endpoint，那么Node上的iptables<br>rules将会非常庞大，添加或者删除iptables规则会引起较大的延迟。  </p>
+<p> <strong>3. ipvs:</strong></p>
+<p>为了解决存在大量iptables规则时的网络延迟的问题，Kubernetes引入了ipvs的模式，（ipvs是LVS - Linux Virtual<br>Server 的重要组成部分，最早是由中国的章文嵩博士推出的一个开源项目，提供软件负载均衡的解决方案），下面是ipvs模式的原理图：</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-11-29/2-2-6-3.png" srcset="/img/loading.gif" alt="avatar"></p>
+
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/Kubernetes/">Kubernetes</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Kubernetes/">Kubernetes</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/12/04/2019-12-04-kubernetes2-introduction-to-basic-concepts/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【Kubernetes系列】第2篇 基础概念介绍</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-md">
+    <div class="container custom post-content mx-auto">
+      <img src="https://octodex.github.com/images/jetpacktocat.png" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "【Kubernetes系列】第1篇 架构及组件介绍 &nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+  
+  
+    <script>
+      !function (e, t, a) {
+        function r() {
+          for (var e = 0; e < s.length; e++) s[e].alpha <= 0 ? (t.body.removeChild(s[e].el), s.splice(e, 1)) : (s[e].y--, s[e].scale += .004, s[e].alpha -= .013, s[e].el.style.cssText = "left:" + s[e].x + "px;top:" + s[e].y + "px;opacity:" + s[e].alpha + ";transform:scale(" + s[e].scale + "," + s[e].scale + ") rotate(45deg);background:" + s[e].color + ";z-index:99999");
+          requestAnimationFrame(r)
+        }
+
+        function n() {
+          var t = "function" == typeof e.onclick && e.onclick;
+          e.onclick = function (e) {
+            t && t(), o(e)
+          }
+        }
+
+        function o(e) {
+          var a = t.createElement("div");
+          a.className = "heart", s.push({
+            el: a,
+            x: e.clientX - 5,
+            y: e.clientY - 5,
+            scale: 1,
+            alpha: 1,
+            color: c()
+          }), t.body.appendChild(a)
+        }
+
+        function i(e) {
+          var a = t.createElement("style");
+          a.type = "text/css";
+          try {
+            a.appendChild(t.createTextNode(e))
+          } catch (t) {
+            a.styleSheet.cssText = e
+          }
+          t.getElementsByTagName("head")[0].appendChild(a)
+        }
+
+        function c() {
+          return "rgb(" + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + ")"
+        }
+
+        var s = [];
+        e.requestAnimationFrame = e.requestAnimationFrame || e.webkitRequestAnimationFrame || e.mozRequestAnimationFrame || e.oRequestAnimationFrame || e.msRequestAnimationFrame || function (e) {
+          setTimeout(e, 1e3 / 60)
+        }, i(".heart{width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: fixed;}.heart:after{top: -5px;}.heart:before{left: -5px;}"), n(), r()
+      }(window, document);
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

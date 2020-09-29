@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="权掌天下 Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://like-ycy.github.io/img/backend.jpg">
+    <meta property="twitter:image" content="https://like-ycy.github.io/img/backend.jpg" />
+    
+
+    
+    <meta name="title" content="Tech" />
+    <meta property="og:title" content="Tech" />
+    <meta property="twitter:title" content="Tech" />
+    
+
+    
+    <meta name="description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。">
+    <meta property="og:description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。" />
+    <meta property="twitter:description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="权掌天下的博客, Master Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>Tech-权掌天下的博客</title>
+
+    <link rel="canonical" href="/categories/tech/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">权掌天下 Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/categories/tech">tech</a>
+                    </li>
+                    
+                    
+		    
+                        <li><a href="/top/books/">BOOKS</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+<header class="intro-header" style="background-image: url('/img/backend.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
+                <div class="site-heading">
+                    <h1>权掌天下 Blog </h1>
+                    
+		    <span class="subheading">永远相信美好的事情即将发生！</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+  
+<div class="container">
+    <div class="row">
+        
+        
+   	    <div class="
+            col-lg-8 col-lg-offset-1
+            col-md-8 col-md-offset-1
+            col-sm-12
+            col-xs-12
+            post-container
+        ">
+            
+
+<div class="post-preview">
+    <a href="https://like-ycy.github.io/2019/12/18/prometheus5-grafana/">
+        <h2 class="post-title">
+             Grafana 可视化组件安装 
+        </h2>
+	
+        <div class="post-content-preview">
+	
+            Grafana 是一个开源的 dashboard，支持用 prometheus 作为数据源，部署起来也比较简单，这里我用的是 ConfigMap 做配置，所以看起来比较复杂。 yaml文件地址：htt
+       
+        </div>
+    </a>
+    <p class="post-meta">
+    Posted by     &#34;望翔&#34; Wednesday, December 18, 2019
+    
+    
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="https://like-ycy.github.io/2019/12/18/prometheus3-kube-state-metrics/">
+        <h2 class="post-title">
+             kube-state-metrics 组件安装 
+        </h2>
+	
+        <div class="post-content-preview">
+	
+            在这里 kube-state-metrics 是作为 prometheus 的一个 exporter 来使用，主要用来提供集群中的 deployment、daemonset、cronjob 等服务的监控数据。 yaml文件地
+       
+        </div>
+    </a>
+    <p class="post-meta">
+    Posted by     &#34;望翔&#34; Wednesday, December 18, 2019
+    
+    
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="https://like-ycy.github.io/2019/12/18/prometheus4-node-expoter/">
+        <h2 class="post-title">
+             Node-Expoter 组件安装 
+        </h2>
+	
+        <div class="post-content-preview">
+	
+            node-exporter 这里主要用来提供集群节点本身的信息的，包括 CPU、内存、硬盘、IO 等等信息。 yaml文件地址：https://github.com/ILI
+       
+        </div>
+    </a>
+    <p class="post-meta">
+    Posted by     &#34;望翔&#34; Wednesday, December 18, 2019
+    
+    
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="https://like-ycy.github.io/2019/12/18/prometheus2-server/">
+        <h2 class="post-title">
+             Prometheus Server组件安装 
+        </h2>
+	
+        <div class="post-content-preview">
+	
+            这里 Prometheus Server 使用一个带 RBAC 权限的账号采集集群中现有监控信息（其实是从 cadvisor 获取）和节点信息。本次部署是基于比较新的 v2.11.1 版本，网上的一些教程还停留在比较早
+       
+        </div>
+    </a>
+    <p class="post-meta">
+    Posted by     &#34;望翔&#34; Wednesday, December 18, 2019
+    
+    
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="https://like-ycy.github.io/2019/12/18/prometheus1-architecture/">
+        <h2 class="post-title">
+             Prometheus 部署架构选择 
+        </h2>
+	
+        <div class="post-content-preview">
+	
+            本次 Prometheus 实践采用的是 Prometheus Sever + Kube-state-metrics + Grafana 的架构，每一个组件的作用如下: Promethues：提供强大的数据采集、数据存储、数据展示、告警等，天生完美支
+       
+        </div>
+    </a>
+    <p class="post-meta">
+    Posted by     &#34;望翔&#34; Wednesday, December 18, 2019
+    
+    
+    </p>
+
+</div>
+<hr>
+
+
+            
+
+
+<ul class="pager">
+    
+    <li class="previous">
+        <a href="/categories/tech/page/6/">&larr; Newer Posts</a>
+    </li>
+    
+    
+    <li class="next">
+        <a href="/categories/tech/page/8/">Older Posts &rarr;</a>
+    </li>
+    
+</ul>
+
+
+       	</div>
+        
+
+<div class="
+    col-lg-3 col-lg-offset-0
+    col-md-3 col-md-offset-0
+    col-sm-12
+    col-xs-12
+    sidebar-container
+">
+    
+    
+    <section>
+        <hr class="hidden-sm hidden-xs">
+        <h5>FEATURED TAGS</h5>
+        <div class="tags">
+             
+            
+                
+                    <a href="/tags/aliyun" title="aliyun">
+                        aliyun
+                    </a>
+                
+            
+                
+                    <a href="/tags/architecture" title="architecture">
+                        architecture
+                    </a>
+                
+            
+                
+                    <a href="/tags/cloudnative" title="cloudnative">
+                        cloudnative
+                    </a>
+                
+            
+                
+                    <a href="/tags/gitlab" title="gitlab">
+                        gitlab
+                    </a>
+                
+            
+                
+                    <a href="/tags/heart" title="heart">
+                        heart
+                    </a>
+                
+            
+                
+                    <a href="/tags/http" title="http">
+                        http
+                    </a>
+                
+            
+                
+                    <a href="/tags/https" title="https">
+                        https
+                    </a>
+                
+            
+                
+                    <a href="/tags/kubernetes" title="kubernetes">
+                        kubernetes
+                    </a>
+                
+            
+                
+                    <a href="/tags/linux" title="linux">
+                        linux
+                    </a>
+                
+            
+                
+                    <a href="/tags/mesos" title="mesos">
+                        mesos
+                    </a>
+                
+            
+                
+                    <a href="/tags/mysql" title="mysql">
+                        mysql
+                    </a>
+                
+            
+                
+                    <a href="/tags/network" title="network">
+                        network
+                    </a>
+                
+            
+                
+                    <a href="/tags/nginx" title="nginx">
+                        nginx
+                    </a>
+                
+            
+                
+                    <a href="/tags/prometheus" title="prometheus">
+                        prometheus
+                    </a>
+                
+            
+                
+                    <a href="/tags/python" title="python">
+                        python
+                    </a>
+                
+            
+                
+                    <a href="/tags/servicemesh" title="servicemesh">
+                        servicemesh
+                    </a>
+                
+            
+                
+                    <a href="/tags/tcp" title="tcp">
+                        tcp
+                    </a>
+                
+            
+        </div>
+    </section>
+    
+
+    
+	
+    <section class="visible-md visible-lg">
+	<hr><h5><a href="/top/about">ABOUT ME</a></h5>
+        <div class="short-about">
+            
+            <a href="/top/about">
+               <img src="/img/master.png" alt="avatar" style="cursor: pointer" />
+            </a>
+            
+            
+                <p>Software Developer, Open Source Enthusiast </p>
+            
+           
+           <ul class="list-inline"> 
+               
+               <li>
+                   <a href='/categories/tech/index.xml' rel="alternate" type="application/rss+xml" title="权掌天下 Blog" >
+                       <span class="fa-stack fa-lg">
+                           <i class="fa fa-circle fa-stack-2x"></i>
+                           <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                       </span>
+                   </a>
+               </li>
+               
+               
+               
+               
+               <li>
+                   <a target="_blank" href="https://weibo.com/6069853748/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                       <span class="fa-stack fa-lg">
+                           <i class="fa fa-circle fa-stack-2x"></i>
+                           <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                       </span>
+                   </a>
+               </li>
+               
+               
+               
+               <li>
+                   <a target="_blank" href="/img/wechat_qrcode.jpg">
+                       <span class="fa-stack fa-lg">
+                           <i class="fa fa-circle fa-stack-2x"></i>
+                           <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                       </span>
+                   </a>
+               </li>
+               
+               
+               <li>
+                   <a target="_blank" href="https://github.com/ILIKETWICE">
+                       <span class="fa-stack fa-lg">
+                           <i class="fa fa-circle fa-stack-2x"></i>
+                           <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                       </span>
+                   </a>
+               </li>
+               
+               
+               
+               
+               
+               
+            
+            
+               
+                </ul>
+            </div>
+    </section>
+	
+    
+    
+    <section>
+        <hr class="hidden-sm hidden-xs">
+        <h5>FRIENDS</h5>
+        <ul class="list-inline">
+            
+            <li><a target="_blank" href="https://github.com/ILIKETWICE">权掌天下-Github</a></li>
+            
+        </ul>
+    </section>
+    
+
+    
+    
+    <section>
+        <hr>
+        <h5>BOOKMARKS</h5>
+        <ul class="list-inline">
+            
+            <li><a target="_blank" href="https://kubernetes.io/">Kubernetes</a></li>
+            
+            <li><a target="_blank" href="http://www.servicemesher.com">ServiceMesher</a></li>
+            
+            <li><a target="_blank" href="https://www.kubernetes.org.cn/">K8S中文社区</a></li>
+            
+            <li><a target="_blank" href="https://www.docker.com/">Docker</a></li>
+            
+        </ul>
+    </section>
+    
+</div>
+
+	</div>
+</div>
+
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href='/categories/tech/index.xml' rel="alternate" type="application/rss+xml" title="权掌天下 Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:15210198546@163.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/6069853748/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/wechat_qrcode.jpg">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ILIKETWICE">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; 权掌天下 Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+</body>
+</html>

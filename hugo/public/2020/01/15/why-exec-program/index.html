@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="权掌天下 Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://like-ycy.github.io/img/backend.jpg">
+    <meta property="twitter:image" content="https://like-ycy.github.io/img/backend.jpg" />
+    
+
+    
+    <meta name="title" content=" 为什么执行自己的程序要在前面加./ " />
+    <meta property="og:title" content=" 为什么执行自己的程序要在前面加./ " />
+    <meta property="twitter:title" content=" 为什么执行自己的程序要在前面加./ " />
+    
+
+    
+    <meta name="description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。">
+    <meta property="og:description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。" />
+    <meta property="twitter:description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="权掌天下的博客, Master Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title> 为什么执行自己的程序要在前面加./ -权掌天下的博客</title>
+
+    <link rel="canonical" href="/2020/01/15/why-exec-program/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">权掌天下 Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/categories/tech">tech</a>
+                    </li>
+                    
+                    
+		    
+                        <li><a href="/top/books/">BOOKS</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('https://image.my-blog.wang/header/header.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/linux" title="Linux">
+                            Linux
+                        </a>
+                        
+                    </div>
+                    <h1> 为什么执行自己的程序要在前面加./ </h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                &#34;望翔&#34;
+                         
+                        on 
+                        Wednesday, January 15, 2020
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+<ul>
+<li><a href="#shell是如何运行程序的">shell是如何运行程序的</a>
+<ul>
+<li><a href="#alias中查找">alias中查找</a></li>
+<li><a href="#内置命令中查找">内置命令中查找</a></li>
+<li><a href="#path中查找">PATH中查找</a></li>
+<li><a href="#确定解释程序">确定解释程序</a></li>
+</ul></li>
+<li><a href="#运行">运行</a></li>
+<li><a href="#扩展一下">扩展一下</a>
+<ul>
+<li><a href="#将程序放到path路径下">将程序放到PATH路径下</a></li>
+<li><a href="#设置path环境变量">设置PATH环境变量</a></li>
+<li><a href="#设置别名">设置别名</a></li>
+</ul></li>
+<li><a href="#执行顺序">执行顺序</a></li>
+<li><a href="#总结">总结</a></li>
+</ul>
+</nav>
+                
+                
+
+<p>在Linux中，我们执行内置命令时，直接输入命令名称即可，如：</p>
+
+<pre><code class="language-bash">$ mv a b #将a重命名为b
+</code></pre>
+
+<p>而在执行自己写好的程序时，却要带上./，例如：</p>
+
+<pre><code class="language-bash">$ hello
+hello: command not found
+$ ./hello
+hello world
+</code></pre>
+
+<p>这是为什么呢？它们有什么区别呢？</p>
+
+<h1 id="shell是如何运行程序的">shell是如何运行程序的</h1>
+
+<p>在说明清楚问题之前，我们必须了解shell是如何运行程序的。首先我们必须要清楚的是，执行一条Linux命令，本质是在运行一个程序，如执行ls命令，它执行的是ls程序。那么在shell中输入一条命令，到底发生了什么？如果没有给出当前路径或绝对路径，它会经历哪几个查找过程？</p>
+
+<h2 id="alias中查找">alias中查找</h2>
+
+<p>alias命令可用来设置命令别名，而单独输入alias可以查看到已设置的别名：</p>
+
+<pre><code class="language-bash">$ alias
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias grep='grep --color=auto'
+alias l='ls -CF'
+alias la='ls -A'
+alias ll='ls -alF'
+alias ls='ls --color=auto'
+</code></pre>
+
+<p>如果这里没有找到你执行的命令，那么就会接下去查找。如果找到了，那么就会执行下去。</p>
+
+<h2 id="内置命令中查找">内置命令中查找</h2>
+
+<p>不同的shell包含一些不同的内置命令，通常不需要shell到磁盘中去搜索。通过help命令可以看到有哪些内置命令：</p>
+
+<pre><code class="language-bash">$ help
+</code></pre>
+
+<p>通过type 命令可以查看命令类型：</p>
+
+<pre><code class="language-bash">$ type echo
+echo is a shell builtin
+</code></pre>
+
+<p>如果是内置命令，则会直接执行，否则继续查找。</p>
+
+<h2 id="path中查找">PATH中查找</h2>
+
+<p>以ls为例，在shell输入ls时，首先它会从PATH环境变量中查找，PATH内容是什么呢，我们看看：</p>
+
+<pre><code class="language-bash">$ echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+</code></pre>
+
+<p>所以它会在这些路径下去寻找ls程序，按照路径找到的第一个ls程序就会被执行。使用whereis也能确定ls的位置：</p>
+
+<pre><code class="language-bash">$ whereis ls
+ls: /bin/ls /usr/share/man/man1/ls.1.g
+</code></pre>
+
+<p>既然它是在bin目录下，那么我把ls从bin目录下移走是不是就找不到了呢？是的。</p>
+
+<pre><code class="language-bash">$ mv /bin/ls /temp/ls_bak  #测试完后记得改回来奥
+</code></pre>
+
+<p>现在再来执行ls命令看看：</p>
+
+<pre><code class="language-bash">$ ls 
+The program 'ls' is currently not installed. You can install it by typing:
+apt install coreutils
+</code></pre>
+
+<p>没错，它会提示你没有安装这个程序或者命令没有找到。</p>
+
+<p>所以你现在明白为什么你第一次安装jdk或者python的时候要设置环境变量了吧？不设置的话行不行？</p>
+
+<p>行。这个时候你就需要指定路径了。怎么指定路径？无非就是那么几种，相对路径，绝对路径等等。
+比如：</p>
+
+<pre><code class="language-bash">$ cd /temp
+$ ./ls_bak
+</code></pre>
+
+<p>或者：</p>
+
+<pre><code class="language-bash">$ /temp/ls_bak
+</code></pre>
+
+<p>是不是发现和运行自己的普通程序方式没什么差别呢？</p>
+
+<p>到这里，如果还没有找到你要执行的命令，那么就会报错。</p>
+
+<h2 id="确定解释程序">确定解释程序</h2>
+
+<p>在找到程序之后呢，需要确定解释程序。什么意思呢？
+shell通常可以执行两种程序，一种是二进制程序，一种是脚本程序。</p>
+
+<p>而一旦发现要执行的程序文件是文本文件，且文本未指定解释程序，那么就会默认当成shell脚本来执行。例如，假设有test.txt内容如下：</p>
+
+<pre><code class="language-bash">echo -e &quot;hello world&quot;
+</code></pre>
+
+<p>赋予执行权限并执行：</p>
+
+<pre><code class="language-bash">$ chmod +x test.txt
+$ ./test.txt
+hello world
+</code></pre>
+
+<p>当然了，我们通常会在shell脚本程序的来头带上下面这句：</p>
+
+<pre><code class="language-bash">#!/bin/bash
+</code></pre>
+
+<p>这是告诉shell，你要用bash程序来解释执行test.txt。作为一位调皮的开发者，如果开头改成下面这样呢？</p>
+
+<pre><code class="language-bash">#!/usr/bin/python
+</code></pre>
+
+<p>再次执行之后结果如下：</p>
+
+<pre><code class="language-bash">$ ./test.txt
+  File &quot;./test.txt&quot;, line 2
+    echo -e &quot;hello world&quot;
+                        ^
+SyntaxError: invalid syntax
+</code></pre>
+
+<p>是的，它被当成python脚本来执行了，自然就会报错了。</p>
+
+<p>那么如果是二进制程序呢？就会使用execl族函数去创建一个新的进程来运行新的程序了。</p>
+
+<p>小结一下前面的内容，就是说，如果是文本程序，且开头没有指定解释程序，则按照shell脚本处理，如果指定了解释程序，则使用解释程序来解释运行；对于二进制程序，则直接创建新的进程即可。</p>
+
+<h1 id="运行">运行</h1>
+
+<p>前面我们也已经看到了运行方式，设置环境变量或者使用相对路径，绝对路径即可。不过对于shell脚本，你还可以像下面这样执行：</p>
+
+<pre><code class="language-bash">$ sh test.txt
+$ . test.txt  
+</code></pre>
+
+<p>即便test.txt没有执行权限，也能够正常执行。</p>
+
+<p>什么？你说为什么txt也能执行？注意，Linux下的文件后缀不过是为了方便识别文件类型罢了，以.txt结尾，并不代表一定是文本。当然在这里它确实是，而且还是ASCII text executable：</p>
+
+<pre><code class="language-bash">$ file test.txt
+test.txt: Bourne-Again shell script, ASCII text executable
+$ file hello
+hello: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/l, for GNU/Linux 2.6.32, BuildID[sha1]=8ae48f0f84912dec98511581c876aa042824efdb, not stripped
+</code></pre>
+
+<h1 id="扩展一下">扩展一下</h1>
+
+<p>那么如果让我们自己的程序也能够像Linux内置命令一样输入即可被识别呢？</p>
+
+<h2 id="将程序放到path路径下">将程序放到PATH路径下</h2>
+
+<p>第一种方法就是将我们自己的程序放到PATH中的路径中去，这样在shell输入hello时，也能找到，例如我们将其放在/bin目录下：</p>
+
+<pre><code class="language-bash">$ hello
+hello world
+$ whereis hello
+hello: /bin/hello
+</code></pre>
+
+<p>也就是说，如果你的程序安装在了PATH指定的路径，就需要配置PATH环境变量，在命令行输入就可以直接找到了。</p>
+
+<h2 id="设置path环境变量">设置PATH环境变量</h2>
+
+<p>那么如果想在指定的目录能够直接运行呢？很简单，那就是添加环境变量，例如将当前路径加入到PATH中：</p>
+
+<pre><code class="language-bash">$ PATH=$PATH:./   #这种方式只在当前shell有效，所有shell生效可修改/etc/profile文件
+$ hello
+hello world
+</code></pre>
+
+<h2 id="设置别名">设置别名</h2>
+
+<p>例如：</p>
+
+<pre><code class="language-bash">$ alias hello=&quot;/temp/hello&quot;
+$ hello
+hello world
+</code></pre>
+
+<p>以上三种方法都可以达到目的。</p>
+
+<h1 id="执行顺序">执行顺序</h1>
+
+<p>那么假设我写了一个自己的printf程序，当执行printf的时候，到底执行的是哪一个呢？</p>
+
+<p>实际上它的查找顺序可以可以通过type -a来查看：</p>
+
+<pre><code class="language-bash">$ type -a printf
+printf is aliased to `printf &quot;hello
+&quot;'
+printf is a shell builtin
+printf is /usr/bin/printf
+printf is ./printf
+</code></pre>
+
+<p>这里就可以很清楚地看到查找顺序了。也就是说，如果你输入printf，它执行的是：</p>
+
+<pre><code class="language-bash">$ printf
+hello
+</code></pre>
+
+<p>而如果删除别名：</p>
+
+<pre><code class="language-bash">unalias printf
+</code></pre>
+
+<p>它执行的将会是内置命令printf。
+以此类推。</p>
+
+<h1 id="总结">总结</h1>
+
+<p>说到这里，想必标题的问题以及下面的问题你都清楚了：</p>
+
+<ul>
+<li>安装Python或者Jdk程序为什么要设置PATH环境变量？如果不设置，该如何运行？</li>
+<li>除了./方式运行自己的程序还有什么方式？</li>
+<li>如果让自己的程序能够像内置命令一样被识别？</li>
+<li>如何查看文件类型？</li>
+<li>执行一条命令，如何确定是哪里的命令被执行</li>
+</ul>
+
+<p>本文涉及命令：</p>
+
+<ul>
+<li>mv 移动/重命名</li>
+<li>file 查看文件信息</li>
+<li>whereis 查看命令或者手册位置</li>
+<li>type 查看命令类别</li>
+</ul>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p> 「如果这篇文章对你有用,请随意打赏」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="https://like-ycy.github.io"><img src="/img/favicon.png" />权掌天下 Blog</a></span>
+        
+	        <p class="tip"><i></i><span>如果这篇文章对你有用,请随意打赏</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2020/01/14/distributed-and-cluster-difference/" data-toggle="tooltip" data-placement="top" title=" 分布式和集群的区别 ">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2020/01/16/what-is-servicemesh/" data-toggle="tooltip" data-placement="top" title=" 听上去超酷的 Service Mesh 到底是什么？ ">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        <a href="/tags/aliyun" title="aliyun">
+                            aliyun
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/architecture" title="architecture">
+                            architecture
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/cloudnative" title="cloudnative">
+                            cloudnative
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/gitlab" title="gitlab">
+                            gitlab
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/heart" title="heart">
+                            heart
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/http" title="http">
+                            http
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/https" title="https">
+                            https
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/kubernetes" title="kubernetes">
+                            kubernetes
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/linux" title="linux">
+                            linux
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/mesos" title="mesos">
+                            mesos
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/mysql" title="mysql">
+                            mysql
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/network" title="network">
+                            network
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/nginx" title="nginx">
+                            nginx
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/prometheus" title="prometheus">
+                            prometheus
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/python" title="python">
+                            python
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/servicemesh" title="servicemesh">
+                            servicemesh
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/tcp" title="tcp">
+                            tcp
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://github.com/ILIKETWICE">权掌天下-Github</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="权掌天下 Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:15210198546@163.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/6069853748/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/wechat_qrcode.jpg">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ILIKETWICE">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; 权掌天下 Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+</body>
+</html>

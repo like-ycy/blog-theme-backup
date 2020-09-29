@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ServiceMesh on 权掌天下 Blog</title>
+    <link>https://like-ycy.github.io/tags/servicemesh/</link>
+    <description>Recent content in ServiceMesh on 权掌天下 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 16 Jan 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://like-ycy.github.io/tags/servicemesh/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> 听上去超酷的 Service Mesh 到底是什么？ </title>
+      <link>https://like-ycy.github.io/2020/01/16/what-is-servicemesh/</link>
+      <pubDate>Thu, 16 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2020/01/16/what-is-servicemesh/</guid>
+      <description>Service Mesh 作为下一代微服务技术的代名词，初出茅庐却深得人心一鸣惊人，大有一统微服务时代的趋势。那么到底什么是Service Mesh？ 一言以蔽之：S</description>
+    </item>
+    
+  </channel>
+</rss>

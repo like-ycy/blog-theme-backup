@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.ico">
+  <link rel="icon" type="image/png" href="/img/favicon.ico">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="望翔">
+  <meta name="keywords" content="">
+  <title>【Kubernetes系列】第4篇 Kubernetes包管理工具-helm介绍 - 权掌天下 Blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>权掌天下</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background" parallax=true
+         style="background: url('https://image.my-blog.wang/header/header.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2019-12-06 00:00">
+      2019年12月6日 凌晨
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      14
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+              <p class="note note-info">
+                
+                  本文最后更新于：2020年9月29日 下午
+                
+              </p>
+            
+            <article class="markdown-body">
+              <h1 id="1、概述"><a href="#1、概述" class="headerlink" title="1、概述"></a>1、概述</h1><p>Helm是kubernetes包管理工具，可以方便快捷的安装、管理、卸载kubernetes应用，类似于Linux操作系统中yum或apt-get软件的作用。其主要的设计目的：</p>
+<ul>
+<li>创建新的chart包</li>
+<li>将charts包文件打包压缩</li>
+<li>同chart仓库进行集成，获取charts文件</li>
+<li>安装及卸载charts到kubernetes集群</li>
+<li>管理通过helm安装的charts应用</li>
+</ul>
+<h1 id="2、概念介绍"><a href="#2、概念介绍" class="headerlink" title="2、概念介绍"></a>2、概念介绍</h1><p><strong>chart:</strong> 一个 Helm 包，其中包含了运行一个应用所需要的镜像、依赖和资源定义等，还可能包含 Kubernetes 集群中的服务定义。</p>
+<p><strong>release：</strong>在 Kubernetes 集群上运行的 Chart 的一个实例。在同一个集群上，一个 Chart 可以安装很多次，每次安装都会创建一个新的 release。</p>
+<p><strong>repository：</strong>用于发布和存储 Chart 的仓库，Helm客户端通过HTTP协议来访问仓库中Chart的索引文件和压缩包。</p>
+<h1 id="3、组件"><a href="#3、组件" class="headerlink" title="3、组件"></a>3、组件</h1><p><strong>helm:</strong> 提供给用户的客户端程序，可以以命令行的形式同服务端-tiller进行通信。</p>
+<p><strong>tiller：</strong>服务端软件，用来同helm客户端进行交互，并同kubernetes api server组件进行交互。</p>
+<p>架构如下：</p>
+<p><img src="https://gitee.com/like-ycy/images/raw/master/blog/2019-12-06/4-3.png" srcset="/img/loading.gif" alt="avatar"></p>
+<h1 id="4、安装部署"><a href="#4、安装部署" class="headerlink" title="4、安装部署"></a>4、安装部署</h1><h2 id="1-helm的安装部署"><a href="#1-helm的安装部署" class="headerlink" title="1. helm的安装部署"></a>1. helm的安装部署</h2><ul>
+<li>版本下载，版本列表 <a href="https://github.com/helm/helm/releases" target="_blank" rel="noopener">https://github.com/helm/helm/releases</a></li>
+<li>解压缩, tar -zxvf helm-v2.0.0-linux-amd64.tgz</li>
+<li>将解压缩后的二进制文件放在可执行目录下 mv linux-amd64/helm /usr/local/bin/helm，然后执行 helm –help查看帮助文档</li>
+</ul>
+<h2 id="2-tiller的安装部署"><a href="#2-tiller的安装部署" class="headerlink" title="2. tiller的安装部署"></a>2. tiller的安装部署</h2><p>控制台执行 &gt; helm init命令，该命令会将从charts仓库中下载charts包，并根据其中的配置部署至kubernetes集群。</p>
+<p>默认的charts仓库为 <a href="https://kubernetes-charts.storage.googleapis.com/index.yaml" target="_blank" rel="noopener">https://kubernetes-charts.storage.googleapis.com/index.yaml</a></p>
+<p>默认使用的tiller镜像为 gcr.io/kubernetes-helm/tiller:v2.13.1 </p>
+<p>国内由于墙的原因无法直接访问，需要我们自行处理可替代的仓库和镜像版本，通过如下命令进行helm服务端的安装部署：</p>
+<pre><code class="hljs shell"><span class="hljs-meta">&gt;</span><span class="bash"> helm init --tiller-image registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.13.1 --stable-repo-url https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts</span>
+
+Creating /root/.helm/repository/repositories.yaml
+Adding stable repo with URL: https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+Adding local repo with URL: http://127.0.0.1:8879/charts
+<span class="hljs-meta">$</span><span class="bash">HELM_HOME has been configured at /root/.helm.</span>
+
+Tiller (the Helm server-side component) has been installed into your Kubernetes Cluster.
+
+Please note: by default, Tiller is deployed with an insecure 'allow unauthenticated users'
+policy.
+To prevent this, run `helm init` with the --tiller-tls-verify flag.
+For more information on securing your installation see:
+https://docs.helm.sh/using_helm/#securing-your-helm-installationHappy Helming!</code></pre>
+
+<p>稍等一会然后执行如下命令，看到如下输出说明安装成功：</p>
+<pre><code class="hljs shell"><span class="hljs-meta">&gt;</span><span class="bash"> helm version</span>
+Client: &amp;version.Version&#123;SemVer:"v2.13.1", GitCommit:"618447cbf203d147601b4b9bd7f8c37a5d39fbb4", GitTreeState:"clean"&#125;
+Server: &amp;version.Version&#123;SemVer:"v2.13.1", GitCommit:"618447cbf203d147601b4b9bd7f8c37a5d39fbb4", GitTreeState:"clean"&#125;</code></pre>
+
+<p>通过执行 helm –help 可以看到常用的命令，说明如下：</p>
+<ul>
+<li>search 在helm仓库进行查找应用</li>
+<li>fetch 从仓库中下载chart包到本地</li>
+<li>list 在该k8s集群的部署的release列表</li>
+<li>status 显示release的具体信息</li>
+<li>install 安装charts</li>
+<li>inspect 描述charts信息</li>
+<li>delete 删除部署的release</li>
+<li>create 创建一个charts</li>
+<li>package 将某一charts进行打包压缩</li>
+<li>repo 显示、添加、移除charts仓库</li>
+</ul>
+<h1 id="5、访问授权"><a href="#5、访问授权" class="headerlink" title="5、访问授权"></a>5、访问授权</h1><p>在上面的步骤中我们将tiller所需的资源部署到了kubernetes集群中，但是由于Deployment tiller-deploy没有定义授权的ServiceAccount导致访问apiserver拒绝，执行如下命令为tiller-deploy进行授权：</p>
+<pre><code class="hljs shell"><span class="hljs-meta">&gt;</span><span class="bash"> kubectl create serviceaccount --namespace kube-system tiller</span>
+<span class="hljs-meta">&gt;</span><span class="bash"> kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller</span>
+<span class="hljs-meta">&gt;</span><span class="bash"> kubectl patch deploy --namespace kube-system tiller-deploy -p <span class="hljs-string">'&#123;"spec":&#123;</span></span></code></pre>
+
+<h1 id="6、通过helm部署WordPress"><a href="#6、通过helm部署WordPress" class="headerlink" title="6、通过helm部署WordPress"></a>6、通过helm部署WordPress</h1><p>输入如下命令，我们可以通过helm创建一个WordPress博客网站</p>
+<pre><code class="hljs shell"><span class="hljs-meta">&gt;</span><span class="bash"> helm install --name wordpress-test --<span class="hljs-built_in">set</span> <span class="hljs-string">"persistence.enabled=false,mariadb.persistence.enabled=false"</span> stable/wordpress</span></code></pre>
+
+<p>通过如下命令获取登录信息：</p>
+<pre><code class="hljs shell"><span class="hljs-meta">&gt;</span><span class="bash"> kubectl get svc -o wide</span>
+<span class="hljs-meta">&gt;</span><span class="bash"> kubectl get secret --namespace default wordpress-test-wordpress -o jsonpath=<span class="hljs-string">"&#123;.data.wordpress-password&#125;"</span> | base64 --decode</span></code></pre>
+
+<p>在浏览器中打开页面，并输入用户名和密码就可以看到搭建好的WordPress博客网站了。</p>
+<h1 id="7、升级"><a href="#7、升级" class="headerlink" title="7、升级"></a>7、升级</h1><p>当有新的chart包发布时或者想改变已有release的配置时，可以通过 helm upgrade命令实现，比如：</p>
+<pre><code class="hljs shell"><span class="hljs-meta">&gt;</span><span class="bash"> helm upgrade wordpress-test \</span>
+<span class="hljs-meta">&gt;</span><span class="bash"> --<span class="hljs-built_in">set</span> <span class="hljs-string">"persistence.enabled=true,mariadb.persistence.enabled=true"</span> \</span>
+<span class="hljs-meta">&gt;</span><span class="bash"> stable/wordpress</span></code></pre>
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Kubernetes/">Kubernetes</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/12/07/2019-12-07-kubernetes5-traefik-introduction/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【Kubernetes系列】第5篇 Ingress Controller - Traefik组件介绍</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2019/12/05/2019-12-05-kubernetes3-cluster-install/">
+                        <span class="hidden-mobile">【Kubernetes系列】第3篇 Kubernetes集群安装部署</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+  <div class="col-lg-7 mx-auto nopadding-md">
+    <div class="container custom post-content mx-auto">
+      <img src="https://octodex.github.com/images/jetpacktocat.png" srcset="/img/loading.gif" class="rounded mx-auto d-block mt-5" style="width:150px; height:150px;">
+    </div>
+  </div>
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "【Kubernetes系列】第4篇 Kubernetes包管理工具-helm介绍&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+  
+  
+    <script>
+      !function (e, t, a) {
+        function r() {
+          for (var e = 0; e < s.length; e++) s[e].alpha <= 0 ? (t.body.removeChild(s[e].el), s.splice(e, 1)) : (s[e].y--, s[e].scale += .004, s[e].alpha -= .013, s[e].el.style.cssText = "left:" + s[e].x + "px;top:" + s[e].y + "px;opacity:" + s[e].alpha + ";transform:scale(" + s[e].scale + "," + s[e].scale + ") rotate(45deg);background:" + s[e].color + ";z-index:99999");
+          requestAnimationFrame(r)
+        }
+
+        function n() {
+          var t = "function" == typeof e.onclick && e.onclick;
+          e.onclick = function (e) {
+            t && t(), o(e)
+          }
+        }
+
+        function o(e) {
+          var a = t.createElement("div");
+          a.className = "heart", s.push({
+            el: a,
+            x: e.clientX - 5,
+            y: e.clientY - 5,
+            scale: 1,
+            alpha: 1,
+            color: c()
+          }), t.body.appendChild(a)
+        }
+
+        function i(e) {
+          var a = t.createElement("style");
+          a.type = "text/css";
+          try {
+            a.appendChild(t.createTextNode(e))
+          } catch (t) {
+            a.styleSheet.cssText = e
+          }
+          t.getElementsByTagName("head")[0].appendChild(a)
+        }
+
+        function c() {
+          return "rgb(" + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + ")"
+        }
+
+        var s = [];
+        e.requestAnimationFrame = e.requestAnimationFrame || e.webkitRequestAnimationFrame || e.mozRequestAnimationFrame || e.oRequestAnimationFrame || e.msRequestAnimationFrame || function (e) {
+          setTimeout(e, 1e3 / 60)
+        }, i(".heart{width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: fixed;}.heart:after{top: -5px;}.heart:before{left: -5px;}"), n(), r()
+      }(window, document);
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

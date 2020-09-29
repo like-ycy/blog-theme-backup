@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Architecture on 权掌天下 Blog</title>
+    <link>https://like-ycy.github.io/tags/architecture/</link>
+    <description>Recent content in Architecture on 权掌天下 Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 14 Jan 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://like-ycy.github.io/tags/architecture/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title> 分布式和集群的区别 </title>
+      <link>https://like-ycy.github.io/2020/01/14/distributed-and-cluster-difference/</link>
+      <pubDate>Tue, 14 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://like-ycy.github.io/2020/01/14/distributed-and-cluster-difference/</guid>
+      <description>分布式开发的时代实际上早已悄悄地成为了时代的主流，吵得很热的云计算实际上只是包装在分布式之外的商业概念，很多开发者（包括我）都想加入研究云计</description>
+    </item>
+    
+  </channel>
+</rss>

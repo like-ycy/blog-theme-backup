@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="权掌天下 Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="https://like-ycy.github.io/img/backend.jpg">
+    <meta property="twitter:image" content="https://like-ycy.github.io/img/backend.jpg" />
+    
+
+    
+    <meta name="title" content="【Kubernetes系列】第1篇 架构及组件介绍 " />
+    <meta property="og:title" content="【Kubernetes系列】第1篇 架构及组件介绍 " />
+    <meta property="twitter:title" content="【Kubernetes系列】第1篇 架构及组件介绍 " />
+    
+
+    
+    <meta name="description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。">
+    <meta property="og:description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。" />
+    <meta property="twitter:description" content="Master，程序员, 开源爱好者 | 这里是 Master 的博客，永远相信美好的事情即将发生！。" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="权掌天下的博客, Master Blog, 博客, 个人网站, 互联网, Web, 云原生, PaaS, Istio, Kubernetes, 微服务">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>【Kubernetes系列】第1篇 架构及组件介绍 -权掌天下的博客</title>
+
+    <link rel="canonical" href="/2019/11/29/kubernetes1-architecture-component/">
+
+    <link rel="stylesheet" href="/css/iDisqus.min.css"/>
+	
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    
+    <link rel="stylesheet" href="/css/syntax.css">
+    
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+    
+    
+    <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    
+    
+
+    
+    
+    <script src="/js/jquery.min.js"></script>
+    
+    
+    <script src="/js/bootstrap.min.js"></script>
+    
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/docco.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    
+    
+
+</head>
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">权掌天下 Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="/categories/tech">tech</a>
+                    </li>
+                    
+                    
+		    
+                        <li><a href="/top/books/">BOOKS</a></li>
+                    
+                        <li><a href="/top/about/">ABOUT</a></li>
+                    
+
+                    
+		    <li>
+                        <a href="/search">SEARCH <img src="/img/search.png" height="15" style="cursor: pointer;" alt="Search"></a>
+		    </li>
+                    
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('https://image.my-blog.wang/header/header.jpg')
+    }
+</style>
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/kubernetes" title="Kubernetes">
+                            Kubernetes
+                        </a>
+                        
+                    </div>
+                    <h1>【Kubernetes系列】第1篇 架构及组件介绍 </h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 
+                        
+                                &#34;望翔&#34;
+                         
+                        on 
+                        Friday, November 29, 2019
+                        
+                        
+                        
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <header>
+                    <h2>TOC</h2>
+                </header>
+                <nav id="TableOfContents">
+<ul>
+<li><a href="#1-kubernetes简介">1、Kubernetes简介</a></li>
+<li><a href="#2-kubernetes-架构及组件介绍">2、Kubernetes 架构及组件介绍</a>
+<ul>
+<li><a href="#2-1-kubernetes-架构">2.1 kubernetes 架构</a></li>
+<li><a href="#2-2-kubernetes组件介绍">2.2 Kubernetes组件介绍</a>
+<ul>
+<li><a href="#2-2-1-etcd">2.2.1 etcd</a></li>
+<li><a href="#2-2-2-kube-apiserver">2.2.2 kube-apiserver</a></li>
+<li><a href="#2-2-3-kube-scheduler">2.2.3 kube-scheduler</a></li>
+<li><a href="#2-2-4-kube-controller-manager">2.2.4 kube-controller-manager</a></li>
+<li><a href="#2-2-5-kubelet">2.2.5 Kubelet</a></li>
+<li><a href="#2-2-6-kube-proxy">2.2.6 kube-proxy</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+                
+                
+
+<h1 id="1-kubernetes简介">1、Kubernetes简介</h1>
+
+<p>Kubernetes是谷歌开源的容器集群管理系统，是Google多年大规模容器管理技术Borg的开源版本，主要功能包括:</p>
+
+<ul>
+<li><p>基于容器的应用部署、维护和滚动升级</p></li>
+
+<li><p>负载均衡和服务发现</p></li>
+
+<li><p>跨机器和跨地区的集群调度</p></li>
+
+<li><p>自动伸缩</p></li>
+
+<li><p>无状态服务和有状态服务</p></li>
+
+<li><p>广泛的Volume支持</p></li>
+
+<li><p>插件机制保证扩展性</p></li>
+</ul>
+
+<p>Kubernetes发展非常迅速，已经成为容器编排领域的领导者。</p>
+
+<h1 id="2-kubernetes-架构及组件介绍">2、Kubernetes 架构及组件介绍</h1>
+
+<h2 id="2-1-kubernetes-架构">2.1 kubernetes 架构</h2>
+
+<p>Kubernetes架构如图所示：</p>
+
+<p><img src="https://image.my-blog.wang/k8s-series/one/2-1.jpg" alt="avatar" /></p>
+
+<p>Kubernetes主要由以下几个核心组件构成：</p>
+
+<ul>
+<li><p>etcd 保存整个集群的状态；</p></li>
+
+<li><p>apiserver 提供了资源操作的唯一入口，并提供认证、授权、访问控制、API注册和发现等机制；</p></li>
+
+<li><p>controller manager 负责维护集群的状态，比如故障检测、自动扩展、滚动更新等；</p></li>
+
+<li><p>scheduler 负责资源的调度，按照预定的调度策略将实例（Pod）调度到相应的主机上；</p></li>
+
+<li><p>kubelet 负责维护容器的生命周期，同时也负责存储卷和网络的管理；</p></li>
+
+<li><p>container runtime 负责镜像管理以及容器的真正执行，在我们系统中指的是Docker</p></li>
+
+<li><p>kube-proxy 负责为应用提供集群内部的服务发现和负载均衡</p></li>
+
+<li><p>推荐的插件</p>
+
+<ul>
+<li><p>helm - kubernetes包管理工具</p></li>
+
+<li><p>kube-dns/coreDNS 负责为整个集群提供DNS服务</p></li>
+
+<li><p>Ingress Controller 为服务提供外网入口</p></li>
+
+<li><p>Heapster 提供资源监控</p></li>
+
+<li><p>Dashboard 提供GUI</p></li>
+
+<li><p>Federation 提供跨可用区的集群</p></li>
+
+<li><p>Fluentd-elasticsearch 提供集群日志采集、存储与查询</p></li>
+</ul></li>
+</ul>
+
+<h2 id="2-2-kubernetes组件介绍">2.2 Kubernetes组件介绍</h2>
+
+<h3 id="2-2-1-etcd">2.2.1 etcd</h3>
+
+<p>etcd是基于Raft一致性算法开发的分布式key-value存储，可用于服务发现、共享配置以及一致性保障（如数据库选主、分布式锁等）</p>
+
+<p><strong>etcd主要功能：</strong></p>
+
+<ul>
+<li><p>基本的key-value存储</p></li>
+
+<li><p>监听机制</p></li>
+
+<li><p>key的过期及续约机制，用于监控和服务发现</p></li>
+
+<li><p>原子CAS和CAD，用于分布式锁和leader选举</p></li>
+</ul>
+
+<p><strong>Etcd基于RAFT的一致性</strong></p>
+
+<p><strong>leader节点选举方法</strong></p>
+
+<ul>
+<li><p>初始启动时，节点处于follower状态并被设定一个election timeout，如果在这一时间周期内没有收到来自leader的心跳检测，节点将发起选举，将自己切换为candidate（候选人）节点之后，向集群中的其他follow节点发送请求，询问其是否选举自己为leader</p></li>
+
+<li><p>当收到来自集群中过半数节点的接受投票后，节点即成为leader，开始接收保存client的数据并向其他的follower节点同步日志。如果没有达成一致，则candidate节点随机选择一个等待时间（150ms ～ 300ms）再次发起投票，得到集群中半数以上的follower接受的candidate将成为leader</p></li>
+
+<li><p>leader节点依靠定时向follower节点发送心跳检测来保持其地位</p></li>
+
+<li><p>任何时候如果其他follower在election timeout期间没有收到来自leader的心跳检测，同样会将自己的状态切换为candidate并发起选举。每成功选举一次，新leader的步进数（Term）都会比之前leader的步进数加1</p></li>
+</ul>
+
+<p><strong>失效处理</strong></p>
+
+<ul>
+<li><p>leader失效：其他没有收到心跳检测的节点将发起新的选举，当leader恢复后由于步进数小自动成为follower（日志会被新leader的日志覆盖）</p></li>
+
+<li><p>follower节点不可用：follower节点不可用的情况相对比较容易解决。因为集群中的日志内容始终是从leader节点同步，只要这一节点再次加入集群时重新从leader节点处复制日志即可</p></li>
+
+<li><p>多个候选人（candidate）：冲突后candidate将随机选择一个等待时间（150ms ～ 300ms）再次发起投票，得到集群中半数以上的follower接受的candidate将成为leader</p></li>
+</ul>
+
+<p>讲到这里可能有同学发现Etcd和Zookeeper、Consul等一致性协议实现框架有些类似，的确这些中间件是比较类似的，关于其中的异同点，大家可以自行查阅资料。</p>
+
+<h3 id="2-2-2-kube-apiserver">2.2.2 kube-apiserver</h3>
+
+<p>kube-apiserver是Kubernetes最重要的核心组件之一，主要提供了如下功能：</p>
+
+<ul>
+<li><p>提供集群管理的REST API接口，包括认证授权、数据校验以及集群状态变更等</p></li>
+
+<li><p>提供同其他模块之间的数据交互(其他模块通过API Server查询或修改数据，只有API Server才直接操作etcd)</p></li>
+</ul>
+
+<h3 id="2-2-3-kube-scheduler">2.2.3 kube-scheduler</h3>
+
+<p>kube-scheduler负责分配调度Pod到集群内的节点上，它监听kube-
+apiserver，查询还未分配Node的Pod，然后根据调度策略为这些Pod分配节点</p>
+
+<p>通过以下三种方式可以指定Pod只运行在特定的Node节点上</p>
+
+<ul>
+<li><p>nodeSelector:只调度到匹配指定label的Node上</p></li>
+
+<li><p>nodeAffinity:功能更丰富的Node选择器，比如支持集合操作</p></li>
+
+<li><p>podAffinity:调度到满足条件的Pod所在的Node上</p></li>
+</ul>
+
+<h3 id="2-2-4-kube-controller-manager">2.2.4 kube-controller-manager</h3>
+
+<p>kube-controller-manager是Kubernetes的大脑，通过kube-
+apiserver监控整个集群的状态，并确保集群处于预期的工作状态，它由一系列的控制器组成，这些控制器主要包括三组：</p>
+
+<p><strong>1. 必须启动的控制器</strong></p>
+
+<ul>
+<li><p>eploymentController</p></li>
+
+<li><p>DaemonSetController</p></li>
+
+<li><p>NamesapceController</p></li>
+
+<li><p>ReplicationController</p></li>
+
+<li><p>RelicaSet</p></li>
+
+<li><p>JobController</p></li>
+
+<li><p>&hellip;</p></li>
+</ul>
+
+<p><strong>2. 默认启动的控制器</strong></p>
+
+<ul>
+<li><p>NodeController</p></li>
+
+<li><p>ServiceController</p></li>
+
+<li><p>PVBinderController</p></li>
+
+<li><p>&hellip;</p></li>
+</ul>
+
+<p><strong>3. 默认禁止的可选控制器</strong></p>
+
+<ul>
+<li><p>BootstrapSignerController</p></li>
+
+<li><p>TokenCleanerController</p></li>
+</ul>
+
+<h3 id="2-2-5-kubelet">2.2.5 Kubelet</h3>
+
+<p>每个Node节点上都运行一个kubelet守护进程，默认监听10250端口，接收并执行master发来的指令，管理Pod及Pod中的容器。每个kubelet进程会在API
+Server上注册节点自身信息，定期向master节点汇报节点的资源使用情况</p>
+
+<p><strong>节点管理</strong></p>
+
+<p>主要是节点自注册和节点状态更新:</p>
+
+<ul>
+<li><p>Kubelet可以通过设置启动参数 &ndash;register-node 来确定是否向API Server注册自己;</p></li>
+
+<li><p>如果Kubelet没有选择自注册模式，则需要用户自己配置Node资源信息，同时需要在Kubelet上配置集群中API Server的信息;</p></li>
+
+<li><p>Kubelet在启动时通过API Server注册节点信息，并定时向API Server发送节点状态消息，API Server在接收到新消息后，将信息写入etcd</p></li>
+</ul>
+
+<p><strong>容器健康检查</strong></p>
+
+<p>Pod通过两类探针检查容器的健康状态</p>
+
+<ul>
+<li><p>LivenessProbe 存活探针：通过该探针判断容器是否健康，告诉Kubelet一个容器什么时候处于不健康的状态。如果LivenessProbe探针探测到容器不健康，则kubelet将删除该容器，并根据容器的重启策略做相应的处理。如果一个容器不包含LivenessProbe探针，那么kubelet认为该容器的LivenessProbe探针返回的值永远是“Success”。</p></li>
+
+<li><p>ReadinessProbe 就绪探针：用于判断容器是否启动完成且准备接收请求。如果 ReadinessProbe 探针探测到失败，则Pod的状态将被修改。Endpoint Controller将从Service的Endpoint中删除包含该容器所在Pod的IP地址的Endpoint条目。</p></li>
+</ul>
+
+<p>以下是Pod的启动流程：</p>
+
+<p><img src="https://image.my-blog.wang/k8s-series/one/2-2-5.jpg" alt="avatar" /></p>
+
+<h3 id="2-2-6-kube-proxy">2.2.6 kube-proxy</h3>
+
+<p>每台机器上都运行一个kube-proxy服务，它监听API
+Server中service和Pod的变化情况，并通过userspace、iptables、ipvs等proxier来为服务配置负载均衡</p>
+
+<p>代理模式（proxy-mode）提供如下三种类型：</p>
+
+<p><strong>1. userspace</strong></p>
+
+<p><img src="https://image.my-blog.wang/k8s-series/one/2-2-6-1.png" alt="avatar" /></p>
+
+<p>最早的负载均衡方案，它在用户空间监听一个端口，所有请求通过 iptables 转发到这个端口，然后在其内部负载均衡到实际的
+Pod。service的请求会先从用户空间进入内核iptables，然后再回到用户空间（kube-proxy），由kube-
+proxy完成后端Endpoints的选择和代理工作，这样流量从用户空间进出内核带来的性能损耗是不可接受的，所以产生了iptables的代理模式</p>
+
+<p><strong>2. iptables:</strong></p>
+
+<p><img src="https://image.my-blog.wang/k8s-series/one/2-2-6-2.png" alt="avatar" /></p>
+
+<p>iptables
+mode完全使用iptables来完成请求过滤和转发。但是如果集群中存在大量的Service/Endpoint，那么Node上的iptables
+rules将会非常庞大，添加或者删除iptables规则会引起较大的延迟。</p>
+
+<p><strong>3. ipvs:</strong></p>
+
+<p>为了解决存在大量iptables规则时的网络延迟的问题，Kubernetes引入了ipvs的模式，（ipvs是LVS - Linux Virtual
+Server 的重要组成部分，最早是由中国的章文嵩博士推出的一个开源项目，提供软件负载均衡的解决方案），下面是ipvs模式的原理图：</p>
+
+<p><img src="https://image.my-blog.wang/k8s-series/one/2-2-6-3.png" alt="avatar" /></p>
+
+
+                
+                
+<div class="entry-shang text-center">
+    
+	    <p> 「如果这篇文章对你有用,请随意打赏」</p>
+	
+	<button class="zs show-zs btn btn-bred">赞赏支持</button>
+</div>
+<div class="zs-modal-bg"></div>
+<div class="zs-modal-box">
+	<div class="zs-modal-head">
+		<button type="button" class="close">×</button>
+		<span class="author"><a href="https://like-ycy.github.io"><img src="/img/favicon.png" />权掌天下 Blog</a></span>
+        
+	        <p class="tip"><i></i><span>如果这篇文章对你有用,请随意打赏</span></p>
+		
+ 
+	</div>
+	<div class="zs-modal-body">
+		<div class="zs-modal-btns">
+			<button class="btn btn-blink" data-num="2">2元</button>
+			<button class="btn btn-blink" data-num="5">5元</button>
+			<button class="btn btn-blink" data-num="10">10元</button>
+			<button class="btn btn-blink" data-num="50">50元</button>
+			<button class="btn btn-blink" data-num="100">100元</button>
+			<button class="btn btn-blink" data-num="1">任意金额</button>
+		</div>
+		<div class="zs-modal-pay">
+			<button class="btn btn-bred" id="pay-text">2元</button>
+			<p>使用<span id="pay-type">微信</span>扫描二维码完成支付</p>
+			<img src="/img/reward/wechat-2.png"  id="pay-image"/>
+		</div>
+	</div>
+	<div class="zs-modal-footer">
+		<label><input type="radio" name="zs-type" value="wechat" class="zs-type" checked="checked"><span ><span class="zs-wechat"><img src="/img/reward/wechat-btn.png"/></span></label>
+		<label><input type="radio" name="zs-type" value="alipay" class="zs-type" class="zs-alipay"><img src="/img/reward/alipay-btn.png"/></span></label>
+	</div>
+</div>
+<script type="text/javascript" src="/js/reward.js"></script>
+
+                
+
+                <hr>
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2019/12/04/kubernetes2-introduction-to-basic-concepts/" data-toggle="tooltip" data-placement="top" title="【Kubernetes系列】第2篇 基础概念介绍 ">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+<div id="disqus-comment"></div>
+
+
+
+            </div>
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        <a href="/tags/aliyun" title="aliyun">
+                            aliyun
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/architecture" title="architecture">
+                            architecture
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/cloudnative" title="cloudnative">
+                            cloudnative
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/gitlab" title="gitlab">
+                            gitlab
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/heart" title="heart">
+                            heart
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/http" title="http">
+                            http
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/https" title="https">
+                            https
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/kubernetes" title="kubernetes">
+                            kubernetes
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/linux" title="linux">
+                            linux
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/mesos" title="mesos">
+                            mesos
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/mysql" title="mysql">
+                            mysql
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/network" title="network">
+                            network
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/nginx" title="nginx">
+                            nginx
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/prometheus" title="prometheus">
+                            prometheus
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/python" title="python">
+                            python
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/servicemesh" title="servicemesh">
+                            servicemesh
+                        </a>
+                        
+                        
+                        
+                        <a href="/tags/tcp" title="tcp">
+                            tcp
+                        </a>
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://github.com/ILIKETWICE">权掌天下-Github</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                   
+                   <li>
+                       <a href='' rel="alternate" type="application/rss+xml" title="权掌天下 Blog" >
+                           <span class="fa-stack fa-lg">
+                               <i class="fa fa-circle fa-stack-2x"></i>
+                               <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                           </span>
+                       </a>
+                   </li>
+                   
+                    
+                    <li>
+                        <a href="mailto:15210198546@163.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://weibo.com/6069853748/profile?rightmod=1&amp;wvr=6&amp;mod=personinfo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+
+                    
+
+		    
+                    
+                    <li>
+                        <a target="_blank" href="/img/wechat_qrcode.jpg">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-wechat fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/ILIKETWICE">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; 权掌天下 Blog 2020
+                    <br>
+                    <a href="https://themes.gohugo.io/hugo-theme-cleanwhite">CleanWhite Hugo Theme</a> by <a href="https://zhaohuabing.com">Huabing</a> |
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=zhaohuabing&repo=hugo-theme-cleanwhite&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        async("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    async("https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+</body>
+</html>
